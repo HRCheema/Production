@@ -1002,6 +1002,89 @@ body > * { position: relative; z-index: 1; }
 .empty-state-icon { font-size: 2em; opacity: 0.4; }
 .empty-state-text { font-size: 0.78em; font-weight: 600; opacity: 0.6; }
 
+/* ═══════════════════ MOBILE RESPONSIVE (phones) ═══════════════════ */
+@media (max-width: 760px) {
+  html, body {
+    height: auto;
+    min-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* Header: wrap into rows instead of squeezing everything into one line */
+  .header {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    padding: 10px 12px;
+  }
+  .logo-zone { order: 1; }
+  .header-center {
+    order: 3;
+    flex: 1 1 100%;
+    max-width: 100%;
+    margin: 4px 0 0;
+  }
+  .header-actions {
+    order: 2;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    row-gap: 6px;
+  }
+  .live-clock { min-width: auto; padding: 5px 9px; font-size: 0.78em; }
+  .hdr-btn { padding: 6px 10px; font-size: 0.72em; }
+  .header-actions .divider { display: none; }
+  .logo-text { font-size: 0.68em; }
+  .logo-sig { font-size: 1.05em; }
+
+  /* Stack calendar + dashboard vertically instead of side-by-side */
+  .main-wrap {
+    flex-direction: column;
+    overflow: visible;
+    height: auto;
+  }
+
+  .cal-side {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    overflow: visible;
+    padding: 14px;
+  }
+  .cal-grid { overflow: visible; }
+  .cal-day.has-order .order-mini-label { font-size: 0.55em; }
+
+  .dash-side {
+    width: 100%;
+    overflow: visible;
+    padding: 14px;
+  }
+
+  /* Register form: allow inputs to wrap instead of overflowing off-screen */
+  .form-row { flex-wrap: wrap; }
+  .form-row .f-input,
+  .form-row .select-wrap { flex: 1 1 100%; }
+  .arts-row { flex-wrap: wrap; }
+
+  /* Order detail + articles panel: stack instead of squeezing side by side */
+  .detail-row {
+    flex-direction: column;
+    overflow: visible;
+    min-height: auto;
+  }
+
+  .order-detail-panel {
+    overflow: visible;
+    min-height: 0;
+  }
+
+  .articles-panel {
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  .timeline-wrap { overflow: visible; min-height: 0; }
+}
+
 /* ═══ STATUS COLORS ═══ */
 .s-received { --status-a: rgba(99,102,241,0.12); --status-b: rgba(139,92,246,0.12); color: #a5b4fc; border-color: rgba(99,102,241,0.35) !important; }
 .s-fabric   { --status-a: rgba(245,158,11,0.12); --status-b: rgba(251,191,36,0.1); color: #fbbf24; border-color: rgba(245,158,11,0.35) !important; }
