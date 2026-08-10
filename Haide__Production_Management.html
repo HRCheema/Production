@@ -3,7 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <title>Elite Production — Command Center</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<!-- PWA / Add-to-Home-Screen support -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#060912">
+
+<!-- iOS-specific home screen app support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Production">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700;800&family=Dancing+Script:wght@700&display=swap');
 
@@ -141,6 +151,9 @@ body > * { position: relative; z-index: 1; }
   align-items: center;
   justify-content: space-between;
   padding: 10px 18px;
+  padding-top: max(10px, env(safe-area-inset-top));
+  padding-left: max(18px, env(safe-area-inset-left));
+  padding-right: max(18px, env(safe-area-inset-right));
   border-bottom: 1px solid var(--border);
   background: rgba(var(--bg-rgb), 0.95);
   backdrop-filter: blur(20px);
@@ -2040,6 +2053,15 @@ function render() {
 document.getElementById('dIn').value = new Date().toISOString().split('T')[0];
 updateAdminUI();
 render();
+
+// ═══ PWA: REGISTER SERVICE WORKER ═══
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
 </script>
 </body>
 </html>
