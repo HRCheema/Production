@@ -2,8 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Force5 Performance Gear — Production Management</title>
+<title>Haider Cheema — Production Management</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<meta name="theme-color" content="#060912">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700;800&family=Dancing+Script:wght@700&display=swap');
 
@@ -64,6 +69,75 @@ body.light-theme .f-select {
 }
 body.light-theme .logo-upload-hint {
   color: var(--text-muted);
+}
+
+/* ── Permission Toggle Rows (Settings Modal) ── */
+.perm-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(var(--glass-rgb), 0.04);
+  margin-bottom: 10px;
+}
+.perm-info { min-width: 0; }
+.perm-title { font-size: 0.82em; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.perm-desc { font-size: 0.68em; font-weight: 600; color: var(--text-muted); line-height: 1.35; }
+.perm-note {
+  font-size: 0.68em;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(var(--glass-rgb), 0.03);
+  border: 1px dashed var(--border);
+  margin-top: 4px;
+}
+.perm-switch {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.perm-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+.perm-slider {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: rgba(var(--glass-rgb), 0.12);
+  border: 1px solid var(--border);
+  transition: background 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.perm-slider::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #64748b, #94a3b8);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  transition: left 0.28s cubic-bezier(0.34,1.56,0.64,1), background 0.25s;
+}
+.perm-switch input:checked + .perm-slider {
+  background: linear-gradient(135deg, rgba(99,102,241,0.35), rgba(139,92,246,0.35));
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(99,102,241,0.35);
+}
+.perm-switch input:checked + .perm-slider::before {
+  left: 24px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
 }
 
 /* ── Theme Toggle Switch ── */
@@ -1297,6 +1371,170 @@ body > * { position: relative; z-index: 1; }
   .order-id { font-size: 1.1em; }
   .modal-box { width: 88%; padding: 20px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   ═══ ETD COUNTDOWN BADGES ═══
+   Live ticking countdown to a normal order's Ex-Factory Date (ETD).
+   Hidden automatically for Completed / Shipped / Emb. Specs Done.
+   ═══════════════════════════════════════════════════════════════ */
+.countdown-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  border-radius: 999px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+.countdown-badge.cd-compact {
+  font-size: 0.62em;
+  padding: 3px 9px;
+  margin-top: 4px;
+}
+.countdown-badge.cd-full {
+  font-size: 0.92em;
+  padding: 8px 16px;
+}
+.countdown-badge.cd-safe {
+  color: var(--green);
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+.countdown-badge.cd-soon {
+  color: var(--accent3);
+  background: rgba(6, 182, 212, 0.12);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+.countdown-badge.cd-urgent {
+  color: var(--amber);
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.35);
+}
+.countdown-badge.cd-critical {
+  color: #fb7185;
+  background: rgba(251, 113, 133, 0.16);
+  border-color: rgba(251, 113, 133, 0.4);
+  animation: cdPulse 1.4s ease-in-out infinite;
+}
+.countdown-badge.cd-overdue {
+  color: #fff;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.45);
+  animation: cdPulse 1.1s ease-in-out infinite;
+}
+@keyframes cdPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.78; transform: scale(1.03); }
+}
+.order-countdown-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  margin-bottom: 14px;
+  background: rgba(var(--glass-rgb), 0.04);
+  border: 1px solid var(--border);
+}
+.order-countdown-card .cd-label {
+  font-size: 0.66em;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.dash-alert-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 18px 12px;
+}
+.dash-alert-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7em;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.dash-alert-chip:hover { transform: translateY(-1px); }
+.dash-alert-chip.overdue {
+  color: #fff;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 0 12px rgba(239,68,68,0.4);
+}
+.dash-alert-chip.critical {
+  color: #fff;
+  background: linear-gradient(135deg, #fb7185, #f43f5e);
+}
+.dash-alert-chip.soon {
+  color: #fff;
+  background: linear-gradient(135deg, var(--amber), #d97706);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ═══ MOBILE TAB BAR ═══ (Calendar / Orders / Detail switcher —
+   keeps the phone view short instead of one giant scroll)
+   ═══════════════════════════════════════════════════════════════ */
+.mobile-tabbar {
+  display: none;
+}
+@media (max-width: 960px) {
+  .mobile-tabbar {
+    display: flex;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(var(--bg-rgb), 0.97);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .mtab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 9px 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(var(--glass-rgb), 0.03);
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.72em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mtab-btn.active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+  }
+  .mtab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 15px;
+    height: 15px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.85em;
+    font-weight: 800;
+  }
+}
 </style>
 
 <style>
@@ -1370,7 +1608,47 @@ document.getElementById('lockGateBtn').addEventListener('click',tryUnlock);docum
       <button class="modal-btn confirm" onclick="performLogin()">Login</button>
     </div>
     <div class="login-error" id="loginError"></div>
-    <div class="login-hint">Sirf authorized admin accounts hi status update kar sakte hain. Baaki sab Viewer (read-only) rahenge.</div>
+    <div class="login-hint">Admin login ke baad ⚙️ Access se Viewer ko Order Entry / Status Change ki ijazat de sakte ho. Default = read-only.</div>
+  </div>
+</div>
+
+<!-- Viewer Permissions / Settings Modal (Admin only) -->
+<div class="modal-overlay" id="settingsOverlay">
+  <div class="modal-box" style="width:380px;max-width:92%;">
+    <div class="modal-title">⚙️ Viewer Access Control</div>
+    <p style="font-size:0.72em;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">
+      Ye toggles cloud par save hote hain. Admin jab chaahe Viewer ko Order Entry ya Status Change ki ijazat de sakta hai — turant sab PCs par apply.
+    </p>
+
+    <div class="perm-row">
+      <div class="perm-info">
+        <div class="perm-title">📝 Order Entry</div>
+        <div class="perm-desc">Viewer naye orders / Emb Specs register kar sake</div>
+      </div>
+      <label class="perm-switch">
+        <input type="checkbox" id="toggleViewerRegister" onchange="setViewerPermission('register', this.checked)">
+        <span class="perm-slider"></span>
+      </label>
+    </div>
+
+    <div class="perm-row">
+      <div class="perm-info">
+        <div class="perm-title">🔄 Status Change</div>
+        <div class="perm-desc">Viewer order ka status update / edit kar sake</div>
+      </div>
+      <label class="perm-switch">
+        <input type="checkbox" id="toggleViewerUpdate" onchange="setViewerPermission('update', this.checked)">
+        <span class="perm-slider"></span>
+      </label>
+    </div>
+
+    <div class="perm-note" id="permLiveNote">
+      Dono OFF = pure read-only Viewer (default)
+    </div>
+
+    <div class="modal-btns" style="margin-top:18px;">
+      <button class="modal-btn confirm" onclick="closeSettingsModal()" style="width:100%;">Done</button>
+    </div>
   </div>
 </div>
 
@@ -1410,6 +1688,7 @@ document.getElementById('lockGateBtn').addEventListener('click',tryUnlock);docum
     <button class="hdr-btn admin-btn" id="adminBtn" onclick="adminLogin()">
       <span id="adminIcon">🔒</span> <span id="adminLabel">Viewer</span>
     </button>
+    <button class="hdr-btn" id="settingsBtn" onclick="openSettingsModal()" title="Viewer permissions control" style="display:none;">⚙️ Access</button>
     <div class="divider"></div>
     <div class="theme-toggle">
       <span id="themeIcon" style="font-size:0.9em;">🌙</span>
@@ -1432,6 +1711,16 @@ document.getElementById('lockGateBtn').addEventListener('click',tryUnlock);docum
     <button class="hdr-btn" id="clearEmbBtn" onclick="clearAllEmb()" title="Sab Emb Specs records delete kar dein — nayi backup .json import karne se pehle">🗑️ Clear Emb</button>
   </div>
 </div>
+
+<!-- ═══ MOBILE TAB BAR (Calendar / Orders / Detail) ═══ -->
+<div class="mobile-tabbar" id="mobileTabbar">
+  <button type="button" class="mtab-btn active" data-tab="calendar" onclick="switchMobileTab('calendar')">📅 Calendar</button>
+  <button type="button" class="mtab-btn" data-tab="orders" onclick="switchMobileTab('orders')">📋 Orders</button>
+  <button type="button" class="mtab-btn" data-tab="detail" onclick="switchMobileTab('detail')">🔎 Detail<span class="mtab-badge" id="mtabDetailBadge" style="display:none;"></span></button>
+</div>
+
+<!-- ═══ DASHBOARD ALERT STRIP (overdue / due-soon ETD chips) ═══ -->
+<div class="dash-alert-strip" id="dashAlertStrip"></div>
 
 <!-- ═══ MAIN ═══ -->
 <div class="main-wrap">
@@ -1597,6 +1886,7 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 const ordersDocRef = db.collection('elite_production').doc('orders');
 const embDocRef = db.collection('elite_production').doc('emb_specs');
+const settingsDocRef = db.collection('elite_production').doc('settings');
 </script>
 
 <script>
@@ -1645,6 +1935,166 @@ const EMB_STATUS = 'Emb. Specs Done';
 let embOrders = [];
 let selectedEmbId = null;
 let selectedKind = 'normal'; // 'normal' | 'emb' — which type of item the detail pane currently shows
+
+// ═══════════════════════════════════════════════════════════════
+// ═══ ETD COUNTDOWN CLOCK ═══
+// Live countdown to a normal order's Ex-Factory Date (ETD).
+// Automatically skipped for orders whose status is Completed,
+// Shipped, or Emb. Specs Done — those are already done, no clock needed.
+// ═══════════════════════════════════════════════════════════════
+const COUNTDOWN_EXEMPT_STATUSES = ['Completed', 'Shipped', EMB_STATUS];
+
+function isCountdownExempt(status) {
+  return COUNTDOWN_EXEMPT_STATUSES.includes(status);
+}
+
+function getETDTargetDate(item) {
+  if (item == null || item.year == null || item.month == null || item.day == null) return null;
+  // ETD deadline = end of that calendar day (23:59:59.999 local time)
+  return new Date(item.year, item.month, item.day, 23, 59, 59, 999);
+}
+
+function computeCountdown(item) {
+  if (!item || isCountdownExempt(item.status)) return null;
+  const target = getETDTargetDate(item);
+  if (!target) return null;
+  return { diff: target.getTime() - Date.now(), targetTime: target.getTime() };
+}
+
+function countdownUrgencyClass(diffMs) {
+  if (diffMs < 0) return 'cd-overdue';
+  const days = diffMs / 86400000;
+  if (days <= 1) return 'cd-critical';
+  if (days <= 3) return 'cd-urgent';
+  if (days <= 7) return 'cd-soon';
+  return 'cd-safe';
+}
+
+function formatCountdownParts(absMs) {
+  const totalSec = Math.floor(absMs / 1000);
+  return {
+    d: Math.floor(totalSec / 86400),
+    h: Math.floor((totalSec % 86400) / 3600),
+    m: Math.floor((totalSec % 3600) / 60),
+    s: totalSec % 60
+  };
+}
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function renderCountdownText(diffMs, mode) {
+  const p = formatCountdownParts(Math.abs(diffMs));
+  if (diffMs < 0) {
+    return mode === 'full'
+      ? `⚠️ Overdue by ${p.d}d ${pad2(p.h)}h ${pad2(p.m)}m ${pad2(p.s)}s`
+      : `⚠️ ${p.d}d late`;
+  }
+  if (mode === 'full') {
+    return `⏳ ${p.d}d ${pad2(p.h)}h ${pad2(p.m)}m ${pad2(p.s)}s left`;
+  }
+  if (p.d === 0) return `🔥 ${p.h}h ${p.m}m left`;
+  return `⏳ ${p.d}d ${p.h}h left`;
+}
+
+// Compact badge — used inside order-list rows
+function countdownBadgeHTML(item, mode) {
+  const cd = computeCountdown(item);
+  if (!cd) return '';
+  const cls = countdownUrgencyClass(cd.diff);
+  const sizeClass = mode === 'full' ? 'cd-full' : 'cd-compact';
+  return `<span class="countdown-badge ${cls} ${sizeClass}" data-cd-target="${cd.targetTime}" data-cd-mode="${mode}">${renderCountdownText(cd.diff, mode)}</span>`;
+}
+
+// Full countdown card — used inside the order detail panel
+function countdownCardHTML(item) {
+  const cd = computeCountdown(item);
+  if (!cd) return '';
+  return `
+    <div class="order-countdown-card">
+      <div class="cd-label">🚚 ETD Countdown</div>
+      ${countdownBadgeHTML(item, 'full')}
+    </div>
+  `;
+}
+
+// Ticks every second — updates any badge already in the DOM without a full re-render
+function tickCountdowns() {
+  document.querySelectorAll('[data-cd-target]').forEach(el => {
+    const target = parseInt(el.getAttribute('data-cd-target'), 10);
+    const mode = el.getAttribute('data-cd-mode') || 'compact';
+    const diff = target - Date.now();
+    const sizeClass = mode === 'full' ? 'cd-full' : 'cd-compact';
+    el.className = `countdown-badge ${countdownUrgencyClass(diff)} ${sizeClass}`;
+    el.textContent = renderCountdownText(diff, mode);
+  });
+}
+
+// ═══ DASHBOARD ALERT STRIP — quick overdue / due-soon summary chips ═══
+function renderAlertStrip() {
+  const strip = document.getElementById('dashAlertStrip');
+  const mtabBadge = document.getElementById('mtabDetailBadge');
+  if (!strip) return;
+
+  const active = orders.filter(o => !isCountdownExempt(o.status));
+  let overdue = 0, critical = 0, soon = 0;
+  active.forEach(o => {
+    const cd = computeCountdown(o);
+    if (!cd) return;
+    const cls = countdownUrgencyClass(cd.diff);
+    if (cls === 'cd-overdue') overdue++;
+    else if (cls === 'cd-critical') critical++;
+    else if (cls === 'cd-urgent') soon++;
+  });
+
+  const chips = [];
+  if (overdue > 0) chips.push(`<div class="dash-alert-chip overdue" onclick="setCalFilter('wip')">⚠️ ${overdue} Overdue</div>`);
+  if (critical > 0) chips.push(`<div class="dash-alert-chip critical" onclick="setCalFilter('wip')">🔥 ${critical} Due ≤24h</div>`);
+  if (soon > 0) chips.push(`<div class="dash-alert-chip soon" onclick="setCalFilter('wip')">⏳ ${soon} Due ≤3 Days</div>`);
+  strip.innerHTML = chips.join('');
+
+  const urgentTotal = overdue + critical;
+  if (mtabBadge) {
+    if (urgentTotal > 0) { mtabBadge.style.display = 'inline-flex'; mtabBadge.textContent = urgentTotal; }
+    else { mtabBadge.style.display = 'none'; }
+  }
+}
+
+// ═══ MOBILE TAB BAR — Calendar / Orders / Detail (keeps phone view short) ═══
+let mobileActiveTab = 'calendar';
+function isMobileView() { return window.innerWidth <= 960; }
+
+function applyMobileTabs() {
+  const calSide = document.querySelector('.cal-side');
+  const dashSide = document.querySelector('.dash-side');
+  const listPanel = document.getElementById('orderListPanel');
+  const detailPanel = document.getElementById('orderDisplay');
+  const artPanel = document.querySelector('.articles-panel');
+  if (!calSide || !dashSide) return;
+
+  if (!isMobileView()) {
+    [calSide, dashSide, listPanel, detailPanel, artPanel].forEach(el => { if (el) el.style.display = ''; });
+    return;
+  }
+
+  calSide.style.display = mobileActiveTab === 'calendar' ? '' : 'none';
+  dashSide.style.display = mobileActiveTab === 'calendar' ? 'none' : '';
+  if (listPanel) listPanel.style.display = mobileActiveTab === 'orders' ? '' : 'none';
+  if (detailPanel) detailPanel.style.display = mobileActiveTab === 'detail' ? '' : 'none';
+  if (artPanel) artPanel.style.display = mobileActiveTab === 'detail' ? '' : 'none';
+}
+
+function switchMobileTab(tab) {
+  mobileActiveTab = tab;
+  document.querySelectorAll('.mtab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  applyMobileTabs();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goToDetailOnMobile() {
+  if (isMobileView()) switchMobileTab('detail');
+}
+
+window.addEventListener('resize', applyMobileTabs);
 
 // Modal state
 let modalCallback = null;
@@ -1721,6 +2171,70 @@ function embFormattedDate(rec) {
   return d.toISOString().split('T')[0];
 }
 
+// ═══ VIEWER PERMISSIONS (cloud-synced — Admin controls these toggles) ═══
+// allowViewerRegister  → viewers can use Order / Emb register forms
+// allowViewerUpdate    → viewers can change / edit order status
+let allowViewerRegister = false;
+let allowViewerUpdate = false;
+let settingsCloudReady = false;
+
+function canRegister() {
+  return isAdmin || allowViewerRegister;
+}
+function canUpdateStatus() {
+  return isAdmin || allowViewerUpdate;
+}
+
+function saveSettingsToCloud() {
+  settingsDocRef.set({
+    allowViewerRegister: !!allowViewerRegister,
+    allowViewerUpdate: !!allowViewerUpdate,
+    updatedAt: new Date().toISOString(),
+    updatedBy: (auth.currentUser && auth.currentUser.email) || 'admin'
+  }).catch(err => showToast('❌ Settings sync failed: ' + err.message));
+}
+
+settingsDocRef.onSnapshot(
+  (doc) => {
+    if (doc.exists) {
+      const d = doc.data() || {};
+      allowViewerRegister = !!d.allowViewerRegister;
+      allowViewerUpdate = !!d.allowViewerUpdate;
+    } else {
+      allowViewerRegister = false;
+      allowViewerUpdate = false;
+    }
+    settingsCloudReady = true;
+    // Keep toggle UI in sync if settings modal is open
+    const tReg = document.getElementById('toggleViewerRegister');
+    const tUpd = document.getElementById('toggleViewerUpdate');
+    if (tReg) tReg.checked = allowViewerRegister;
+    if (tUpd) tUpd.checked = allowViewerUpdate;
+    updateAdminUI();
+    render();
+  },
+  (err) => {
+    console.error('Settings cloud error', err);
+  }
+);
+
+function setViewerPermission(key, value) {
+  if (!isAdmin) {
+    showToast('🔒 Sirf Admin permissions change kar sakta hai');
+    return;
+  }
+  if (key === 'register') allowViewerRegister = !!value;
+  if (key === 'update') allowViewerUpdate = !!value;
+  saveSettingsToCloud();
+  updateAdminUI();
+  updatePermNote();
+  render();
+  const label = key === 'register' ? 'Order Entry' : 'Status Change';
+  showToast(value
+    ? `✅ Viewer ko ${label} access mil gaya`
+    : `🚫 Viewer se ${label} access hata diya`);
+}
+
 // ═══ ADMIN MODE (real Firebase Authentication) ═══
 let isAdmin = false;
 function updateAdminUI() {
@@ -1734,8 +2248,16 @@ function updateAdminUI() {
   document.getElementById('exportEmbBtn').style.display = isAdmin ? '' : 'none';
   document.getElementById('importEmbBtn').style.display = isAdmin ? '' : 'none';
   document.getElementById('clearEmbBtn').style.display = isAdmin ? '' : 'none';
-  document.getElementById('registerPanel').style.display = (isAdmin && calFilterMode !== 'emb') ? '' : 'none';
-  document.getElementById('embRegisterPanel').style.display = (isAdmin && calFilterMode === 'emb') ? '' : 'none';
+  const settingsBtn = document.getElementById('settingsBtn');
+  if (settingsBtn) settingsBtn.style.display = isAdmin ? '' : 'none';
+
+  // Register panels: Admin always, or Viewer if permission granted
+  const showNormalReg = canRegister() && calFilterMode !== 'emb';
+  const showEmbReg = canRegister() && calFilterMode === 'emb';
+  const regPanel = document.getElementById('registerPanel');
+  const embPanel = document.getElementById('embRegisterPanel');
+  if (regPanel) regPanel.style.display = showNormalReg ? '' : 'none';
+  if (embPanel) embPanel.style.display = showEmbReg ? '' : 'none';
 }
 
 // Firebase keeps the session alive across reloads automatically
@@ -1763,6 +2285,44 @@ function adminLogin() {
 function closeLoginModal() {
   document.getElementById('loginOverlay').classList.remove('open');
 }
+
+function openSettingsModal() {
+  if (!isAdmin) {
+    showToast('🔒 Sirf Admin settings khol sakta hai');
+    return;
+  }
+  const tReg = document.getElementById('toggleViewerRegister');
+  const tUpd = document.getElementById('toggleViewerUpdate');
+  if (tReg) tReg.checked = allowViewerRegister;
+  if (tUpd) tUpd.checked = allowViewerUpdate;
+  updatePermNote();
+  document.getElementById('settingsOverlay').classList.add('open');
+}
+function closeSettingsModal() {
+  document.getElementById('settingsOverlay').classList.remove('open');
+}
+function updatePermNote() {
+  const note = document.getElementById('permLiveNote');
+  if (!note) return;
+  if (allowViewerRegister && allowViewerUpdate) {
+    note.textContent = '🟢 Viewer ko Order Entry + Status Change dono allowed hain';
+  } else if (allowViewerRegister) {
+    note.textContent = '🟡 Viewer sirf Order Entry kar sakta hai — Status locked';
+  } else if (allowViewerUpdate) {
+    note.textContent = '🟡 Viewer sirf Status Change kar sakta hai — Entry locked';
+  } else {
+    note.textContent = '🔴 Dono OFF = pure read-only Viewer (default)';
+  }
+}
+// Keep note live when toggles change (setViewerPermission already re-renders)
+document.addEventListener('DOMContentLoaded', function() {
+  const overlay = document.getElementById('settingsOverlay');
+  if (overlay) {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) closeSettingsModal();
+    });
+  }
+});
 
 function performLogin() {
   const email = document.getElementById('loginEmail').value.trim();
@@ -1912,7 +2472,7 @@ function parseDateExact(ds) {
 
 // ═══ ADD ORDER ═══
 function addOrder() {
-  if (!isAdmin) { showToast('🔒 Admin only — switch to Admin mode'); return; }
+  if (!canRegister()) { showToast('🔒 Order entry locked — Admin ne access nahi diya'); return; }
   let o = document.getElementById('oIn').value.trim();
   let t = document.getElementById('tIn').value.trim();
   let dVal = document.getElementById('dIn').value;
@@ -1977,7 +2537,7 @@ function toggleCustomStatusInput() {
 }
 
 function handleUpdate(id, isEdit) {
-  if (!isAdmin) { showToast('🔒 Admin only — switch to Admin mode'); return; }
+  if (!canUpdateStatus()) { showToast('🔒 Status change locked — Admin ne access nahi diya'); return; }
   let ord = orders.find(x => x.id === id);
   let selectVal = document.getElementById('statusSelectBox').value;
   let newStatus = selectVal;
@@ -2197,6 +2757,7 @@ function selectEmbFromList(id) {
     if (p.month !== null) { calViewMonth = p.month; calViewYear = p.year; }
   }
   render();
+  goToDetailOnMobile();
 }
 
 // ═══ REGISTER PANEL TOGGLE ═══
@@ -2236,6 +2797,7 @@ function getEmbColorValue(selectId, manualId) {
 // Register a new Emb Spec record from the embedded panel — same schema/rules as
 // the standalone Order Records tool, but saved straight into embOrders + Firestore.
 function addEmbRecordFromPanel() {
+  if (!canRegister()) { showToast('🔒 Order entry locked — Admin ne access nahi diya'); return; }
   const eNumber = document.getElementById('embENumberIn').value.trim().toUpperCase();
   const custArt = document.getElementById('embCustArtIn').value.trim().toUpperCase();
   const color1 = getEmbColorValue('embColor1In', 'embColor1ManualIn');
@@ -2452,11 +3014,11 @@ function setCalFilter(mode) {
   document.getElementById('filterTodayBtn').classList.toggle('active', mode === 'today');
   document.getElementById('filterEmbBtn').classList.toggle('active', mode === 'emb');
 
-  // Swap the Register panel: normal Order form vs Emb Specs form
+  // Swap the Register panel: normal Order form vs Emb Specs form (respect viewer permissions)
   const normalPanel = document.getElementById('registerPanel');
   const embPanel = document.getElementById('embRegisterPanel');
-  if (normalPanel) normalPanel.style.display = (mode === 'emb' || !isAdmin) ? 'none' : '';
-  if (embPanel) embPanel.style.display = (mode === 'emb' && isAdmin) ? '' : 'none';
+  if (normalPanel) normalPanel.style.display = (mode === 'emb' || !canRegister()) ? 'none' : '';
+  if (embPanel) embPanel.style.display = (mode === 'emb' && canRegister()) ? '' : 'none';
 
   if (mode === 'today') {
     const todaysOrders = getModeList('today');
@@ -2529,6 +3091,7 @@ function selectOrderFromList(id) {
   const ord = orders.find(x => x.id === id);
   if (ord) { calViewMonth = ord.month; calViewYear = ord.year; }
   render();
+  goToDetailOnMobile();
 }
 
 // ═══ EMB SPECS SUMMARY LIST — separate list, own schema, own rendering ═══
@@ -2622,7 +3185,7 @@ function renderView() {
         <div class="status-value">${ord.status}</div>
       </div>
     </div>
-    ${isAdmin ? `
+    ${canUpdateStatus() ? `
     <div class="update-panel ${updateOpen ? 'open' : ''}" id="updatePanel">
       <div class="update-toggle" onclick="toggleUpdatePanel()">
         <div class="upd-toggle-left">
@@ -2645,7 +3208,7 @@ function renderView() {
       </div>
     </div>
     ` : `
-    <div class="viewer-note">👁️ Read-only — Viewer mode. Only Admin can update status.</div>
+    <div class="viewer-note">👁️ Status change locked — Admin ne Viewer ko ye access nahi diya. Sirf dekh sakte ho.</div>
     `}
     <div class="timeline-label">Status History</div>
     <div class="timeline-scroll">${histHtml}</div>
@@ -2725,12 +3288,24 @@ function render() {
   renderCalendar();
   renderView();
   renderOrderListPanel();
+  renderAlertStrip();
+  applyMobileTabs();
 }
 
 // ═══ INIT ═══
 document.getElementById('dIn').value = new Date().toISOString().split('T')[0];
 updateAdminUI();
 render();
+setInterval(tickCountdowns, 1000);
+
+// ═══ PWA SERVICE WORKER REGISTRATION ═══
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
 </script>
 </body>
 </html>
