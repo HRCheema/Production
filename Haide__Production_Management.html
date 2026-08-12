@@ -2,13 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Haider Cheema — Production Management</title>
+<title>Force5 Performance Gear — Production Management</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<meta name="theme-color" content="#060912">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;700;800&family=Dancing+Script:wght@700&display=swap');
 
@@ -2563,9 +2558,11 @@ function handleUpdate(id, isEdit) {
 
 // ═══ SEARCH ═══
 // Search behaves differently per active tab:
-// - Orders / WIP / Completed / Today: searches only real Production Orders (o / team / date), jumps to first match.
+// - Orders / WIP / Completed / Today: live-filters the Orders list itself (o / team / date) AND jumps
+//   the calendar + detail view to the first match — so it's visible no matter which mobile tab you're on.
 // - Emb Specs: live-filters the Emb list itself by eNumber, custArt (name), color, or date — shows ALL matches at once.
 let embSearchQuery = '';
+let orderSearchQuery = '';
 
 function handleGlobalSearch(query) {
   query = (query || '').toLowerCase().trim();
@@ -2578,6 +2575,7 @@ function handleGlobalSearch(query) {
   }
 
   embSearchQuery = '';
+  orderSearchQuery = query;
 
   if (!query) { render(); return; }
   let matched = orders.filter(x =>
@@ -2587,10 +2585,16 @@ function handleGlobalSearch(query) {
   );
   if (matched.length > 0) {
     selectedOrderId = matched[0].id;
+    selectedKind = 'normal';
     calViewMonth = matched[0].month;
     calViewYear = matched[0].year;
     render();
+    // On mobile, jump straight to the Detail tab so the match is actually visible
+    // (before this, a search match only updated the Calendar tab and looked "dead"
+    // if you were on the Orders or Detail tab).
+    if (isMobileView()) switchMobileTab('detail');
   } else {
+    render(); // still refresh so the Orders list shows "no match" instead of the old list
     showToast('🔎 "' + query + '" se koi order match nahi hua');
   }
 }
@@ -3000,8 +3004,9 @@ function isItemSelected(item) {
 function setCalFilter(mode) {
   calFilterMode = mode;
 
-  // Reset search when switching tabs — Emb search stays scoped to the Emb tab only
+  // Reset search when switching tabs — each tab's search starts fresh
   embSearchQuery = '';
+  orderSearchQuery = '';
   const searchInput = document.getElementById('globalSearchInput');
   if (searchInput) {
     searchInput.value = '';
@@ -3053,15 +3058,28 @@ function renderOrderListPanel() {
   const scrollEl = document.getElementById('orderListScroll');
   if (!titleEl || !scrollEl) return;
 
-  const list = getModeList(calFilterMode)
+  let list = getModeList(calFilterMode)
     .slice()
     .sort((a, b) => (a.year - b.year) || (a.month - b.month) || (a.day - b.day));
 
+  if (orderSearchQuery) {
+    list = list.filter(o =>
+      (o.o || '').toLowerCase().includes(orderSearchQuery) ||
+      (o.t || '').toLowerCase().includes(orderSearchQuery) ||
+      (o.dateStr || '').toLowerCase().includes(orderSearchQuery)
+    );
+  }
+
   const titles = { all: 'All Orders', wip: 'WIP Orders', completed: 'Completed Orders', today: "Today's Orders" };
-  titleEl.textContent = `${titles[calFilterMode] || 'Orders'} (${list.length})`;
+  const titleBase = titles[calFilterMode] || 'Orders';
+  titleEl.textContent = orderSearchQuery
+    ? `${titleBase} — "${orderSearchQuery}" (${list.length})`
+    : `${titleBase} (${list.length})`;
 
   if (list.length === 0) {
-    scrollEl.innerHTML = `<div class="order-list-empty">Koi order nahi mila</div>`;
+    scrollEl.innerHTML = orderSearchQuery
+      ? `<div class="order-list-empty">🔎 "${orderSearchQuery}" se koi order match nahi hua</div>`
+      : `<div class="order-list-empty">Koi order nahi mila</div>`;
     return;
   }
 
@@ -3297,15 +3315,6 @@ document.getElementById('dIn').value = new Date().toISOString().split('T')[0];
 updateAdminUI();
 render();
 setInterval(tickCountdowns, 1000);
-
-// ═══ PWA SERVICE WORKER REGISTRATION ═══
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => {
-      console.warn('Service worker registration failed:', err);
-    });
-  });
-}
 </script>
 </body>
 </html>
