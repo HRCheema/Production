@@ -296,6 +296,14 @@ body > * { position: relative; z-index: 1; }
   transition: all 0.25s;
   position: relative;
 }
+/* iOS Safari auto-zooms the whole page when a focused input's font is under
+   16px — on this dashboard that made the search bar look "broken" (the page
+   jumps/zooms as soon as you tap it). Force 16px only where it matters (the
+   mobile breakpoint) so desktop keeps its compact look. */
+@media (max-width: 960px) {
+  .search-input { font-size: 16px; padding: 11px 14px 11px 38px; }
+  .search-icon { font-size: 15px; }
+}
 .search-wrap { position: relative; flex: 1; }
 .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; pointer-events: none; }
 .search-input:focus { border-color: var(--accent); background: rgba(99,102,241,0.08); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
@@ -348,7 +356,7 @@ body > * { position: relative; z-index: 1; }
 
 /* ═══════════════════ CALENDAR SIDE ═══════════════════ */
 .cal-side {
-  width: 42%;
+  width: 34%;
   flex-shrink: 0;
   padding: 14px 14px 14px 16px;
   display: flex;
@@ -821,7 +829,7 @@ body > * { position: relative; z-index: 1; }
 }
 
 .order-detail-panel {
-  flex: 1.3;
+  flex: 1.05;
   min-width: 0;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -1073,7 +1081,7 @@ body > * { position: relative; z-index: 1; }
   overflow: hidden;
   transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1);
 }
-.update-panel.open .update-body { max-height: 140px; }
+.update-panel.open .update-body { max-height: 190px; }
 
 .update-body-inner {
   display: flex;
@@ -1167,34 +1175,151 @@ body > * { position: relative; z-index: 1; }
 
 /* ── Articles Summary ── */
 .articles-panel {
-  width: 130px;
+  width: 285px;
   flex-shrink: 0;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 12px 10px;
+  border-radius: 16px;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(20px);
   overflow: hidden;
+  position: relative;
 }
+.articles-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 40% at 100% 0%, rgba(99,102,241,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 70% 40% at 0% 100%, rgba(236,72,153,0.07) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.articles-panel > * { position: relative; z-index: 1; }
+
+#summaryList {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  gap: 10px;
+  padding-right: 2px;
+}
+#summaryList::-webkit-scrollbar { width: 4px; }
+#summaryList::-webkit-scrollbar-track { background: transparent; }
+#summaryList::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 2px; }
 
 .article-row {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 13px;
+  border-radius: 13px;
+  background: linear-gradient(145deg, rgba(var(--glass-rgb),0.05), rgba(var(--glass-rgb),0.02));
+  border: 1px solid rgba(var(--glass-rgb),0.08);
+  border-left: 3px solid var(--accent);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  min-width: 0;
+  flex-shrink: 0;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+.article-row:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-glow);
+  box-shadow: 0 6px 18px rgba(99,102,241,0.18);
+  background: linear-gradient(145deg, rgba(var(--glass-rgb),0.07), rgba(var(--glass-rgb),0.03));
+}
+/* Cycle a distinct accent color per article card so the panel doesn't read flat */
+.article-row:nth-child(4n+1) { border-left-color: var(--accent); }
+.article-row:nth-child(4n+2) { border-left-color: var(--pink); }
+.article-row:nth-child(4n+3) { border-left-color: var(--accent3); }
+.article-row:nth-child(4n+4) { border-left-color: var(--gold); }
+
+.article-row-top {
+  display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  padding: 6px 8px;
-  border-radius: 8px;
-  margin-bottom: 5px;
-  background: rgba(var(--glass-rgb),0.03);
-  border: 1px solid rgba(var(--glass-rgb),0.06);
-  transition: padding 0.2s, background 0.2s;
+  gap: 8px;
   min-width: 0;
 }
+.article-name-wrap {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.article-icon {
+  flex-shrink: 0;
+  font-size: 1.05em;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(99,102,241,0.35));
+}
+.article-prod-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.article-prod-input {
+  width: 48px;
+  font-size: 0.75em;
+  font-weight: 800;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text);
+  background: rgba(var(--glass-rgb),0.07);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 4px;
+  text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.article-prod-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
+.article-prod-readonly {
+  font-size: 0.75em;
+  font-weight: 800;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--text-dim);
+}
+.article-prod-of {
+  font-size: 0.66em;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.article-shortfall {
+  font-size: 0.66em;
+  font-weight: 800;
+  padding: 5px 8px;
+  border-radius: 8px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.2px;
+}
+.article-shortfall.has-shortfall {
+  color: #fca5a5;
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.3);
+  box-shadow: 0 0 10px rgba(239,68,68,0.08);
+}
+.article-shortfall.no-shortfall {
+  color: #6ee7b7;
+  background: rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.3);
+  box-shadow: 0 0 10px rgba(16,185,129,0.08);
+}
 .article-name {
-  font-size: 0.68em; font-weight: 800; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px;
+  font-size: 0.78em; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px;
   transition: font-size 0.2s;
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1202,38 +1327,208 @@ body > * { position: relative; z-index: 1; }
 }
 .article-qty {
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.85em;
+  font-size: 0.95em;
   font-weight: 800;
-  color: #a5b4fc;
-  background: rgba(99,102,241,0.15);
-  padding: 2px 7px;
-  border-radius: 6px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  padding: 3px 10px;
+  border-radius: 7px;
   transition: font-size 0.2s, padding 0.2s;
   flex-shrink: 0;
   white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.35);
 }
+
+.article-row .progress-bar-wrap.small { height: 7px; border-radius: 6px; }
+.article-row .progress-bar-fill { box-shadow: 0 0 8px rgba(99,102,241,0.5); }
 
 /* When only a few articles exist, blow them up so the panel isn't
    mostly empty space — the article the user cares about becomes the
    focal point instead of a tiny tag lost at the top. */
-#summaryList {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
 .articles-panel.few-articles #summaryList {
   justify-content: center;
-  gap: 14px;
+  gap: 16px;
 }
 .articles-panel.few-articles .article-row {
-  padding: 14px 10px;
-  border-radius: 12px;
-  background: rgba(99,102,241,0.07);
-  border-color: rgba(99,102,241,0.18);
+  padding: 18px 15px;
+  border-radius: 14px;
 }
-.articles-panel.few-articles .article-name { font-size: 0.85em; letter-spacing: 0.6px; }
-.articles-panel.few-articles .article-qty { font-size: 1.05em; padding: 3px 10px; }
+.articles-panel.few-articles .article-name { font-size: 0.85em; letter-spacing: 0.3px; }
+.articles-panel.few-articles .article-icon { font-size: 1.3em; }
+.articles-panel.few-articles .article-qty { font-size: 1.1em; padding: 4px 12px; }
+.articles-panel.few-articles .article-shortfall { font-size: 0.75em; padding: 6px 10px; }
+
+/* ── Progress Bars (shared: overall + per-article + list mini) ── */
+.progress-bar-wrap {
+  width: 100%;
+  height: 7px;
+  border-radius: 5px;
+  background: rgba(var(--glass-rgb),0.08);
+  overflow: hidden;
+}
+.progress-bar-wrap.small { height: 5px; }
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  transition: width 0.3s ease;
+}
+
+.mini-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+.mini-progress-bar {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(var(--glass-rgb),0.08);
+  overflow: hidden;
+  max-width: 70px;
+}
+.mini-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+}
+.mini-progress-pct {
+  font-size: 0.55em;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-family: 'Space Grotesk', sans-serif;
+  white-space: nowrap;
+}
+
+.order-progress-card {
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+  background: rgba(var(--glass-rgb),0.02);
+}
+.op-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.op-label { font-size: 0.68em; font-weight: 800; color: var(--text-dim); }
+.op-numbers { font-size: 0.68em; font-weight: 700; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif; }
+.op-pct { font-size: 0.6em; font-weight: 700; color: var(--text-muted); margin-top: 4px; text-align: right; }
+
+/* ── Priority Badges & Selector ── */
+.priority-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.6em;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  border: 1px solid transparent;
+  vertical-align: middle;
+}
+.pri-normal { color: var(--text-muted); background: rgba(var(--glass-rgb),0.06); border-color: var(--border); }
+.pri-urgent { color: var(--amber); background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.35); }
+.pri-critical { color: #f87171; background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.35); animation: customDotPulse 2s ease-in-out infinite; }
+
+.priority-select-wrap { flex: 0 0 auto !important; }
+.priority-select {
+  font-size: 0.68em;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  min-width: 0;
+  width: auto;
+}
+
+/* ── Stage Stepper ── */
+.stage-stepper-wrap {
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.stage-stepper {
+  display: flex;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding: 4px 2px 6px;
+  gap: 0;
+}
+.stage-stepper::-webkit-scrollbar { height: 3px; }
+.stage-stepper::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 2px; }
+.stage-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  width: 64px;
+}
+.stage-step-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7em;
+  background: rgba(var(--glass-rgb),0.06);
+  border: 1.5px solid var(--border);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.stage-step.done .stage-step-dot {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+.stage-step.current .stage-step-dot {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-color: var(--accent);
+  color: white;
+  box-shadow: 0 0 10px rgba(99,102,241,0.5);
+}
+.stage-step-label {
+  font-size: 0.5em;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.2;
+}
+.stage-step.current .stage-step-label { color: var(--text); }
+.stage-step.done .stage-step-label { color: var(--text-dim); }
+.stage-connector {
+  height: 2px;
+  flex: 1;
+  min-width: 10px;
+  background: rgba(var(--glass-rgb),0.1);
+  margin-top: 12px;
+}
+.stage-connector.done { background: var(--green); }
+.stage-custom-note {
+  font-size: 0.62em;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* ── Timeline Note ── */
+.timeline-note {
+  font-size: 0.58em;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 2px;
+  line-height: 1.3;
+  white-space: normal;
+  word-break: break-word;
+}
 
 /* Placeholder */
 .empty-state {
@@ -1378,8 +1673,21 @@ body > * { position: relative; z-index: 1; }
     padding: 14px 14px 16px;
     overflow: visible;
   }
+  .cal-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .cal-nav { justify-content: center; }
+  .cal-legend { justify-content: center; flex-wrap: wrap; row-gap: 6px; }
   .cal-grid { min-height: 320px; }
   .cal-day { min-height: 40px; }
+
+  .oli-id { white-space: normal; }
+  .priority-badge { font-size: 0.56em; padding: 2px 6px; }
+  .mini-progress-bar { max-width: 90px; }
+  .stage-step { width: 56px; }
+  .stage-step-label { font-size: 0.48em; }
 
   .dash-side {
     overflow: visible;
@@ -1808,7 +2116,7 @@ body.locked > *:not(#lockGateOverlay) { display: none !important; }
 <div id="lockGateOverlay">
   <div id="lockGateBox">
     <h2>🔒 Protected File</h2>
-    <p>Created by Haide — enter password to continue</p>
+    <p>Created by Haider Cheema — enter password to continue</p>
     <input type="password" id="lockGateInput" placeholder="Enter password" autocomplete="off">
     <button id="lockGateBtn">Unlock</button>
     <div id="lockGateError"></div>
@@ -2017,6 +2325,13 @@ document.getElementById('lockGateBtn').addEventListener('click',tryUnlock);docum
               <option value="Completed">✅ Completed</option>
             </select>
           </div>
+          <div class="select-wrap">
+            <select class="f-select" id="priorityIn" style="max-width:118px;">
+              <option value="Normal">⚪ Normal</option>
+              <option value="Urgent">🟠 Urgent</option>
+              <option value="Critical">🔴 Critical</option>
+            </select>
+          </div>
           <button class="add-order-btn" onclick="addOrder()">+ Register</button>
         </div>
         <div class="form-row" style="margin-top:8px;">
@@ -2169,6 +2484,27 @@ const EMB_STATUS = 'Emb. Specs Done';
 let embOrders = [];
 let selectedEmbId = null;
 let selectedKind = 'normal'; // 'normal' | 'emb' — which type of item the detail pane currently shows
+
+// ═══ PRIORITY LEVELS ═══
+const PRIORITY_LEVELS = ['Normal', 'Urgent', 'Critical'];
+const priorityIcons = { Normal: '⚪', Urgent: '🟠', Critical: '🔴' };
+const priorityClasses = { Normal: 'pri-normal', Urgent: 'pri-urgent', Critical: 'pri-critical' };
+
+// ═══ PRODUCTION PROGRESS HELPERS ═══
+// Computes { totalTarget, totalProduced, pct } across all active articles of an order.
+function computeOrderProgress(ord) {
+  const qtys = ord.qtys || {};
+  const produced = ord.produced || {};
+  let totalTarget = 0, totalProduced = 0;
+  for (const art in qtys) {
+    const target = qtys[art] || 0;
+    if (target <= 0) continue;
+    totalTarget += target;
+    totalProduced += Math.min(produced[art] || 0, target);
+  }
+  const pct = totalTarget > 0 ? Math.round((totalProduced / totalTarget) * 100) : 0;
+  return { totalTarget, totalProduced, pct };
+}
 
 // ═══════════════════════════════════════════════════════════════
 // ═══ ETD COUNTDOWN CLOCK ═══
@@ -2335,6 +2671,9 @@ function isMobileView() { return window.innerWidth <= 960; }
 
 function applyMobileTabs() {
   const calSide = document.querySelector('.cal-side');
+  const calNav = document.querySelector('.cal-nav');
+  const calGrid = document.getElementById('calGrid');
+  const calLegend = document.querySelector('.cal-legend');
   const dashSide = document.querySelector('.dash-side');
   const listPanel = document.getElementById('orderListPanel');
   const detailPanel = document.getElementById('orderDisplay');
@@ -2342,11 +2681,19 @@ function applyMobileTabs() {
   if (!calSide || !dashSide) return;
 
   if (!isMobileView()) {
-    [calSide, dashSide, listPanel, detailPanel, artPanel].forEach(el => { if (el) el.style.display = ''; });
+    [calSide, dashSide, listPanel, detailPanel, artPanel, calNav, calGrid, calLegend].forEach(el => { if (el) el.style.display = ''; });
     return;
   }
 
-  calSide.style.display = mobileActiveTab === 'calendar' ? '' : 'none';
+  // On mobile the filter buttons (Orders/WIP/Completed/Today/Emb) stay visible
+  // no matter which tab you're on — only the month-nav + day grid are
+  // Calendar-tab-only. This way switching to Orders/Detail doesn't strand you
+  // without a way to change the active filter.
+  calSide.style.display = '';
+  if (calNav) calNav.style.display = mobileActiveTab === 'calendar' ? '' : 'none';
+  if (calGrid) calGrid.style.display = mobileActiveTab === 'calendar' ? '' : 'none';
+  if (calLegend) calLegend.style.display = 'flex';
+
   dashSide.style.display = mobileActiveTab === 'calendar' ? 'none' : '';
   if (listPanel) listPanel.style.display = mobileActiveTab === 'orders' ? '' : 'none';
   if (detailPanel) detailPanel.style.display = mobileActiveTab === 'detail' ? '' : 'none';
@@ -2759,6 +3106,7 @@ function addOrder() {
   let t = document.getElementById('tIn').value.trim();
   let dVal = document.getElementById('dIn').value;
   let status = document.getElementById('statusInitIn').value;
+  let priority = document.getElementById('priorityIn')?.value || 'Normal';
 
   if (!o || !t || !dVal) {
     showToast('⚠️ Fill in Order #, Team Name, and Date!');
@@ -2767,16 +3115,18 @@ function addOrder() {
 
   let ed = parseDateExact(dVal);
   let qtys = {};
+  let produced = {};
   availableArticles.forEach(art => {
     if (activeArticles[art]) {
       qtys[art] = parseInt(document.getElementById('qty_' + art)?.value) || 0;
+      produced[art] = 0;
     }
   });
 
   let newOrd = {
     id: Date.now(),
     day: ed.day, month: ed.month, year: ed.year, dateStr: dVal,
-    o, t, status, qtys,
+    o, t, status, qtys, produced, priority,
     history: [{ status, date: dVal }]
   };
 
@@ -2787,6 +3137,7 @@ function addOrder() {
   saveToStorage();
   document.getElementById('oIn').value = '';
   document.getElementById('tIn').value = '';
+  document.getElementById('priorityIn').value = 'Normal';
   // Auto-collapse the register panel
   registerOpen = false;
   document.getElementById('registerPanel').classList.remove('open');
@@ -2827,12 +3178,15 @@ function handleUpdate(id, isEdit) {
     newStatus = document.getElementById('customStatusInput').value.trim();
     if (!newStatus) { showToast('⚠️ Pehle custom status likho'); return; }
   }
+  let note = document.getElementById('statusNoteInput')?.value.trim() || '';
   let title = isEdit ? 'Edit Last Status Date' : 'Add Status Update';
   openModal(title, new Date().toISOString().split('T')[0], function(date) {
+    const entry = { status: newStatus, date };
+    if (note) entry.note = note;
     if (isEdit) {
-      ord.history[ord.history.length - 1] = { status: newStatus, date };
+      ord.history[ord.history.length - 1] = entry;
     } else {
-      ord.history.push({ status: newStatus, date });
+      ord.history.push(entry);
     }
     ord.status = newStatus;
     saveToStorage();
@@ -2841,6 +3195,57 @@ function handleUpdate(id, isEdit) {
     updateOpen = false;
     render();
   });
+}
+
+// ═══ PRIORITY UPDATE ═══
+function updatePriority(id, val) {
+  if (!canUpdateStatus()) { showToast('🔒 Priority change locked — Admin ne access nahi diya'); return; }
+  const ord = orders.find(x => x.id === id);
+  if (!ord) return;
+  ord.priority = val;
+  saveToStorage();
+  showToast('🚩 Priority set to ' + val);
+  render();
+}
+
+// ═══ PRODUCED QTY UPDATE ═══
+function updateProducedQty(id, art, val) {
+  if (!canUpdateStatus()) { showToast('🔒 Production update locked — Admin ne access nahi diya'); return; }
+  const ord = orders.find(x => x.id === id);
+  if (!ord) return;
+  const target = (ord.qtys && ord.qtys[art]) || 0;
+  let n = parseInt(val) || 0;
+  if (n < 0) n = 0;
+  if (n > target) n = target;
+  ord.produced = ord.produced || {};
+  ord.produced[art] = n;
+  saveToStorage();
+  render();
+}
+
+// ═══ STAGE STEPPER ═══
+// Renders a horizontal stepper through the standard statusList.
+// If the order's current status is a custom (non-standard) status, the
+// stepper still shows the standard stages (none marked current) plus a
+// note that a custom stage is active.
+function renderStageStepper(currentStatus) {
+  const idx = statusList.indexOf(currentStatus);
+  const stepsHtml = statusList.map((s, i) => {
+    let cls = 'pending';
+    if (idx >= 0) {
+      if (i < idx) cls = 'done';
+      else if (i === idx) cls = 'current';
+    }
+    return `
+      <div class="stage-step ${cls}">
+        <div class="stage-step-dot">${cls === 'done' ? '✓' : statusIcons[s]}</div>
+        <div class="stage-step-label">${s}</div>
+      </div>
+      ${i < statusList.length - 1 ? `<div class="stage-connector ${i < idx ? 'done' : ''}"></div>` : ''}
+    `;
+  }).join('');
+  const customNote = idx < 0 ? `<div class="stage-custom-note">📌 Custom stage active: "${currentStatus}"</div>` : '';
+  return `<div class="stage-stepper-wrap"><div class="stage-stepper">${stepsHtml}</div>${customNote}</div>`;
 }
 
 // ═══ SEARCH ═══
@@ -2864,6 +3269,16 @@ function handleGlobalSearch(query) {
   embSearchQuery = '';
   orderSearchQuery = query;
 
+  // On mobile, typing a search query is invisible unless we're on a tab that
+  // actually shows the order list/detail — if the user is still on the
+  // Calendar tab (the default) nothing appears to happen. Jump to the Orders
+  // tab the moment they start typing so results are visible as they type,
+  // not just once a full match is found.
+  if (isMobileView() && query && mobileActiveTab === 'calendar') {
+    mobileActiveTab = 'orders';
+    document.querySelectorAll('.mtab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'orders'));
+  }
+
   if (!query) { render(); return; }
   let matched = orders.filter(x =>
     (x.o || '').toLowerCase().includes(query) ||
@@ -2875,11 +3290,13 @@ function handleGlobalSearch(query) {
     selectedKind = 'normal';
     calViewMonth = matched[0].month;
     calViewYear = matched[0].year;
+    // Switch to the Detail tab BEFORE rendering, so the match shows up in the
+    // same paint instead of flashing Calendar first and jumping a moment later.
+    if (isMobileView()) {
+      mobileActiveTab = 'detail';
+      document.querySelectorAll('.mtab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === 'detail'));
+    }
     render();
-    // On mobile, jump straight to the Detail tab so the match is actually visible
-    // (before this, a search match only updated the Calendar tab and looked "dead"
-    // if you were on the Orders or Detail tab).
-    if (isMobileView()) switchMobileTab('detail');
   } else {
     render(); // still refresh so the Orders list shows "no match" instead of the old list
     showToast('🔎 "' + query + '" se koi order match nahi hua');
@@ -3244,7 +3661,7 @@ function renderCalendar() {
 
 // Normalize a real production order into a generic list item shape.
 function normalOrderAsItem(o) {
-  return { _type: 'normal', id: o.id, o: o.o, t: o.t, status: o.status, dateStr: o.dateStr, day: o.day, month: o.month, year: o.year };
+  return { _type: 'normal', id: o.id, o: o.o, t: o.t, status: o.status, dateStr: o.dateStr, day: o.day, month: o.month, year: o.year, priority: o.priority || 'Normal', qtys: o.qtys, produced: o.produced };
 }
 // Normalize an Emb Specs record into the same generic list item shape.
 function embOrderAsItem(rec) {
@@ -3422,11 +3839,26 @@ function renderOrderListPanel() {
     }
 
     const hasCircle = circleHTML !== '';
+    const pri = o._type !== 'emb' ? (o.priority || 'Normal') : null;
+    const priBadge = (pri && pri !== 'Normal')
+      ? `<span class="priority-badge ${priorityClasses[pri]}">${priorityIcons[pri]} ${pri}</span>` : '';
+    let miniProgress = '';
+    if (o._type !== 'emb' && o.qtys) {
+      const prog = computeOrderProgress(o);
+      if (prog.totalTarget > 0) {
+        miniProgress = `
+          <div class="mini-progress-wrap" title="${prog.totalProduced}/${prog.totalTarget} produced">
+            <div class="mini-progress-bar"><div class="mini-progress-fill" style="width:${prog.pct}%;"></div></div>
+            <span class="mini-progress-pct">${prog.pct}%</span>
+          </div>`;
+      }
+    }
     return `
       <div class="order-list-item ${isActive ? 'active' : ''} ${hasCircle ? 'has-circle' : ''}" onclick="${clickFn}">
         <div class="oli-left">
-          <div class="oli-id">${o.o}</div>
+          <div class="oli-id">${o.o} ${priBadge}</div>
           <div class="oli-team">🏷️ ${o.t}</div>
+          ${miniProgress}
         </div>
         <div class="oli-right">
           <div class="oli-right-text">
@@ -3506,6 +3938,7 @@ function renderView() {
       <div class="timeline-dot"></div>
       <div class="timeline-main">
         <div class="timeline-status">${statusIcons[h.status] || '<span class="custom-status-dot small"></span>'} ${h.status}</div>
+        ${h.note ? `<div class="timeline-note">📝 ${h.note}</div>` : ''}
       </div>
       <div class="timeline-right">
         ${i === 0 ? '<div class="timeline-latest-badge">Latest</div>' : ''}
@@ -3513,6 +3946,10 @@ function renderView() {
       </div>
     </div>
   `).join('');
+
+  const stepperHtml = renderStageStepper(ord.status);
+  const progress = computeOrderProgress(ord);
+  const pri = ord.priority || 'Normal';
 
   const isCustomCurrent = !statusList.includes(ord.status);
   const optionsHtml =
@@ -3529,6 +3966,13 @@ function renderView() {
         <div class="order-meta-row">
           <span class="order-meta-tag team">🏷️ ${ord.t}</span>
           <span class="order-meta-tag date">🚚 ETD: ${ord.dateStr}</span>
+          ${canUpdateStatus() ? `
+            <div class="select-wrap priority-select-wrap">
+              <select class="f-select priority-select ${priorityClasses[pri]}" onchange="updatePriority(${ord.id}, this.value)">
+                ${PRIORITY_LEVELS.map(p => `<option value="${p}" ${pri === p ? 'selected' : ''}>${priorityIcons[p]} ${p}</option>`).join('')}
+              </select>
+            </div>
+          ` : `<span class="priority-badge ${priorityClasses[pri]}">${priorityIcons[pri]} ${pri}</span>`}
         </div>
       </div>
       <button class="delete-btn" onclick="deleteOrder(${ord.id})" ${isAdmin ? '' : 'style="display:none;"'}>Delete ✕</button>
@@ -3540,6 +3984,19 @@ function renderView() {
         <div class="status-value">${ord.status}</div>
       </div>
     </div>
+    ${stepperHtml}
+    ${progress.totalTarget > 0 ? `
+    <div class="order-progress-card">
+      <div class="op-top">
+        <span class="op-label">📦 Production Progress</span>
+        <span class="op-numbers">${progress.totalProduced} / ${progress.totalTarget} pcs</span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" style="width:${progress.pct}%;"></div>
+      </div>
+      <div class="op-pct">${progress.pct}% complete</div>
+    </div>
+    ` : ''}
     ${canUpdateStatus() ? `
     <div class="update-panel ${updateOpen ? 'open' : ''}" id="updatePanel">
       <div class="update-toggle" onclick="toggleUpdatePanel()">
@@ -3560,6 +4017,9 @@ function renderView() {
         <div class="update-body-inner custom-row" id="customStatusRow" style="display:none;">
           <input class="f-input" type="text" id="customStatusInput" placeholder="Type custom status here…" style="flex:1;">
         </div>
+        <div class="update-body-inner custom-row">
+          <input class="f-input" type="text" id="statusNoteInput" placeholder="Note (optional) — e.g. reason for delay…" style="flex:1;">
+        </div>
       </div>
     </div>
     ` : `
@@ -3573,14 +4033,36 @@ function renderView() {
   summaryList.innerHTML = '';
   let hasAny = false;
   let articleCount = 0;
+  const canEditProd = canUpdateStatus();
   for (let [art, q] of Object.entries(ord.qtys || {})) {
     if (q > 0) {
       hasAny = true;
       articleCount++;
+      const made = Math.min((ord.produced && ord.produced[art]) || 0, q);
+      const artPct = q > 0 ? Math.round((made / q) * 100) : 0;
+      const shortfall = Math.max(q - made, 0);
       summaryList.innerHTML += `
         <div class="article-row">
-          <div class="article-name">${art}</div>
-          <div class="article-qty">${q}</div>
+          <div class="article-row-top">
+            <div class="article-name-wrap">
+              <span class="article-icon">${getArticleIcon(art)}</span>
+              <div class="article-name">${art}</div>
+            </div>
+            <div class="article-qty">${q}</div>
+          </div>
+          <div class="progress-bar-wrap small">
+            <div class="progress-bar-fill" style="width:${artPct}%;"></div>
+          </div>
+          <div class="article-prod-row">
+            ${canEditProd ? `
+              <input type="number" class="article-prod-input" min="0" max="${q}" value="${made}"
+                onchange="updateProducedQty(${ord.id}, '${art}', this.value)">
+            ` : `<span class="article-prod-readonly">${made}</span>`}
+            <span class="article-prod-of">/ ${q} (${artPct}%)</span>
+          </div>
+          <div class="article-shortfall ${shortfall > 0 ? 'has-shortfall' : 'no-shortfall'}">
+            ${shortfall > 0 ? `⚠️ Shortfall: <b>${shortfall}</b> pcs` : `✅ Target met`}
+          </div>
         </div>`;
     }
   }
@@ -3640,6 +4122,23 @@ function renderEmbView() {
   `;
 
   summaryList.innerHTML = `<div style="font-size:0.7em; color:var(--text-muted); text-align:center; padding:8px;">Embroidery record — no article breakdown</div>`;
+}
+
+// Pick a fitting emoji for an article name so the Articles panel feels
+// less like a plain data table and more like a scannable visual list.
+function getArticleIcon(name) {
+  const n = String(name || '').toLowerCase();
+  if (n.includes('jack')) return '🧥';
+  if (n.includes('pant') || n.includes('trouser')) return '👖';
+  if (n.includes('shirt')) return '👕';
+  if (n.includes('hood')) return '🧢';
+  if (n.includes('short')) return '🩳';
+  if (n.includes('dress')) return '👗';
+  if (n.includes('cap') || n.includes('hat')) return '🧢';
+  if (n.includes('sock')) return '🧦';
+  if (n.includes('glove')) return '🧤';
+  if (n.includes('bag')) return '👜';
+  return '📦';
 }
 
 // ═══ MAIN RENDER ═══
