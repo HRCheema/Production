@@ -342,6 +342,56 @@
   .summary-table td.grand{font-weight:700;background:var(--bg-soft);color:var(--brass-dark);}
   .summary-table tbody tr:nth-child(even){background:#fbf8f2;}
 
+  /* ===================== GLASS SHELL THEME (screen UI only — pdf-page / export untouched) ===================== */
+  body{
+    background:
+      radial-gradient(circle at 12% 8%, rgba(182,131,46,0.18), transparent 45%),
+      radial-gradient(circle at 88% 92%, rgba(156,58,44,0.14), transparent 45%),
+      radial-gradient(circle at 50% 45%, rgba(99,102,241,0.06), transparent 55%),
+      linear-gradient(160deg,#0f0c09,#171310 55%,#0c0a08);
+    background-attachment:fixed;
+  }
+  ::selection{ background:rgba(182,131,46,.35); }
+  .toolbar{
+    background:rgba(28,22,16,.55);
+    background-image:none;
+    backdrop-filter:blur(18px) saturate(150%);
+    -webkit-backdrop-filter:blur(18px) saturate(150%);
+    border:1px solid rgba(246,239,224,.10);
+    border-bottom:1px solid rgba(182,131,46,.45);
+    box-shadow:0 8px 32px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);
+    border-radius:10px;
+    position:sticky; top:12px; z-index:40;
+  }
+  .nav-links a{background:rgba(255,255,255,.04); backdrop-filter:blur(8px);}
+  .nav-links a:hover{background:rgba(182,131,46,.12);}
+  .panel-block{
+    background:rgba(255,255,255,.05);
+    backdrop-filter:blur(20px) saturate(150%);
+    -webkit-backdrop-filter:blur(20px) saturate(150%);
+    border:1px solid rgba(246,239,224,.14);
+    box-shadow:0 8px 30px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.05);
+    border-radius:16px;
+  }
+  .panel-block h2{color:#f6efe0;}
+  .field label{color:#c9bfa8;}
+  .field input, .field select{
+    background:rgba(0,0,0,.25);
+    border:1px solid rgba(246,239,224,.16);
+    color:#f6efe0;
+  }
+  .field input::placeholder{color:rgba(246,239,224,.35);}
+  .field input:focus, .field select:focus{border-color:var(--brass); box-shadow:0 0 0 3px rgba(182,131,46,.25);}
+  .upload-slot{background:rgba(0,0,0,.18); border-color:rgba(246,239,224,.2); color:#c9bfa8;}
+  .upload-slot:hover, .upload-slot.dragover{border-color:var(--brass); color:#f0d9a8; background:rgba(182,131,46,.12);}
+  .upload-slot .lbl{color:#a89b83;}
+  .color-row{background:rgba(0,0,0,.18); border-color:rgba(246,239,224,.14);}
+  .color-row label{color:#c9bfa8;}
+  .color-row input[type=text]{background:rgba(0,0,0,.25); border-color:rgba(246,239,224,.18); color:#f6efe0;}
+  .color-hint{color:#c9bfa8;}
+  .btn-primary{box-shadow:0 6px 20px rgba(182,131,46,.3);}
+  .btn-primary:hover{box-shadow:0 8px 26px rgba(182,131,46,.45);}
+
   @media print{
     .pdf-bottom h4, .pdf-title-block .title { text-decoration: none !important; border: none !important; }
 
