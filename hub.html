@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haider Cheema — Tools Hub</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #060912;
+    --card-bg: rgba(255,255,255,0.03);
+    --border: rgba(99, 130, 255, 0.15);
+    --border-glow: rgba(99, 130, 255, 0.4);
+    --accent: #6366f1;
+    --accent2: #8b5cf6;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --font-display:'Bebas Neue', Impact, sans-serif;
+    --font-body:'IBM Plex Sans', Arial, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(99,102,241,0.14), transparent 45%),
+      radial-gradient(circle at 85% 90%, rgba(139,92,246,0.12), transparent 45%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:48px 20px;
+  }
+  .hub-head{ text-align:center; margin-bottom:40px; }
+  .hub-head h1{
+    font-family:var(--font-display);
+    font-size:clamp(32px,6vw,52px);
+    letter-spacing:.04em;
+    margin:0 0 8px 0;
+    background:linear-gradient(135deg,#f1f5f9,var(--accent2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hub-head p{ color:var(--text-dim); font-size:0.95em; margin:0; }
+
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:22px;
+    width:100%;
+    max-width:920px;
+  }
+  .card{
+    background:var(--card-bg);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:26px 22px;
+    text-decoration:none;
+    color:var(--text);
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    transition: transform .18s, border-color .18s, box-shadow .18s;
+    backdrop-filter: blur(6px);
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    border-color:var(--border-glow);
+    box-shadow:0 12px 30px rgba(99,102,241,0.18);
+  }
+  .card .icon{
+    width:52px;height:52px;
+    display:flex;align-items:center;justify-content:center;
+    border-radius:12px;
+    font-size:26px;
+    background:linear-gradient(135deg, var(--accent), var(--accent2));
+    box-shadow:0 0 20px rgba(99,102,241,0.35);
+  }
+  .card h2{
+    font-family:var(--font-display);
+    font-size:22px;
+    letter-spacing:.03em;
+    margin:0;
+    font-weight:400;
+    text-transform:uppercase;
+  }
+  .card p{
+    margin:0;
+    font-size:0.85em;
+    color:var(--text-dim);
+    line-height:1.5;
+  }
+  .card .go{
+    margin-top:auto;
+    font-size:0.78em;
+    font-weight:600;
+    color:var(--accent2);
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .card:hover .go{ color:#c4b5fd; }
+
+  footer{ margin-top:44px; color:var(--text-dim); font-size:0.75em; text-align:center; }
+</style>
+</head>
+<body>
+
+  <div class="hub-head">
+    <h1>Haider Cheema — Tools</h1>
+    <p>Sab production &amp; specs tools ek jagah se</p>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="./index.html">
+      <div class="icon">📋</div>
+      <h2>Production Dashboard</h2>
+      <p>Orders, WIP, nesting aur Embroidery Specs register — poora production management ek jagah.</p>
+      <div class="go">Open Dashboard →</div>
+    </a>
+
+    <a class="card" href="./Order_Specs_Sheet.html">
+      <div class="icon">🧾</div>
+      <h2>Order Specs Sheet</h2>
+      <p>Full uniform (Jacket, Pant, Belts, Panels) ke liye size-wise print quantity aur sqft calculator, PDF export ke saath.</p>
+      <div class="go">Open Sheet →</div>
+    </a>
+
+    <a class="card" href="./Shorts_Order_Spec_Sheet.html">
+      <div class="icon">🩳</div>
+      <h2>Shorts Specs Sheet</h2>
+      <p>Shorts-specific panels (Shorts, Side Panels, Belts) ke liye size-wise specs aur PDF export tool.</p>
+      <div class="go">Open Sheet →</div>
+    </a>
+  </div>
+
+  <footer>Force5 Performance Gear · Production Suite</footer>
+
+</body>
+</html>

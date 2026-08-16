@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<title>Shorts Order Specification Sheet</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* ---- Atelier theme: ink + brass, built for a sublimation/garment spec sheet ---- */
+    --ink:#221d18;
+    --ink-soft:#5b5145;
+    --brass:#b6832e;
+    --brass-dark:#8a611f;
+    --thread:#9c3a2c;
+    --thread-dark:#7c2c21;
+    --paper:#fffdf9;
+    --line:#ddd3bf;
+    --bg-soft:#f4eee1;
+    --canvas:#e9e2d2;
+    --page-w:794px;
+    --font-display:'Bebas Neue', Impact, sans-serif;
+    --font-body:'IBM Plex Sans', Arial, sans-serif;
+    --font-mono:'IBM Plex Mono', 'Courier New', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    font-family:var(--font-body);
+    color:var(--ink);
+    background:var(--canvas);
+    margin:0;
+    padding:24px;
+  }
+  .toolbar{
+    max-width:var(--page-w);
+    margin:0 auto 16px auto;
+    background:var(--ink);
+    background-image:linear-gradient(135deg,#2b241d,#1a1512);
+    color:#f6efe0;
+    padding:14px 20px;
+    border-radius:4px;
+    border-bottom:3px solid var(--brass);
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .toolbar h1{
+    font-family:var(--font-display);
+    font-size:22px;margin:0;font-weight:400;
+    letter-spacing:.04em;text-transform:uppercase;color:#fdf6e6;
+  }
+  .toolbar .actions{display:flex;gap:8px;flex-wrap:wrap;}
+  button{
+    cursor:pointer;
+    border:none;
+    border-radius:3px;
+    padding:9px 15px;
+    font-size:12.5px;
+    font-weight:600;
+    font-family:var(--font-body);
+    letter-spacing:.02em;
+    transition:background .15s ease, transform .1s ease;
+  }
+  button:active{transform:translateY(1px);}
+  .btn-primary{background:var(--brass);color:#241c10;}
+  .btn-primary:hover{background:#c99a44;}
+  .btn-secondary{background:transparent;color:#f6efe0;border:1px solid rgba(246,239,224,.45);}
+  .btn-secondary:hover{border-color:#f6efe0;background:rgba(246,239,224,.08);}
+  .btn-danger{background:var(--thread);color:#fdf3ee;}
+  .btn-danger:hover{background:var(--thread-dark);}
+  .btn-primary[disabled]{opacity:.65;cursor:wait;}
+  .nav-links{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+  .nav-links a{
+    font-family:var(--font-body);font-size:12px;font-weight:600;
+    color:#f6efe0;text-decoration:none;
+    border:1px solid rgba(246,239,224,.35);border-radius:3px;
+    padding:5px 10px;transition:.15s;
+  }
+  .nav-links a:hover{border-color:var(--brass);background:rgba(246,239,224,.08);}
+  .nav-links a.current{background:var(--brass);color:#241c10;border-color:var(--brass);cursor:default;}
+
+  .panel-block{
+    max-width:var(--page-w);
+    margin:0 auto 16px auto;
+    background:var(--paper);
+    border-radius:4px;
+    border:1px solid var(--line);
+    padding:18px 20px;
+    box-shadow:0 1px 2px rgba(34,29,24,.06);
+  }
+  .panel-block h2{
+    font-family:var(--font-display);
+    font-size:18px;
+    font-weight:400;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--ink);
+    border-bottom:2px solid var(--brass);
+    padding-bottom:7px;
+    margin:0 0 14px 0;
+  }
+  .grid-fields{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:12px;
+  }
+  .field label{
+    display:block;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+  }
+  .field input, .field select{
+    width:100%;
+    padding:8px 9px;
+    border:1px solid var(--line);
+    background:#fff;
+    border-radius:3px;
+    font-size:13px;
+    font-family:var(--font-body);
+    color:var(--ink);
+  }
+  .field input:focus, .field select:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(182,131,46,.15);}
+  .upload-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:12px;
+  }
+  .upload-slot{
+    border:2px dashed var(--line);
+    border-radius:5px;
+    height:96px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-size:11px;
+    color:#8a7f6f;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+    background:var(--bg-soft);
+    padding:4px;
+  }
+  .upload-slot:hover, .upload-slot.dragover{border-color:var(--brass);color:var(--brass-dark);background:#faf3e2;}
+  .upload-slot img{max-width:100%;max-height:100%;object-fit:contain;}
+  .upload-slot .lbl{font-weight:700;position:absolute;top:3px;left:5px;font-size:10px;color:#a89b83;text-transform:uppercase;letter-spacing:.03em;}
+  .upload-slot input[type=file]{display:none;}
+  .upload-slot .clear-x{
+    position:absolute;top:2px;right:4px;background:var(--thread);color:#fff;
+    border-radius:50%;width:16px;height:16px;font-size:10px;line-height:16px;
+    text-align:center;cursor:pointer;display:none;z-index:2;
+  }
+  .upload-slot.has-img .clear-x{display:block;}
+
+  /* ===================== COLOR CUSTOMIZER PANEL ===================== */
+  .color-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:10px 16px;
+  }
+  .color-row{
+    display:flex;align-items:center;gap:8px;
+    border:1px solid var(--line);border-radius:4px;
+    padding:6px 8px;background:var(--bg-soft);
+  }
+  .color-row label{
+    flex:1;font-size:11px;font-weight:600;color:var(--ink-soft);
+    text-transform:uppercase;letter-spacing:.03em;
+  }
+  .color-row input[type=color]{
+    width:30px;height:26px;padding:0;border:1px solid var(--line);
+    border-radius:3px;cursor:pointer;background:none;
+  }
+  .color-row input[type=text]{
+    width:130px;padding:5px 6px;border:1px solid var(--line);
+    border-radius:3px;font-size:11.5px;font-family:var(--font-mono);
+    color:var(--ink);background:#fff;
+  }
+  .color-panel-actions{
+    display:flex;justify-content:flex-end;margin-top:14px;
+  }
+  .color-hint{font-size:11.5px;color:var(--ink-soft);margin:0 0 12px 0;}
+
+  #sheetContainer{max-width:var(--page-w);margin:0 auto;}
+
+  /* ===================== PDF-LOOK PAGE ===================== */
+  .pdf-page{
+    background:#fff;
+    width:100%;
+    min-height:277mm;
+    display:flex;
+    flex-direction:column;
+    padding:22px 30px 18px 30px;
+    margin-bottom:16px;
+    box-shadow:0 1px 4px rgba(34,29,24,.16);
+    page-break-after:always;
+    break-after:page;
+    font-family:var(--font-body);
+    color:var(--ink);
+  }
+  .pdf-page:last-child{page-break-after:auto;break-after:auto;}
+
+  .pdf-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
+  .pdf-logo-wrap{width:110px;min-width:110px;display:flex;align-items:center;justify-content:center;}
+  .pdf-logo-wrap img{max-width:100%;max-height:100px;object-fit:contain;}
+  .logo-fallback-svg{
+    width:88px;height:88px;border-radius:6px;
+    background:linear-gradient(160deg,var(--brass),var(--ink) 130%);
+    color:#fdf6e6;display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);font-weight:400;font-size:22px;letter-spacing:1px;
+  }
+  .pdf-title-block{flex:1;text-align:left;padding-left:6px;}
+  .pdf-title-block .title{
+    font-family:var(--font-display);
+    font-size:28px;font-weight:400;text-decoration:none;text-transform:uppercase;
+    letter-spacing:.03em;margin-bottom:6px;color:var(--ink);
+  }
+  .pdf-title-block .meta-row{font-size:12.5px;margin:2px 0;display:flex;gap:26px;flex-wrap:wrap;font-family:var(--font-mono);}
+  .pdf-title-block .meta-row b{font-weight:600;font-family:var(--font-body);}
+  .pdf-title-block .meta-row u{text-decoration:none;border-bottom:1px solid var(--brass);}
+
+  .pdf-coname-row{display:flex;align-items:center;justify-content:space-between;margin:10px 0 6px 0;}
+  .pdf-coname{font-family:var(--font-display);font-size:30px;font-weight:400;letter-spacing:.02em;color:var(--ink);}
+  .pdf-orderdetails-lbl{font-size:11px;color:var(--brass-dark);letter-spacing:.12em;font-weight:700;align-self:flex-end;padding-bottom:6px;}
+
+  .dashed-rule{
+    display:block;
+    border:none;
+    height:2px;
+    margin:8px 0;
+    padding:0;
+    background-color:var(--ink);
+    -webkit-mask-repeat:no-repeat;
+    mask-repeat:no-repeat;
+    -webkit-mask-size:100% 100%;
+    mask-size:100% 100%;
+    -webkit-mask-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3NTcuNiAyIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBmaWxsPSIjMDAwIj48cmVjdCB4PSIxLjI4IiB3aWR0aD0iMC40OCIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iOC44IiB3aWR0aD0iMi41NiIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iMTYuOTYiIHdpZHRoPSI0LjY0IiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSIyNi4yNCIgd2lkdGg9IjYuNzIiIHk9IjAiIGhlaWdodD0iMiIvPjxyZWN0IHg9IjM2LjY0IiB3aWR0aD0iOC44IiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSI0OC42NCIgd2lkdGg9IjEwLjg4IiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSI2Mi41NiIgd2lkdGg9IjEzLjEyIiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSI3OS4zNiIgd2lkdGg9IjE1LjIiIHk9IjAiIGhlaWdodD0iMiIvPjxyZWN0IHg9IjEwMC4zMiIgd2lkdGg9IjE3LjI4IiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSIxMTkuNjgiIHdpZHRoPSI1MTYuOTYiIHk9IjAiIGhlaWdodD0iMiIvPjxyZWN0IHg9IjYzOS44NCIgd2lkdGg9IjE3LjI4IiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSI2NjIuODgiIHdpZHRoPSIxNS4yIiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSI2ODEuNzYiIHdpZHRoPSIxMy4xMiIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iNjk3LjkyIiB3aWR0aD0iMTEuMDQiIHk9IjAiIGhlaWdodD0iMiIvPjxyZWN0IHg9IjcxMi4wIiB3aWR0aD0iOC45NiIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iNzI0LjQ4IiB3aWR0aD0iNi44OCIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iNzM1Ljg0IiB3aWR0aD0iNC42NCIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iNzQ2LjA4IiB3aWR0aD0iMi43MiIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iNzU1LjY4IiB3aWR0aD0iMC40OCIgeT0iMCIgaGVpZ2h0PSIyIi8+PC9zdmc+");
+    mask-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3NTcuNiAyIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiBmaWxsPSIjMDAwIj48cmVjdCB4PSIxLjI4IiB3aWR0aD0iMC40OCIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iOC44IiB3aWR0aD0iMi41NiIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iMTYuOTYiIHdpZHRoPSI0LjY0IiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSIyNi4yNCIgd2lkdGg9IjYuNzIiIHk9IjAiIGhlaWdodD0iMiIvPjxyZWN0IHg9IjM2LjY0IiB3aWR0aD0iOC44IiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSI0OC42NCIgd2lkdGg9IjEwLjg4IiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSI2Mi41NiIgd2lkdGg9IjEzLjEyIiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSI3OS4zNiIgd2lkdGg9IjE1LjIiIHk9IjAiIGhlaWdodD0iMiIvPjxyZWN0IHg9IjEwMC4zMiIgd2lkdGg9IjE3LjI4IiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSIxMTkuNjgiIHdpZHRoPSI1MTYuOTYiIHk9IjAiIGhlaWdodD0iMiIvPjxyZWN0IHg9IjYzOS44NCIgd2lkdGg9IjE3LjI4IiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSI2NjIuODgiIHdpZHRoPSIxNS4yIiB5PSIwIiBoZWlnaHQ9IjIiLz48cmVjdCB4PSI2ODEuNzYiIHdpZHRoPSIxMy4xMiIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iNjk3LjkyIiB3aWR0aD0iMTEuMDQiIHk9IjAiIGhlaWdodD0iMiIvPjxyZWN0IHg9IjcxMi4wIiB3aWR0aD0iOC45NiIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iNzI0LjQ4IiB3aWR0aD0iNi44OCIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iNzM1Ljg0IiB3aWR0aD0iNC42NCIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iNzQ2LjA4IiB3aWR0aD0iMi43MiIgeT0iMCIgaGVpZ2h0PSIyIi8+PHJlY3QgeD0iNzU1LjY4IiB3aWR0aD0iMC40OCIgeT0iMCIgaGVpZ2h0PSIyIi8+PC9zdmc+");
+  }
+  .dashed-rule.tight{margin:6px 0;height:1.5px;}
+
+  .pdf-size-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .pdf-size-title-row h2{margin:0;font-family:var(--font-display);font-size:30px;font-weight:400;letter-spacing:.03em;color:var(--ink);}
+  .qty-input-wrap{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}
+  .qty-input-wrap input{width:96px;padding:9px 10px;border:1px solid var(--line);border-radius:4px;font-size:18px;font-weight:700;font-family:var(--font-mono);text-align:center;color:var(--ink);}
+
+  .pdf-fabric-heads{display:grid;grid-template-columns:1fr 1fr;text-align:center;margin-bottom:26px;}
+  .pdf-fabric-heads input{
+    border:none;background:transparent;text-align:center;font-family:var(--font-display);font-size:28px;font-weight:400;
+    letter-spacing:.03em;text-transform:uppercase;
+    color:var(--ink);width:100%;
+  }
+
+  .pdf-columns{display:grid;grid-template-columns:1fr 1fr;column-gap:36px;flex:1;}
+  .pdf-cards{display:flex;flex-direction:column;justify-content:space-evenly;height:100%;}
+  .pdf-cards .panel-card{
+    display:flex;align-items:center;gap:20px;padding:22px 0;
+  }
+  .pdf-cards .info{width:180px;min-width:180px;font-size:13px;text-align:center;line-height:1.5;}
+  .pdf-cards .info .row{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:5px;}
+  .pdf-cards .info label{color:var(--ink-soft);font-size:11px;min-width:50px;text-align:right;text-transform:uppercase;letter-spacing:.03em;}
+  .pdf-cards .info input{
+    border:1px solid var(--line);border-radius:3px;padding:4px 6px;font-size:13px;width:64px;text-align:center;font-family:var(--font-mono);
+  }
+  .pdf-cards .info .print-input{
+    width:50px;font-weight:700;text-align:center;color:var(--brass-dark);
+    border-color:var(--brass);font-size:19px;background:#fbf3e2;
+  }
+  .pdf-cards .info .panel-name{font-size:14px !important;}
+  .pdf-cards .info .size-lbl{font-weight:700;letter-spacing:.03em;font-size:13px;}
+  .pdf-cards .info .sqft-row{color:var(--brass-dark);font-weight:700;}
+  .pdf-cards .info .sqft-out{font-weight:700;color:var(--brass-dark);font-size:14px;font-family:var(--font-mono);}
+  .pdf-cards .imgwrap{
+    flex:1;height:190px;min-width:120px;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent;
+  }
+  .pdf-cards .imgwrap img{
+    max-width:100%;max-height:100%;width:auto;height:auto;
+    object-fit:contain;object-position:center;
+  }
+  .pdf-cards .imgwrap .noimg{font-size:9px;color:#bbb;text-align:center;padding:4px;}
+  .swatch-satin{width:100%;height:100%;background:repeating-linear-gradient(#d3ac5c,#d3ac5c 9px,#b6832e 9px,#b6832e 10px);}
+  .swatch-mesh{width:100%;height:100%;background:repeating-linear-gradient(90deg,#8a8378,#8a8378 3px,#c4bcac 3px,#c4bcac 6px);}
+
+  .pdf-bottom{display:grid;grid-template-columns:1fr 1fr;margin-top:20px;align-items:start;}
+  .pdf-bottom .cell{padding:2px 14px;font-size:13px;}
+  .pdf-bottom .cell:first-child{padding-left:0;}
+  .pdf-bottom h4{margin:0 0 8px 0;font-family:var(--font-display);font-size:17px;font-weight:400;text-decoration:none;text-transform:uppercase;letter-spacing:.05em;border-bottom:none;color:var(--brass-dark);}
+  .pdf-bottom .subhead{font-weight:700;font-size:13px;margin:8px 0 3px 0;}
+  .pdf-bottom input{border:1px solid var(--line);border-radius:3px;padding:5px 7px;font-size:13px;width:100%;margin-bottom:5px;font-family:var(--font-body);}
+  .pdf-bottom .qty-cell{text-align:left;}
+  .total-qty-lbl{font-size:12px;margin-top:4px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);font-weight:700;}
+  .total-qty{font-family:var(--font-display);font-size:38px;font-weight:400;color:var(--ink);margin-top:2px;}
+
+  .pdf-bottom .foot-left{font-family:var(--font-mono);padding-top:2px;}
+  .pdf-bottom .foot-left b{font-weight:700;font-family:var(--font-body);}
+  .pdf-bottom .foot-left div{margin-bottom:2px;}
+  .pdf-bottom .foot-left .spec-code{font-weight:700;font-size:13px;color:var(--brass-dark);}
+
+  .summary-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  .summary-table th,.summary-table td{border:1px solid var(--line);padding:7px 10px;text-align:center;}
+  .summary-table th{
+    background:var(--ink);color:#f6efe0;font-family:var(--font-display);
+    font-size:14px;font-weight:400;letter-spacing:.05em;text-transform:uppercase;
+  }
+  .summary-table td.grand{font-weight:700;background:var(--bg-soft);color:var(--brass-dark);}
+  .summary-table tbody tr:nth-child(even){background:#fbf8f2;}
+
+  @media print{
+    .pdf-bottom h4, .pdf-title-block .title { text-decoration: none !important; border: none !important; }
+
+    body{background:#fff;padding:0;}
+    .toolbar,.panel-block{display:none;}
+    .pdf-page{box-shadow:none;margin:0;}
+    #sheetContainer{max-width:100%;}
+  }
+
+  /* ===================== COSTING & FABRIC PLANNING ===================== */
+  .costing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;}
+  .stat-box{border:1px solid var(--line);border-radius:5px;padding:12px 14px;background:var(--bg-soft);}
+  .stat-box.highlight{background:#fbf3e2;border-color:var(--brass);}
+  .stat-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);font-weight:700;margin-bottom:5px;}
+  .stat-value{font-family:var(--font-display);font-size:22px;font-weight:400;color:var(--ink);letter-spacing:.02em;}
+  .stat-box.highlight .stat-value{color:var(--brass-dark);}
+  .stat-sub{font-size:10px;color:var(--ink-soft);margin-top:4px;font-family:var(--font-mono);}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <h1>Shorts Order Specification Sheet — Editable Tool</h1>
+  <nav class="nav-links">
+    <a href="./hub.html">🏠 Hub</a>
+    <a href="./index.html">📋 Dashboard</a>
+    <a href="./Order_Specs_Sheet.html">🧾 Order Specs</a>
+    <a class="current" href="./Shorts_Order_Spec_Sheet.html">🩳 Shorts Specs</a>
+  </nav>
+  <div class="actions">
+    <button class="btn-primary" id="btnExportPdf">⬇ Export as PDF</button>
+    <button class="btn-secondary" id="btnPrint">🖨️ Browser Print</button>
+    <button class="btn-secondary" id="btnToggleColors">🎨 Colors</button>
+    <button class="btn-danger" id="btnClear">Clear All Data</button>
+  </div>
+</div>
+
+<!-- COLOR CUSTOMIZER -->
+<div class="panel-block" id="colorPanel" style="display:none;">
+  <h2>Interface Colors</h2>
+  <p class="color-hint">Koi bhi color HEX (#b6832e) ya RGB (rgb(182,131,46)) code likh kar replace karein — ya swatch py click kar k picker se select karein. Changes turant sheet py apply hongi.</p>
+  <div class="color-grid" id="colorGrid"></div>
+  <div class="color-panel-actions">
+    <button class="btn-secondary" id="btnResetColors">↺ Reset to Default Colors</button>
+  </div>
+</div>
+
+<!-- ORDER-LEVEL FIELDS -->
+<div class="panel-block">
+  <h2>Order Details (sab pages py apply hoga)</h2>
+  <div class="grid-fields">
+    <div class="field"><label>Specification #</label><input type="text" id="fSpecNo" placeholder="e.g. E-3560"></div>
+    <div class="field"><label>Order Date</label><input type="date" id="fDate"></div>
+    <div class="field"><label>Description</label><input type="text" id="fDesc" placeholder="Sublimation"></div>
+    <div class="field"><label>Company Name</label><input type="text" id="fCoName" placeholder="Asif Printers"></div>
+    <div class="field"><label>Satin Column Label</label><input type="text" id="fSatinLabel" value="Satin 160gsm"></div>
+    <div class="field"><label>Mesh Column Label</label><input type="text" id="fMeshLabel" value="Mesh"></div>
+  </div>
+</div>
+
+<!-- IMAGE UPLOAD SLOTS (shared across all sizes) -->
+<div class="panel-block">
+  <h2>Panel Images — upload once, auto on all 9 sizes</h2>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+    <label style="background:var(--brass);color:#241c10;padding:8px 14px;border-radius:3px;font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;cursor:pointer;">
+      Select ALL Images at Once
+      <input type="file" id="multiUpload" accept="image/*" multiple style="display:none;">
+    </label>
+    <span style="font-size:11px;color:#555;">Order: Logo → Shorts (Satin) → Side Panels (Mesh) → Belts (Mesh)</span>
+  </div>
+  <div class="upload-grid">
+    <div class="upload-slot" data-slot="logo" tabindex="0"><span class="lbl">Logo</span><span class="ph">Drop / Paste</span><span class="clear-x">✕</span></div>
+    <div class="upload-slot" data-slot="SH" tabindex="0"><span class="lbl">Shorts</span><span class="ph">Satin</span><span class="clear-x">✕</span></div>
+    <div class="upload-slot" data-slot="SP" tabindex="0"><span class="lbl">Side Panels</span><span class="ph">Mesh</span><span class="clear-x">✕</span></div>
+    <div class="upload-slot" data-slot="BE" tabindex="0"><span class="lbl">Belts</span><span class="ph">Mesh</span><span class="clear-x">✕</span></div>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div class="panel-block">
+  <h2>Summary — sab sizes ek nazar mein</h2>
+  <table class="summary-table" id="summaryTable">
+    <thead><tr><th>Size</th><th>Order Qty</th><th>Total Print Qty</th></tr></thead>
+    <tbody id="summaryBody"></tbody>
+  </table>
+</div>
+
+<!-- COSTING & FABRIC PLANNING -->
+<div class="panel-block">
+  <h2>Costing &amp; Fabric Planning</h2>
+  <div class="grid-fields" style="margin-bottom:16px;">
+    <div class="field"><label id="lblRollWidthSatin">Satin 160gsm — Roll Width (inches)</label><input type="number" id="fRollWidthSatin" min="1" step="0.5" value="60"></div>
+    <div class="field"><label id="lblRollWidthMesh">Mesh — Roll Width (inches)</label><input type="number" id="fRollWidthMesh" min="1" step="0.5" value="60"></div>
+    <div class="field"><label>Wastage %</label><input type="number" id="fWastage" min="0" step="0.5" value="5"></div>
+    <div class="field"><label>Print Rate (Rs. / SQFT)</label><input type="number" id="fPrintRate" min="0" step="0.5" value="0"></div>
+  </div>
+  <div class="costing-grid">
+    <div class="stat-box">
+      <div class="stat-label">Total SQFT Printed</div>
+      <div class="stat-value" id="costTotalSqft">0.00 sqft</div>
+    </div>
+    <div class="stat-box highlight">
+      <div class="stat-label">Total Printing Cost</div>
+      <div class="stat-value" id="costTotalAmount">Rs. 0</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label" id="lblFabricNeededSatin">Fabric Needed — Satin 160gsm (with wastage)</div>
+      <div class="stat-value" id="costFabricNeededSatin">—</div>
+      <div class="stat-sub" id="costFabricSatinSub"></div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label" id="lblFabricNeededMesh">Fabric Needed — Mesh (with wastage)</div>
+      <div class="stat-value" id="costFabricNeededMesh">—</div>
+      <div class="stat-sub" id="costFabricMeshSub"></div>
+    </div>
+  </div>
+  <p class="color-hint" style="margin-top:12px;margin-bottom:0;">Har fabric ki length uske apne roll width se nikalti hai: Fabric SQFT ÷ (uska Roll Width ÷ 12) × (1 + Wastage%) — phir yards/meters mein convert. Cost = Total SQFT (dono fabrics) × (1 + Wastage%) × Print Rate.</p>
+</div>
+
+<div id="sheetContainer"></div>
+
+<script>
+const PANELS = [
+  {id:'SH', fabric:'satin'},
+  {id:'SP', fabric:'mesh'},  {id:'BE', fabric:'mesh'}
+];
+
+// Width x Height (inches) per size — SH (Shorts) from Satin 160gsm screenshot,
+// SP (Side Panels) from Mesh screenshot. BE (Belts) reused from the uniform sheet (60 x 40).
+// GROUND has only the Satin Shorts panel (60 x 60) — no mesh side panels/belts for it.
+const SIZE_DATA = {
+ YS:  {qty:0, panels:{SH:{print:0,w:57.52,h:52.29}, SP:{print:0,w:58,   h:18.77}, BE:{print:0,w:60,h:40}}},
+ YM:  {qty:0, panels:{SH:{print:0,w:56.96,h:54.46}, SP:{print:0,w:58,   h:20.95}, BE:{print:0,w:60,h:40}}},
+ YL:  {qty:0, panels:{SH:{print:0,w:56.07,h:57.31}, SP:{print:0,w:58,   h:23.04}, BE:{print:0,w:60,h:40}}},
+ XS:  {qty:0, panels:{SH:{print:0,w:56.48,h:58.03}, SP:{print:0,w:58,   h:25.52}, BE:{print:0,w:60,h:40}}},
+ S:   {qty:0, panels:{SH:{print:0,w:56.03,h:61.53}, SP:{print:0,w:58,   h:27.80}, BE:{print:0,w:60,h:40}}},
+ M:   {qty:0, panels:{SH:{print:0,w:56.17,h:64.15}, SP:{print:0,w:58,   h:29.92}, BE:{print:0,w:60,h:40}}},
+ L:   {qty:0, panels:{SH:{print:0,w:54.83,h:68.67}, SP:{print:0,w:58,   h:31.18}, BE:{print:0,w:60,h:40}}},
+ XL:  {qty:0, panels:{SH:{print:0,w:57.26,h:69.56}, SP:{print:0,w:58,   h:32.38}, BE:{print:0,w:60,h:40}}},
+ XXL: {qty:0, panels:{SH:{print:0,w:55.64,h:71.44}, SP:{print:0,w:58.53,h:34.04}, BE:{print:0,w:60,h:40}}},
+ GROUND:{qty:0, panels:{SH:{print:0,w:60,h:60}}}
+};
+const SIZE_ORDER = ['YS','YM','YL','XS','S','M','L','XL','XXL','GROUND'];
+
+// pcs per 1 print (ratio). print = ceil(orderQty / ratio)
+const RATIOS = {
+  SH: { YS:4, YM:4, YL:1, XS:1, S:3, M:3, L:3, XL:3, XXL:3, GROUND:1 }, // Shorts
+  SP: { default: 11 },  // Side Panels — all sizes 11pcs = 1 print
+  BE: { default: 5 }    // Belts — same as uniform sheet, 5pcs = 1 print
+};
+function getRatio(sz, pid){
+  const r = RATIOS[pid];
+  if(!r) return 1;
+  if(r[sz] !== undefined) return r[sz];
+  return r.default || 1;
+}
+
+
+let images = {}; // slot -> dataURL
+
+/* ---------- storage ---------- */
+const STORE_KEY = 'sfs_shorts_spec_sheet_v1';
+function saveState(){
+  const state = {header:{}, images, sizes:{}};
+  ['fSpecNo','fDate','fDesc','fCoName','fSatinLabel','fMeshLabel','fRollWidthSatin','fRollWidthMesh','fWastage','fPrintRate'].forEach(id=>{
+    state.header[id] = document.getElementById(id).value;
+  });
+  SIZE_ORDER.forEach(sz=>{
+    state.sizes[sz] = {qty: document.getElementById('qty-'+sz).value, panels:{}};
+    PANELS.forEach(p=>{
+      const printEl = document.getElementById(`print-${sz}-${p.id}`);
+      if(!printEl) return;
+      state.sizes[sz].panels[p.id] = {
+        print: printEl.value,
+        ratio: document.getElementById(`ratio-${sz}-${p.id}`).value,
+        w: document.getElementById(`w-${sz}-${p.id}`).value,
+        h: document.getElementById(`h-${sz}-${p.id}`).value
+      };
+    });
+  });
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  } catch(e) {
+    // localStorage quota exceed ho gaya (images se) — silently ignore
+    console.warn('State save nahi ho saka (storage full):', e);
+  }
+}
+function loadState(){
+  const raw = localStorage.getItem(STORE_KEY);
+  if(!raw) return null;
+  try{ return JSON.parse(raw); }catch(e){ return null; }
+}
+
+/* ---------- build DOM ---------- */
+function panelLabel(id){
+  return {SH:'Shorts', SP:'Side Panels', BE:'Belts'}[id];
+}
+function swatchClass(id){
+  return PANELS.find(p=>p.id===id).fabric === 'satin' ? 'swatch-satin' : 'swatch-mesh';
+}
+
+function buildSheet(){
+  const container = document.getElementById('sheetContainer');
+  container.innerHTML = '';
+  SIZE_ORDER.forEach(sz=>{
+    const d = SIZE_DATA[sz];
+    const page = document.createElement('div');
+    page.className = 'pdf-page';
+    page.dataset.size = sz;
+    page.innerHTML = `
+      <div class="pdf-top">
+        <div class="pdf-logo-wrap" id="logoBox-${sz}"><div class="logo-fallback-svg">SFS</div></div>
+        <div class="pdf-title-block">
+          <div class="title">Shorts Order Specification Sheet</div>
+          <div class="meta-row"><span>Description: <u class="clone-desc"></u></span></div>
+          <div class="meta-row"><span><b>Specification #:</b> <span class="clone-specno"></span></span></div>
+        </div>
+      </div>
+
+      <div class="pdf-coname-row">
+        <div class="pdf-coname clone-coname"></div>
+        <div class="pdf-orderdetails-lbl">ORDER DETAILS</div>
+      </div>
+      <hr class="dashed-rule">
+
+      <div class="pdf-size-title-row">
+        <h2>${sz==='GROUND' ? 'Ground' : 'Size '+sz}</h2>
+        <div class="qty-input-wrap"><label for="qty-${sz}">Order Qty</label><input type="number" min="0" id="qty-${sz}" value="${d.qty}"></div>
+      </div>
+
+      <div class="pdf-fabric-heads">
+        <input class="clone-satinlabel-input" data-target="fSatinLabel" value="">
+        <input class="clone-meshlabel-input" data-target="fMeshLabel" value="">
+      </div>
+
+      <div class="pdf-columns">
+        <div class="pdf-cards" id="cards-satin-${sz}"></div>
+        <div class="pdf-cards" id="cards-mesh-${sz}"></div>
+      </div>
+
+      <hr class="dashed-rule tight">
+
+      <div class="pdf-bottom">
+        <div class="cell foot-left">
+          <div><b>Date:</b> <span class="clone-date"></span></div>
+          <div class="spec-code"><span class="clone-specno2"></span></div>
+        </div>
+        <div class="cell qty-cell">
+          <h4>Quantity Details</h4>
+          <div class="total-qty-lbl">Total Print Qty</div>
+          <div class="total-qty" id="total-${sz}">0</div>
+        </div>
+      </div>
+    `;
+    container.appendChild(page);
+
+    ['satin','mesh'].forEach(fab=>{
+      const wrap = page.querySelector(`#cards-${fab}-${sz}`);
+      PANELS.filter(p=>p.fabric===fab && d.panels[p.id]).forEach(p=>{
+        const pd = d.panels[p.id];
+        const ratioDefault = getRatio(sz, p.id);
+        const card = document.createElement('div');
+        card.className = 'panel-card';
+        card.innerHTML = `
+          <div class="info">
+            <div class="row"><label>Print</label><input type="number" min="0" class="print-input" id="print-${sz}-${p.id}" value="${pd.print}" data-sz="${sz}" data-panel="${p.id}"></div>
+            <div class="panel-name" style="font-weight:700;font-size:11px;margin:1px 0;">${panelLabel(p.id)}</div>
+            <div class="row size-lbl">${sz==='GROUND' ? 'Ground' : 'Size '+sz}</div>
+            <div class="row"><input type="number" step="0.001" id="w-${sz}-${p.id}" value="${pd.w}" data-sz="${sz}" data-panel="${p.id}" style="width:52px;">×<input type="number" step="0.001" id="h-${sz}-${p.id}" value="${pd.h}" data-sz="${sz}" data-panel="${p.id}" style="width:52px;"></div>
+            <div class="row sqft-row">(<span class="sqft-out" id="sqft-${sz}-${p.id}">0</span> SQFT PER PC)</div>
+            <div class="row" style="color:#999;font-size:9px;">Ratio/print <input type="number" min="1" id="ratio-${sz}-${p.id}" value="${ratioDefault}" data-sz="${sz}" data-panel="${p.id}" style="width:36px;"></div>
+          </div>
+          <div class="imgwrap" id="imgwrap-${sz}-${p.id}"><div class="${swatchClass(p.id)}" style="width:100%;"></div></div>
+        `;
+        wrap.appendChild(card);
+      });
+    });
+  });
+}
+
+/* ---------- calc ---------- */
+function calcSqft(sz,pid){
+  const wEl = document.getElementById(`w-${sz}-${pid}`);
+  const hEl = document.getElementById(`h-${sz}-${pid}`);
+  if(!wEl || !hEl) return;
+  const w = parseFloat(wEl.value)||0;
+  const h = parseFloat(hEl.value)||0;
+  const sqft = (w*h/144);
+  document.getElementById(`sqft-${sz}-${pid}`).textContent = sqft.toFixed(2);
+  calcCosting();
+}
+function calcTotal(sz){
+  let total = 0;
+  PANELS.forEach(p=>{
+    const el = document.getElementById(`print-${sz}-${p.id}`);
+    if(!el) return;
+    total += parseFloat(el.value) || 0;
+  });
+  document.getElementById(`total-${sz}`).textContent = total;
+  const sumTotalEl = document.getElementById('sumTotal-'+sz);
+  if(sumTotalEl) sumTotalEl.textContent = total;
+  calcCosting();
+}
+
+/* ---------- Costing & Fabric Planning ---------- */
+function calcCosting(){
+  const rollSatinEl = document.getElementById('fRollWidthSatin');
+  const rollMeshEl = document.getElementById('fRollWidthMesh');
+  const wastageEl = document.getElementById('fWastage');
+  const rateEl = document.getElementById('fPrintRate');
+  if(!rollSatinEl || !rollMeshEl || !wastageEl || !rateEl) return; // panel not in DOM yet
+
+  let totalSqft = 0, satinSqft = 0, meshSqft = 0;
+  SIZE_ORDER.forEach(sz=>{
+    PANELS.forEach(p=>{
+      const printEl = document.getElementById(`print-${sz}-${p.id}`);
+      const wEl = document.getElementById(`w-${sz}-${p.id}`);
+      const hEl = document.getElementById(`h-${sz}-${p.id}`);
+      if(!printEl || !wEl || !hEl) return;
+      const printQty = parseFloat(printEl.value) || 0;
+      const w = parseFloat(wEl.value) || 0;
+      const h = parseFloat(hEl.value) || 0;
+      const sqft = printQty * (w*h/144);
+      totalSqft += sqft;
+      if(p.fabric === 'satin') satinSqft += sqft; else meshSqft += sqft;
+    });
+  });
+
+  const wastagePct = parseFloat(wastageEl.value) || 0;
+  const rate = parseFloat(rateEl.value) || 0;
+  const sqftWithWastageTotal = totalSqft * (1 + wastagePct/100);
+  const satinSqftW = satinSqft * (1 + wastagePct/100);
+  const meshSqftW = meshSqft * (1 + wastagePct/100);
+
+  document.getElementById('costTotalSqft').textContent = totalSqft.toFixed(2) + ' sqft';
+
+  function fabricNeededText(sqftW, rollWidthIn){
+    if(rollWidthIn > 0){
+      const rollWidthFt = rollWidthIn / 12;
+      const fabricLengthFt = sqftW / rollWidthFt;
+      const yd = fabricLengthFt / 3;
+      const m = fabricLengthFt * 0.3048;
+      return yd.toFixed(2) + ' yd  /  ' + m.toFixed(2) + ' m';
+    }
+    return '— (roll width daalein)';
+  }
+
+  const rollSatinIn = parseFloat(rollSatinEl.value) || 0;
+  const rollMeshIn = parseFloat(rollMeshEl.value) || 0;
+  document.getElementById('costFabricNeededSatin').textContent = fabricNeededText(satinSqftW, rollSatinIn);
+  document.getElementById('costFabricNeededMesh').textContent = fabricNeededText(meshSqftW, rollMeshIn);
+  const satinSubEl = document.getElementById('costFabricSatinSub');
+  if(satinSubEl) satinSubEl.textContent = satinSqft.toFixed(2) + ' sqft';
+  const meshSubEl = document.getElementById('costFabricMeshSub');
+  if(meshSubEl) meshSubEl.textContent = meshSqft.toFixed(2) + ' sqft';
+
+  const totalCost = sqftWithWastageTotal * rate;
+  document.getElementById('costTotalAmount').textContent = 'Rs. ' + totalCost.toLocaleString('en-PK', {maximumFractionDigits:0});
+}
+function wireCostingInputs(){
+  ['fRollWidthSatin','fRollWidthMesh','fWastage','fPrintRate'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', ()=>{ calcCosting(); saveState(); });
+  });
+}
+function recalcPrintFromQty(sz, pid){
+  const printEl = document.getElementById(`print-${sz}-${pid}`);
+  if(!printEl) return;
+  const qty = parseFloat(document.getElementById('qty-'+sz).value) || 0;
+  const ratio = parseFloat(document.getElementById(`ratio-${sz}-${pid}`).value) || 1;
+  const print = Math.ceil(qty/ratio);
+  printEl.value = print;
+}
+function recalcAllPanelsForSize(sz){
+  PANELS.forEach(p=>{ if(p.id !== 'BE') recalcPrintFromQty(sz,p.id); });
+  recalcBeltsPooled();
+  calcTotal(sz);
+}
+// Belts are one universal size shared across all garment sizes — so the print
+// count must be pooled: total qty of all sizes / ratio (5) = total belt prints
+// needed, then that total is split evenly across the sizes that use a belt.
+function recalcBeltsPooled(){
+  const beltSizes = SIZE_ORDER.filter(sz => document.getElementById(`print-${sz}-BE`));
+  if(beltSizes.length === 0) return;
+  let totalQty = 0;
+  beltSizes.forEach(sz=>{ totalQty += parseFloat(document.getElementById('qty-'+sz).value) || 0; });
+  const ratio = parseFloat(document.getElementById(`ratio-${beltSizes[0]}-BE`).value) || 1;
+  const totalPrints = Math.ceil(totalQty / ratio);
+  const perSize = Math.ceil(totalPrints / beltSizes.length);
+  beltSizes.forEach(sz=>{
+    const el = document.getElementById(`print-${sz}-BE`);
+    if(el) el.value = perSize;
+    calcTotal(sz);
+  });
+}
+
+function buildSummary(){
+  const body = document.getElementById('summaryBody');
+  body.innerHTML='';
+  SIZE_ORDER.forEach(sz=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${sz}</td><td><input type="number" min="0" id="sumQty-${sz}" value="0" style="width:70px;text-align:center;font-weight:700;border:1px solid #ccc;border-radius:4px;padding:3px;"></td><td id="sumTotal-${sz}">0</td>`;
+    body.appendChild(tr);
+  });
+  const grandRow = document.createElement('tr');
+  grandRow.innerHTML = `<td class="grand">Grand Total</td><td class="grand" id="grandQty">0</td><td class="grand" id="grandPrint">0</td>`;
+  body.appendChild(grandRow);
+}
+function updateSummaryGrand(){
+  let gq=0, gp=0;
+  SIZE_ORDER.forEach(sz=>{
+    const q = parseFloat(document.getElementById('qty-'+sz).value)||0;
+    gq += q;
+    gp += parseFloat(document.getElementById('total-'+sz).textContent)||0;
+    const sumInput = document.getElementById('sumQty-'+sz);
+    if(sumInput && document.activeElement !== sumInput) sumInput.value = q;
+  });
+  document.getElementById('grandQty').textContent = gq;
+  document.getElementById('grandPrint').textContent = gp;
+}
+
+function wireEvents(){
+  SIZE_ORDER.forEach(sz=>{
+    document.getElementById('qty-'+sz).addEventListener('input', ()=>{
+      recalcAllPanelsForSize(sz);
+      updateSummaryGrand();
+      refreshPageVisibility();
+      saveState();
+    });
+    const sumQtyEl = document.getElementById('sumQty-'+sz);
+    if(sumQtyEl){
+      sumQtyEl.addEventListener('input', ()=>{
+        document.getElementById('qty-'+sz).value = sumQtyEl.value;
+        recalcAllPanelsForSize(sz);
+        updateSummaryGrand();
+        refreshPageVisibility();
+        saveState();
+      });
+    }
+    PANELS.forEach(p=>{
+      const ratioEl = document.getElementById(`ratio-${sz}-${p.id}`);
+      if(!ratioEl) return;
+      ratioEl.addEventListener('input', ()=>{
+        if(p.id === 'BE'){
+          recalcBeltsPooled();
+        } else {
+          recalcPrintFromQty(sz,p.id);
+          calcTotal(sz);
+        }
+        updateSummaryGrand();
+        saveState();
+      });
+      document.getElementById(`print-${sz}-${p.id}`).addEventListener('input', ()=>{
+        calcTotal(sz);
+        updateSummaryGrand();
+        saveState();
+      });
+      ['w','h'].forEach(dim=>{
+        document.getElementById(`${dim}-${sz}-${p.id}`).addEventListener('input', ()=>{
+          calcSqft(sz,p.id);
+          saveState();
+        });
+      });
+      calcSqft(sz,p.id);
+    });
+    calcTotal(sz);
+  });
+  updateSummaryGrand();
+}
+
+/* ---------- header clone sync ---------- */
+const HEADER_MAP = [
+  ['fCoName','.clone-coname'],
+  ['fDesc','.clone-desc'],
+  ['fSpecNo','.clone-specno'],
+  ['fSpecNo','.clone-specno2'],
+  ['fDate','.clone-date'],
+];
+function syncHeaders(){
+  HEADER_MAP.forEach(([fieldId, sel])=>{
+    const val = document.getElementById(fieldId).value;
+    document.querySelectorAll(sel).forEach(el=>{ el.textContent = val; });
+  });
+  document.querySelectorAll('.clone-satinlabel-input').forEach(el=>{ el.value = document.getElementById('fSatinLabel').value; });
+  document.querySelectorAll('.clone-meshlabel-input').forEach(el=>{ el.value = document.getElementById('fMeshLabel').value; });
+  const satinLbl = document.getElementById('fSatinLabel').value || 'Satin';
+  const meshLbl = document.getElementById('fMeshLabel').value || 'Mesh';
+  const lblRollSatin = document.getElementById('lblRollWidthSatin');
+  if(lblRollSatin) lblRollSatin.textContent = satinLbl + ' — Roll Width (inches)';
+  const lblRollMesh = document.getElementById('lblRollWidthMesh');
+  if(lblRollMesh) lblRollMesh.textContent = meshLbl + ' — Roll Width (inches)';
+  const lblFabricSatin = document.getElementById('lblFabricNeededSatin');
+  if(lblFabricSatin) lblFabricSatin.textContent = 'Fabric Needed — ' + satinLbl + ' (with wastage)';
+  const lblFabricMesh = document.getElementById('lblFabricNeededMesh');
+  if(lblFabricMesh) lblFabricMesh.textContent = 'Fabric Needed — ' + meshLbl + ' (with wastage)';
+  refreshLogoFallback();
+}
+function wireHeaderInputs(){
+  ['fSpecNo','fDate','fDesc','fCoName','fSatinLabel','fMeshLabel'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', ()=>{ syncHeaders(); saveState(); });
+  });
+  document.addEventListener('input', (e)=>{
+    if(e.target.classList && (e.target.classList.contains('clone-satinlabel-input') || e.target.classList.contains('clone-meshlabel-input'))){
+      const targetId = e.target.dataset.target;
+      document.getElementById(targetId).value = e.target.value;
+      syncHeaders();
+      saveState();
+    }
+  });
+}
+
+/* ---------- logo fallback: company name ke initials ---------- */
+function getInitials(name){
+  const words = (name||'').trim().split(/\s+/).filter(Boolean);
+  if(!words.length) return 'LOGO';
+  return words.slice(0,2).map(w=>w[0].toUpperCase()).join('');
+}
+function refreshLogoFallback(){
+  if(images.logo) return;
+  const initials = getInitials(document.getElementById('fCoName').value);
+  document.querySelectorAll('.logo-fallback-svg').forEach(el=>{ el.textContent = initials; });
+}
+
+/* ---------- image handling ---------- */
+function applyImage(slot, dataUrl){
+  images[slot] = dataUrl;
+  if(slot==='logo'){
+    const initials = getInitials(document.getElementById('fCoName').value);
+    document.querySelectorAll('[id^="logoBox-"]').forEach(box=>{
+      box.innerHTML = dataUrl ? `<img src="${dataUrl}">` : `<div class="logo-fallback-svg">${initials}</div>`;
+    });
+  } else {
+    SIZE_ORDER.forEach(sz=>{
+      const wrap = document.getElementById(`imgwrap-${sz}-${slot}`);
+      if(!wrap) return;
+      wrap.innerHTML = dataUrl ? `<img src="${dataUrl}">` : `<div class="${swatchClass(slot)}" style="width:100%;"></div>`;
+    });
+  }
+  const slotEl = document.querySelector(`.upload-slot[data-slot="${slot}"]`);
+  if(slotEl){
+    if(dataUrl){
+      slotEl.classList.add('has-img');
+      slotEl.querySelector('.ph') && (slotEl.querySelector('.ph').style.display='none');
+      let img = slotEl.querySelector('img.preview');
+      if(!img){ img = document.createElement('img'); img.className='preview'; slotEl.appendChild(img); }
+      img.src = dataUrl;
+    } else {
+      slotEl.classList.remove('has-img');
+      const img = slotEl.querySelector('img.preview');
+      if(img) img.remove();
+      slotEl.querySelector('.ph') && (slotEl.querySelector('.ph').style.display='');
+    }
+  }
+}
+function readFileToSlot(slot, file){
+  if(!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = e=>{ applyImage(slot, e.target.result); saveState(); };
+  reader.readAsDataURL(file);
+}
+function wireUploadSlots(){
+  document.querySelectorAll('.upload-slot').forEach(slotEl=>{
+    const slot = slotEl.dataset.slot;
+    const fileInput = document.createElement('input');
+    fileInput.type='file'; fileInput.accept='image/*';
+    fileInput.addEventListener('change', ()=>{ if(fileInput.files[0]) readFileToSlot(slot, fileInput.files[0]); });
+    slotEl.appendChild(fileInput);
+
+    slotEl.addEventListener('click', (e)=>{ if(e.target.classList.contains('clear-x')) return; fileInput.click(); });
+    slotEl.addEventListener('dragover', e=>{ e.preventDefault(); slotEl.classList.add('dragover'); });
+    slotEl.addEventListener('dragleave', ()=> slotEl.classList.remove('dragover'));
+    slotEl.addEventListener('drop', e=>{
+      e.preventDefault(); slotEl.classList.remove('dragover');
+      if(e.dataTransfer.files[0]) readFileToSlot(slot, e.dataTransfer.files[0]);
+    });
+    slotEl.addEventListener('paste', e=>{
+      const items = (e.clipboardData||window.clipboardData).items;
+      for(const item of items){
+        if(item.type.indexOf('image')===0){ readFileToSlot(slot, item.getAsFile()); e.preventDefault(); break; }
+      }
+    });
+    const clearBtn = slotEl.querySelector('.clear-x');
+    if(clearBtn) clearBtn.addEventListener('click', (e)=>{
+      e.stopPropagation(); applyImage(slot,null); saveState();
+    });
+  });
+  const SLOT_ORDER = ['logo','SH','SP','BE'];
+  const mu = document.getElementById('multiUpload');
+  if(mu) mu.addEventListener('change', function(){
+    const files = Array.from(this.files).filter(f=>f.type.startsWith('image/'));
+    files.forEach((file,i)=>{ if(i<SLOT_ORDER.length) readFileToSlot(SLOT_ORDER[i], file); });
+    this.value='';
+  });
+}
+
+/* ---------- restore ---------- */
+function restoreState(){
+  const s = loadState();
+  if(!s) return;
+  Object.keys(s.header||{}).forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && s.header[id]) el.value = s.header[id];
+  });
+  Object.keys(s.images||{}).forEach(slot=>{
+    if(s.images[slot]) applyImage(slot, s.images[slot]);
+  });
+  Object.keys(s.sizes||{}).forEach(sz=>{
+    const sd = s.sizes[sz];
+    if(!sd) return;
+    if(sd.qty!==undefined) document.getElementById('qty-'+sz).value = sd.qty;
+    Object.keys(sd.panels||{}).forEach(pid=>{
+      const pv = sd.panels[pid];
+      if(pv.print!==undefined) document.getElementById(`print-${sz}-${pid}`).value = pv.print;
+      if(pv.ratio!==undefined) document.getElementById(`ratio-${sz}-${pid}`).value = pv.ratio;
+      if(pv.w!==undefined) document.getElementById(`w-${sz}-${pid}`).value = pv.w;
+      if(pv.h!==undefined) document.getElementById(`h-${sz}-${pid}`).value = pv.h;
+    });
+  });
+}
+
+/* ---------- export/print filtering: only sizes with Order Qty > 0 ---------- */
+function getQualifyingSizes(){
+  const q = SIZE_ORDER.filter(sz => (parseFloat(document.getElementById('qty-'+sz).value)||0) > 0);
+  return q.length ? q : SIZE_ORDER.slice(); // agar koi qty na bhari ho to sab dikhao
+}
+function setPageVisibility(qualifying){
+  const pages = Array.from(document.querySelectorAll('#sheetContainer .pdf-page'));
+  let lastVisible = null;
+  pages.forEach(page=>{
+    const show = qualifying.includes(page.dataset.size);
+    page.style.display = show ? '' : 'none';
+    page.style.pageBreakAfter = '';
+    page.style.breakAfter = '';
+    if(show) lastVisible = page;
+  });
+  // Last visible page par trailing blank page fix — CSS :last-child sirf DOM ka last node dekhta hai
+  if(lastVisible){
+    lastVisible.style.pageBreakAfter = 'auto';
+    lastVisible.style.breakAfter = 'auto';
+  }
+}
+function refreshPageVisibility(){
+  setPageVisibility(getQualifyingSizes());
+}
+
+/* ---------- PDF export (real, downloadable file — matches on-screen layout) ---------- */
+function exportPdf(){
+  const btn = document.getElementById('btnExportPdf');
+  btn.disabled = true;
+  const prevLabel = btn.textContent;
+  btn.textContent = '⏳ Generating PDF...';
+
+  const source = document.getElementById('sheetContainer');
+  const specNo = (document.getElementById('fSpecNo').value || 'Spec_Sheet').replace(/[^a-z0-9-_]/gi,'_');
+  refreshPageVisibility();
+
+  const opt = {
+    margin: 0,
+    filename: `Shorts_Spec_Sheet_${specNo}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['css', 'legacy'], after: '.pdf-page' }
+  };
+
+  html2pdf().set(opt).from(source).save().then(()=>{
+    refreshPageVisibility();
+    btn.disabled = false;
+    btn.textContent = prevLabel;
+  }).catch((err)=>{
+    console.error(err);
+    refreshPageVisibility();
+    btn.disabled = false;
+    btn.textContent = prevLabel;
+    alert('PDF export mein masla aaya, dobara koshish karein ya Browser Print button use karein.');
+  });
+}
+
+/* ---------- init ---------- */
+function init(){
+  document.getElementById('fDate').value = new Date().toISOString().slice(0,10);
+  document.getElementById('fDesc').value = 'Sublimation';
+  document.getElementById('fCoName').value = 'Asif Printers';
+  document.getElementById('fSpecNo').value = 'SHORTS-1';
+
+  buildSheet();
+  buildSummary();
+  restoreState();
+  syncHeaders();
+  wireHeaderInputs();
+  wireUploadSlots();
+  wireEvents();
+  // Force correct ratios & prints from order qty
+  SIZE_ORDER.forEach(sz=>{
+    PANELS.forEach(p=>{
+      const rEl = document.getElementById('ratio-'+sz+'-'+p.id);
+      if(rEl) rEl.value = getRatio(sz, p.id);
+    });
+    recalcAllPanelsForSize(sz);
+  });
+  updateSummaryGrand();
+  refreshPageVisibility();
+  wireCostingInputs();
+  calcCosting();
+
+  document.getElementById('btnPrint').addEventListener('click', ()=>{
+    refreshPageVisibility();
+    window.print();
+  });
+  window.addEventListener('afterprint', refreshPageVisibility);
+
+  // ===================== COLOR CUSTOMIZER =====================
+  const THEME_VARS = [
+    {v:'--ink',        label:'Ink — Main Text',            def:'#221d18'},
+    {v:'--ink-soft',   label:'Ink Soft — Labels',           def:'#5b5145'},
+    {v:'--brass',      label:'Brass — Accent / Borders',    def:'#b6832e'},
+    {v:'--brass-dark', label:'Brass Dark — Print / SQFT',   def:'#8a611f'},
+    {v:'--thread',     label:'Thread — Danger / Red',       def:'#9c3a2c'},
+    {v:'--thread-dark',label:'Thread Dark',                 def:'#7c2c21'},
+    {v:'--paper',      label:'Paper — Card Background',     def:'#fffdf9'},
+    {v:'--line',       label:'Line — Borders',              def:'#ddd3bf'},
+    {v:'--bg-soft',    label:'Background Soft',             def:'#f4eee1'},
+    {v:'--canvas',     label:'Canvas — Page Background',    def:'#e9e2d2'},
+  ];
+
+  function colorToHex(str){
+    str = (str||'').trim();
+    if(!str) return '#000000';
+    if(str.startsWith('#')){
+      if(str.length===4){ return '#'+str.slice(1).split('').map(c=>c+c).join(''); }
+      return str;
+    }
+    const m = str.match(/rgba?\(([^)]+)\)/i);
+    if(m){
+      const parts = m[1].split(',').map(s=>parseInt(s.trim(),10));
+      return '#'+parts.slice(0,3).map(n=>(n||0).toString(16).padStart(2,'0')).join('');
+    }
+    return '#000000';
+  }
+
+  function isValidColor(str){
+    str = (str||'').trim();
+    if(!str) return false;
+    if(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(str)) return true;
+    if(/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*(,\s*[\d.]+\s*)?\)$/i.test(str)) return true;
+    return false;
+  }
+
+  function buildColorPanel(){
+    const grid = document.getElementById('colorGrid');
+    grid.innerHTML = THEME_VARS.map(t=>{
+      const cur = (getComputedStyle(document.documentElement).getPropertyValue(t.v) || t.def).trim();
+      return `<div class="color-row">
+        <label>${t.label}</label>
+        <input type="color" data-var="${t.v}" class="color-picker" value="${colorToHex(cur)}">
+        <input type="text" data-var="${t.v}" class="color-text" value="${cur}" placeholder="#hex ya rgb(r,g,b)">
+      </div>`;
+    }).join('');
+
+    grid.querySelectorAll('.color-picker').forEach(inp=>{
+      inp.addEventListener('input', e=>{
+        const v = e.target.dataset.var;
+        document.documentElement.style.setProperty(v, e.target.value);
+        grid.querySelector(`.color-text[data-var="${v}"]`).value = e.target.value;
+      });
+    });
+    grid.querySelectorAll('.color-text').forEach(inp=>{
+      inp.addEventListener('change', e=>{
+        const v = e.target.dataset.var;
+        const val = e.target.value.trim();
+        if(!isValidColor(val)){
+          alert('Invalid color code. HEX (#b6832e) ya RGB (rgb(182,131,46)) format mein likhein.');
+          return;
+        }
+        document.documentElement.style.setProperty(v, val);
+        const picker = grid.querySelector(`.color-picker[data-var="${v}"]`);
+        if(picker) picker.value = colorToHex(val);
+      });
+    });
+  }
+
+  document.getElementById('btnToggleColors').addEventListener('click', ()=>{
+    const panel = document.getElementById('colorPanel');
+    const showing = panel.style.display !== 'none';
+    if(showing){
+      panel.style.display = 'none';
+    } else {
+      buildColorPanel();
+      panel.style.display = 'block';
+    }
+  });
+
+  document.getElementById('btnResetColors').addEventListener('click', ()=>{
+    THEME_VARS.forEach(t=> document.documentElement.style.removeProperty(t.v));
+    buildColorPanel();
+  });
+  document.getElementById('btnExportPdf').addEventListener('click', exportPdf);
+  document.getElementById('btnClear').addEventListener('click', ()=>{
+    if(confirm('Sara data (sab fields, images, qty) clear karna hai? Ye wapis nahi aa sakta.')){
+      localStorage.removeItem(STORE_KEY);
+      location.reload();
+    }
+  });
+}
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
