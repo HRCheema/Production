@@ -113,6 +113,39 @@
 </style>
 </head>
 <body>
+<div id="pwGateOverlay" style="position:fixed;inset:0;z-index:99999;background:#0b0d14;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#161a24;border:1px solid rgba(148,163,184,0.25);border-radius:12px;padding:28px 26px;text-align:center;max-width:300px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+    <div style="font-size:30px;margin-bottom:8px;">🔒</div>
+    <div style="font-family:Arial,sans-serif;color:#e2e8f0;font-size:16px;font-weight:600;margin-bottom:4px;">Admin Access Only</div>
+    <div style="font-family:Arial,sans-serif;color:#94a3b8;font-size:12px;margin-bottom:16px;">Ye tool sirf admin ke liye hai — password darj karein</div>
+    <input type="password" id="pwGateInput" placeholder="Password" style="width:100%;padding:10px 12px;border-radius:6px;border:1px solid rgba(148,163,184,0.3);background:#0b0d14;color:#e2e8f0;font-size:14px;box-sizing:border-box;margin-bottom:10px;">
+    <button id="pwGateBtn" style="width:100%;padding:10px;border-radius:6px;border:none;background:#6366f1;color:#fff;font-weight:600;font-size:14px;cursor:pointer;">Unlock</button>
+    <div id="pwGateError" style="display:none;color:#f87171;font-size:12px;margin-top:8px;">Galat password, dubara koshish karein</div>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY='force5_admin_gate_ok';
+  var overlay=document.getElementById('pwGateOverlay');
+  if(localStorage.getItem(KEY)==='1'){ overlay.style.display='none'; return; }
+  document.documentElement.style.overflow='hidden';
+  function check(){
+    var val=document.getElementById('pwGateInput').value;
+    if(val==='786878'){
+      localStorage.setItem(KEY,'1');
+      overlay.style.display='none';
+      document.documentElement.style.overflow='';
+    } else {
+      document.getElementById('pwGateError').style.display='block';
+    }
+  }
+  document.getElementById('pwGateBtn').addEventListener('click', check);
+  document.getElementById('pwGateInput').addEventListener('keydown', function(e){ if(e.key==='Enter') check(); });
+  document.getElementById('pwGateInput').focus();
+})();
+</script>
+
+
 
   <div class="hub-head">
     <h1>Haider Cheema — Tools</h1>
@@ -139,6 +172,13 @@
       <h2>Shorts Specs Sheet</h2>
       <p>Shorts-specific panels (Shorts, Side Panels, Belts) ke liye size-wise specs aur PDF export tool.</p>
       <div class="go">Open Sheet →</div>
+    </a>
+
+    <a class="card" href="./order-manifest.html">
+      <div class="icon">📉</div>
+      <h2>Shortfall</h2>
+      <p>Order ke muqablay shortfall / cut &amp; pack manifest track karne ka tool, PDF export ke saath.</p>
+      <div class="go">Open Tool →</div>
     </a>
   </div>
 
