@@ -344,6 +344,7 @@
 
   /* ===================== GLASS SHELL THEME (screen UI only — pdf-page / export untouched) ===================== */
   body{
+    color:#ece3d3;
     background:
       radial-gradient(circle at 12% 8%, rgba(182,131,46,0.18), transparent 45%),
       radial-gradient(circle at 88% 92%, rgba(156,58,44,0.14), transparent 45%),
@@ -391,6 +392,18 @@
   .color-hint{color:#c9bfa8;}
   .btn-primary{box-shadow:0 6px 20px rgba(182,131,46,.3);}
   .btn-primary:hover{box-shadow:0 8px 26px rgba(182,131,46,.45);}
+  .upload-slot .lbl{color:#e8dcc4;}
+  .upload-slot .ph{color:#a89b83;}
+  .stat-box{background:rgba(255,255,255,.05); border-color:rgba(246,239,224,.16);}
+  .stat-box.highlight{background:rgba(182,131,46,.14); border-color:var(--brass);}
+  .stat-label{color:#c9bfa8;}
+  .stat-value{color:#f6efe0;}
+  .stat-box.highlight .stat-value{color:#f0d9a8;}
+  .stat-sub{color:#a89b83;}
+  .summary-table th,.summary-table td{border-color:rgba(246,239,224,.16); color:#ece3d3;}
+  .summary-table th{background:rgba(0,0,0,.3); color:#f6efe0;}
+  .summary-table td.grand{background:rgba(182,131,46,.16); color:#f0d9a8;}
+  .summary-table tbody tr:nth-child(even){background:rgba(255,255,255,.035);}
 
   @media print{
     .pdf-bottom h4, .pdf-title-block .title { text-decoration: none !important; border: none !important; }
@@ -520,7 +533,7 @@
       Select ALL Images at Once
       <input type="file" id="multiUpload" accept="image/*" multiple style="display:none;">
     </label>
-    <span style="font-size:11px;color:#555;">Order: Logo → Necks → Jkt Front → Jkt Back → Pant → Belts → Side → Shoulder → Pant Panels</span>
+    <span style="font-size:11px;color:#b9ac93;">Order: Logo → Necks → Jkt Front → Jkt Back → Pant → Belts → Side → Shoulder → Pant Panels</span>
   </div>
   <div class="upload-grid">
     <div class="upload-slot" data-slot="logo" tabindex="0"><span class="lbl">Logo</span><span class="ph">Drop / Paste</span><span class="clear-x">✕</span></div>
