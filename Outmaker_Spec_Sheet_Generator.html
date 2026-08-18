@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Outmaker Spec Sheet Generator (Editable)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+    * { box-sizing:border-box; margin:0; padding:0; font-family:'Inter','Segoe UI',Tahoma,Geneva,Verdana,sans-serif; }
+    body { background:radial-gradient(circle at 15% 0%,#eef1fb 0%,#e3e7f5 45%,#dde1f2 100%); padding:18px; color:#222; }
+    h1,h2,h3,.sheet-title,.v-title,.variant-title,.dim-text-big { font-family:'Poppins','Segoe UI',sans-serif; }
+    .wrap { max-width:1680px; margin:0 auto; display:flex; gap:14px; align-items:flex-start; flex-wrap:nowrap; }
+
+    /* ---------- Control Panel ---------- */
+    .panel { width:300px; flex-shrink:0; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.06); padding:16px; max-height:calc(100vh - 36px); overflow-y:auto; position:sticky; top:18px; border: 1px solid #e2e8f0; }
+    .panel h2 { font-size:1.02rem; font-weight:700; color:#1a237e; margin-bottom:12px; border-bottom:2px solid #e8eaf6; padding-bottom:8px; letter-spacing:.2px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* ---------- Article Library (separate side panel) ---------- */
+    .library-panel { width:280px; flex-shrink:0; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.06); padding:16px; max-height:calc(100vh - 36px); overflow-y:auto; position:sticky; top:18px; border: 1px solid #e2e8f0; }
+    .library-panel h2 { font-size:1.02rem; font-weight:700; color:#1a237e; margin-bottom:10px; border-bottom:2px solid #e8eaf6; padding-bottom:8px; }
+    .library-panel .lib-help { font-size:.72rem; color:#666; margin-bottom:8px; line-height:1.35; }
+    .library-panel input[type=text] { width:100%; padding:8px 10px; border:1.5px solid #cbd5e1; border-radius:6px; font-size:.88rem; margin-bottom:8px; transition: border-color .2s; }
+    .library-panel input[type=text]:focus { border-color:#1a237e; outline:none; }
+    #articleResults { display:flex; flex-direction:column; gap:6px; }
+    #recentArticles { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
+    .lib-actions { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+    .lib-actions .btn { margin-top:0; padding:8px; font-size:.78rem; flex:1; min-width:70px; }
+    .panel label { display:block; font-size:.76rem; font-weight:700; color:#444; margin:9px 0 4px; text-transform:uppercase; letter-spacing:.4px; }
+    .panel input[type=text], .panel select { width:100%; padding:8px 10px; border:1.5px solid #cbd5e1; border-radius:6px; font-size:.9rem; background:#fff; transition: border-color .2s; }
+    .panel input[type=text]:focus, .panel select:focus { border-color:#1a237e; outline:none; }
+    .panel select { cursor:pointer; }
+    .row2 { display:flex; gap:8px; }
+    .row2 > div { flex:1; }
+    .btn { display:block; width:100%; margin-top:16px; padding:11px; border:none; border-radius:8px; font-weight:700; font-size:.95rem; cursor:pointer; background:#1a237e; color:#fff; transition: background .2s, transform .1s; }
+    .btn:hover { background:#0d1657; }
+    .btn:active { transform: scale(0.98); }
+    .btn-print { background:#2e7d32; margin-top:8px; }
+    .btn-print:hover { background:#245f26; }
+    .btn-clear { background:#c8102e; margin-top:8px; }
+    .btn-clear:hover { background:#96061e; }
+    hr.sep { border:none; border-top:1px solid #e2e8f0; margin:14px 0; }
+
+    /* checkboxes */
+    .chk-list { display:flex; flex-direction:column; gap:7px; margin-top:6px; }
+    .chk-item { display:flex; align-items:center; gap:8px; font-size:.86rem; font-weight:600; color:#333; cursor: pointer; }
+    .chk-item input { width:16px; height:16px; accent-color:#1a237e; cursor:pointer; }
+
+    /* ---------- Order Kind presets ---------- */
+    .order-kind-box { background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:10px; margin-top:6px; }
+    .order-kind-box label { margin-top:0; }
+    .order-kind-help { font-size:.68rem; color:#666; margin-top:5px; line-height:1.35; }
+    .preset-badge { display:inline-flex; margin-top:6px; padding:4px 8px; border-radius:12px; background:#e8eaf6; color:#1a237e; font-size:.65rem; font-weight:700; }
+
+    /* image drop zones */
+    .drop-zone { margin-top:8px; border:2px dashed #9fa8da; border-radius:8px; padding:14px 10px; text-align:center; font-size:.78rem; color:#5c6bc0; cursor:pointer; background:#f5f6fd; transition:.15s; }
+    .drop-zone.drag { background:#e8eaf6; border-color:#3949ab; }
+    .drop-zone.main-drop { min-height:70px; display:flex; align-items:center; justify-content:center; }
+    .thumb-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .thumb { position:relative; width:60px; height:60px; border:1px solid #ccc; border-radius:6px; overflow:hidden; }
+    .thumb img { width:100%; height:100%; object-fit:cover; }
+    .thumb .rm { position:absolute; top:0; right:0; background:#c8102e; color:#fff; font-size:.65rem; line-height:1; padding:2px 4px; cursor:pointer; border-bottom-left-radius:6px; }
+
+    /* ---------- Sheet (A4) ---------- */
+    .sheet-outer { flex:1; min-width:520px; display:flex; justify-content:center; }
+    .sheet { width:794px; min-height:1123px; background:#fff; border:1px solid #2a2f45; border-radius:10px; box-shadow:0 12px 34px rgba(20,25,60,.20), 0 2px 6px rgba(20,25,60,.08); padding:0 28px 22px; position:relative; overflow:hidden; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .sheet::before { content:""; display:block; height:4px; margin:0 -28px 12px; background:#ffffff; }
+    .head-table { width:100%; border-collapse:separate; border-spacing:0; font-size:.82rem; border:1.5px solid #1a237e; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(20,25,60,.08); }
+    .head-table td { border:1px solid #dde1f0; padding:7px 12px; }
+    .head-table .lbl { font-weight:700; color:#1a237e; background:linear-gradient(180deg,#f2f4fb,#e7eafa); white-space:nowrap; width:1%; }
+
+    .flag-row { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+    .flag { flex:1 1 22%; border:1.5px solid #1a237e; border-radius:20px; padding:7px 10px; font-size:.71rem; font-weight:700; letter-spacing:.2px; color:#1a237e; background:linear-gradient(180deg,#f2f4fb,#e6e9fa); min-height:30px; display:flex; align-items:center; justify-content:center; text-align:center; box-shadow:0 1px 3px rgba(26,35,126,.12); }
+    .flag-empty { color:#999; font-style:italic; font-weight:400; border-color:#ccc; background:#fafafa; box-shadow:none; }
+
+    .sheet-title { text-align:center; margin:16px 0 12px; letter-spacing:.4px; position:relative; padding:2px 0 12px; }
+    .sheet-title .brand-name { display:block; font-weight:800; font-size:2.1rem; letter-spacing:2px; color:#1a237e; background:none !important; -webkit-background-clip:unset !important; background-clip:unset !important; -webkit-text-fill-color:#1a237e !important; }
+    .sheet-title .brand-sub { display:block; font-weight:700; font-size:.95rem; letter-spacing:6px; color:#d4af37; margin-top:2px; text-transform:uppercase; }
+    .sheet-title::after { content:""; position:absolute; left:50%; bottom:0; transform:translateX(-50%); width:100px; height:2px; border-radius:2px; background:#d4af37; }
+
+    .company-logo-top { position:absolute; top:18px; left:28px; width:150px; min-height:72px; border:none; border-radius:0; background:transparent; display:flex; align-items:center; justify-content:center; text-align:center; padding:4px; cursor:pointer; overflow:hidden; z-index:2; }
+    .company-logo-top.drag { background:#f0f2fa; border:1.5px dashed #3949ab; border-radius:6px; }
+    .company-logo-top img { width:100%; height:100%; max-height:72px; object-fit:contain; display:block; }
+    .company-logo-placeholder { font-size:.78rem; font-weight:700; color:#5c6bc0; line-height:1.35; }
+    .company-logo-placeholder span { font-size:.58rem; font-weight:500; color:#8388a8; }
+
+    .vector-specs { margin:8px 0 10px; display:block; }
+    .logo-specs-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; align-items:start; }
+    .stripe-specs-stack { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:10px; align-items:start; }
+
+    .vector-specs.kind-single .logo-specs-grid { grid-template-columns:minmax(0,1fr); max-width:240px; }
+    .vector-specs.kind-single .stripe-specs-stack { display:none; }
+
+    .vector-specs.kind-combo { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; align-items:start; }
+    .vector-specs.kind-combo .logo-specs-grid { grid-template-columns:minmax(0,1fr); }
+    .vector-specs.kind-combo .stripe-specs-stack { grid-template-columns:minmax(0,1fr); margin-top:0; }
+
+    .vector-specs.kind-kit .logo-specs-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .vector-specs.kind-kit .stripe-specs-stack { grid-template-columns:repeat(2,minmax(0,1fr)); width:100%; margin:10px 0 0; gap:12px; }
+    .vector-card { border:1.5px solid #2a2f45; border-top:3px solid #d4af37; border-radius:8px; padding:8px 10px 9px; background:linear-gradient(180deg,#ffffff,#fbfbfd); min-width:0; overflow:hidden; box-shadow:0 2px 8px rgba(20,25,60,.10); }
+    .vector-card .v-art { height:104px; display:flex; align-items:center; justify-content:center; overflow:visible; position:relative; }
+    .logo-card-body { display:block; width:100%; }
+    .logo-card-body .v-art { width:100%; min-width:0; }
+    .logo-card .v-art { height:90px; }
+    .logo-card .v-art svg { max-height:72px !important; }
+    .vector-card .v-art svg { display:block; max-width:86%; max-height:96px; width:auto; height:auto; }
+    .vector-card .v-meta { display:flex; flex-wrap:wrap; justify-content:center; gap:4px; margin-top:4px; }
+
+    .dim-wrap { position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:visible; }
+    .logo-art-inner { align-items:center; justify-content:center; padding:4px 0; }
+    .logo-dim-svg { width:82%; height:100%; position:absolute; inset:0; margin:auto; pointer-events:none; overflow:visible; }
+    .vector-card .v-art svg.logo-dim-svg { max-width:none !important; max-height:none !important; width:82% !important; height:100% !important; }
+    .logo-dim-svg .dim-line, .stripe-combined-svg .dim-line { stroke:#e60012; stroke-width:2.2; fill:none; }
+    .logo-dim-svg .dim-text, .stripe-combined-svg .dim-text { fill:#111; font-family:Arial,sans-serif; font-weight:700; font-size:18px; }
+    .vector-card:not(.logo-card) .v-art { height:130px; }
+    .stripe-art-host { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+    .stripe-combined-svg { width:100%; height:100%; display:block; overflow:visible; }
+    .stripe-combined-svg .dim-text-side { font-size:15px; }
+    .logo-dim-svg .dim-line-black, .stripe-combined-svg .dim-line-black { stroke:#1a1a1a; stroke-width:2.4; fill:none; }
+    .logo-dim-svg .dim-text-big, .stripe-combined-svg .dim-text-big { fill:#1a1a1a; font-family:Arial,sans-serif; font-weight:800; font-size:20px; }
+    .stripe-combined-svg .dim-text-side { fill:#1a1a1a; font-family:Arial,sans-serif; font-weight:800; font-size:16px; }
+    .dim-label { font-size:11px; font-weight:700; fill:#111; }
+    .logo-dim-label { position:absolute; left:0; right:0; bottom:4px; text-align:center; font-family:Arial,sans-serif; font-weight:800; font-size:13px; color:#1a1a1a; pointer-events:none; white-space:nowrap; }
+    .vector-tag { border:1px solid #c3c8de; border-radius:12px; padding:2.5px 8px; font-size:.66rem; font-weight:700; color:#2a2f45; background:linear-gradient(180deg,#f6f7fb,#eceefb); }
+    .vector-tag .mini-swatch { width:12px; height:12px; display:inline-block; vertical-align:-2px; border:1px solid #555; border-radius:2px; margin-right:3px; }
+
+    .variant-item { border:1px solid #cbd5e1; border-radius:8px; padding:9px; margin-top:8px; background:#fafbfc; position:relative; }
+    .variant-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px; }
+    .variant-title { font-size:.74rem; font-weight:800; color:#333; text-transform:uppercase; letter-spacing:.3px; }
+    .btn-add { background:#3949ab; margin-top:9px; }
+    .btn-add:hover { background:#283593; }
+    .btn-remove { width:auto; margin:0; padding:4px 7px; font-size:.72rem; background:#c8102e; border-radius:5px; }
+    .btn-remove:hover { background:#96061e; }
+    .variant-item .row2 { margin-top:2px; }
+    .variant-item label { margin-top:7px; }
+    .variant-item select, .variant-item input { min-width:0; }
+    .vector-card.variant-card { position:relative; }
+    .variant-number { display:none; }
+    .vector-note { display:none; }
+    @media (max-width:650px){ .logo-specs-grid{grid-template-columns:1fr;} }
+
+    .diagram-area { border:1px solid #ccc; border-radius:6px; padding:8px; margin-top:6px; min-height:0; display:none; align-items:center; justify-content:center; position:relative; background:#fdfdfd; }
+    .diagram-area img { max-width:100%; max-height:360px; object-fit:contain; }
+    .diagram-placeholder { text-align:center; color:#9aa0a6; font-size:.85rem; padding:30px; }
+    .diagram-placeholder .icon { font-size:2.2rem; margin-bottom:8px; }
+
+    .cb-row { display:flex; justify-content:space-between; align-items:flex-end; margin-top:16px; font-size:.75rem; }
+    .cb-row .cell { text-align:center; flex:1; }
+    .cb-row .line { border-top:1px solid #333; margin-top:24px; padding-top:4px; font-weight:700; }
+    .cb-row input { border:none; border-bottom:1px solid #333; text-align:center; font-size:.8rem; width:90%; font-weight:700; }
+
+    /* ---------- Print / PDF export mode ---------- */
+    body.print-mode { background:#fff; }
+    body.print-mode * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+    body.print-mode .panel, body.print-mode .library-panel, body.print-mode .no-print { display:none !important; }
+    body.print-mode .wrap { display:block; gap:0; }
+    body.print-mode .sheet-outer { min-width:0; display:block; }
+    body.print-mode .sheet {
+        box-shadow:none; border:none; border-radius:0;
+        width:794px; height:1123px; min-height:1123px; max-height:1123px;
+        margin:0 auto; padding:0 24px 18px;
+        display:flex; flex-direction:column; overflow:hidden;
+    }
+    body.print-mode .sheet::before { height:3px; margin:0 -24px 8px; flex-shrink:0; background:#ffffff; }
+    body.print-mode .sheet-title { margin:6px 0 6px; padding-bottom:6px; flex-shrink:0; }
+    body.print-mode .sheet-title .brand-name { font-size:1.65rem; }
+    body.print-mode .head-table { flex-shrink:0; }
+    body.print-mode .head-table td { padding:4px 9px; }
+    body.print-mode .flag-row { margin:6px 0; gap:5px; flex-shrink:0; }
+    body.print-mode .flag { min-height:22px; padding:4px 7px; font-size:.64rem; }
+    body.print-mode .vector-specs { margin:4px 0 6px; flex-shrink:0; }
+    body.print-mode .logo-specs-grid, body.print-mode .stripe-specs-stack { gap:6px; }
+    body.print-mode .vector-card { padding:5px 7px 6px; }
+    body.print-mode .logo-card .v-art { height:80px; }
+    body.print-mode .logo-card .v-art svg { max-height:64px !important; }
+    body.print-mode .company-logo-top { top:10px; left:24px; width:110px; min-height:50px; }
+    body.print-mode .company-logo-top img { max-height:50px; }
+    body.print-mode .company-logo-placeholder { font-size:.62rem; }
+    body.print-mode .company-logo-placeholder span { display:none; }
+    body.print-mode .vector-card:not(.logo-card) .v-art { height:100px; }
+    body.print-mode .vector-specs.kind-kit .stripe-specs-stack { width:100%; gap:8px; }
+    body.print-mode .diagram-area { min-height:0; padding:5px; margin-top:4px; flex:1 1 auto; display:flex !important; align-items:center; justify-content:center; }
+    body.print-mode .diagram-area img { max-height:100%; max-width:100%; }
+    body.print-mode .cb-row { margin-top:auto; margin-bottom:0; padding-top:8px; flex-shrink:0; }
+    body.print-mode .cb-row .line { margin-top:14px; }
+    @media print {
+        body { margin:0; }
+        @page { size:A4; margin:0; }
+    }
+    @media (max-width:1200px){
+        .wrap{flex-wrap:wrap; justify-content:center;}
+        .panel, .library-panel{position:static; width:100%; max-width:360px;}
+        .sheet{width:100%;}
+    }
+    
+    /* ---------- General beautification polish ---------- */
+    body { background:
+        radial-gradient(circle at 12% -6%, #eef1fd 0%, transparent 42%),
+        radial-gradient(circle at 100% 0%, #fdf6e3 0%, transparent 38%),
+        linear-gradient(160deg,#eef1fb 0%,#e3e7f5 45%,#dde1f2 100%);
+        min-height:100vh;
+    }
+    .panel, .library-panel { transition: box-shadow .2s ease; }
+    .panel:hover, .library-panel:hover { box-shadow:0 8px 28px rgba(20,25,60,.10); }
+    .panel h2, .library-panel h2 { position:relative; }
+    .panel::-webkit-scrollbar, .library-panel::-webkit-scrollbar { width:8px; }
+    .panel::-webkit-scrollbar-track, .library-panel::-webkit-scrollbar-track { background:transparent; }
+    .panel::-webkit-scrollbar-thumb, .library-panel::-webkit-scrollbar-thumb { background:#c5cae9; border-radius:8px; }
+    .panel::-webkit-scrollbar-thumb:hover, .library-panel::-webkit-scrollbar-thumb:hover { background:#9fa8da; }
+
+    .btn { position:relative; letter-spacing:.2px; box-shadow:0 2px 6px rgba(20,25,60,.12); }
+    .btn:hover { box-shadow:0 4px 12px rgba(20,25,60,.18); transform:translateY(-1px); }
+    .btn:active { transform:translateY(0) scale(0.98); box-shadow:0 1px 3px rgba(20,25,60,.12); }
+    .btn-add:hover, .btn-print:hover, .btn-clear:hover { transform:translateY(-1px); }
+
+    .variant-item, #articleResults > div, .thumb, .drop-zone {
+        transition: box-shadow .15s ease, border-color .15s ease, transform .1s ease;
+    }
+    .variant-item:hover { box-shadow:0 3px 10px rgba(20,25,60,.08); border-color:#b6bede; }
+    .drop-zone:hover { border-color:#5c6bc0; box-shadow:0 2px 10px rgba(63,81,181,.10); }
+    .vector-card { transition: box-shadow .15s ease, transform .15s ease; }
+    .vector-card:hover { box-shadow:0 5px 16px rgba(20,25,60,.16); transform:translateY(-1px); }
+
+    /* Keyboard-shortcut "keycap" badge */
+    .shortcut-hint {
+        font-size:.62rem; background:#eef0f8; color:#37415c; padding:2px 7px; border-radius:5px;
+        font-weight:700; float:right; font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+        border:1px solid rgba(0,0,0,.12); box-shadow:0 1px 0 rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.5);
+        letter-spacing:.2px;
+    }
+
+    /* ---------- Toasts ---------- */
+    #toastHost { position:fixed; right:18px; bottom:18px; z-index:9999; display:flex; flex-direction:column; gap:10px; max-width:340px; }
+    .toast {
+        display:flex; align-items:flex-start; gap:8px; background:#1a237e; color:#fff; padding:11px 14px;
+        border-radius:10px; font-size:.82rem; font-weight:600; box-shadow:0 8px 24px rgba(20,25,60,.28);
+        opacity:0; transform:translateY(12px) scale(.97); transition:opacity .22s ease, transform .22s ease;
+        line-height:1.4;
+    }
+    .toast.show { opacity:1; transform:translateY(0) scale(1); }
+    .toast-icon { flex-shrink:0; width:20px; height:20px; border-radius:50%; background:rgba(255,255,255,.18);
+        display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:800; }
+    .toast-success { background:#1b5e20; }
+    .toast-error { background:#a91d35; }
+    .toast-warn { background:#8a5a00; }
+    .toast-info { background:#1a237e; }
+
+    /* ---------- Modal (confirm + shortcuts) ---------- */
+    .modal-overlay {
+        position:fixed; inset:0; background:rgba(15,18,38,.45); backdrop-filter:blur(2px);
+        display:flex; align-items:center; justify-content:center; z-index:10000;
+        opacity:0; pointer-events:none; transition:opacity .18s ease;
+    }
+    .modal-overlay.show { opacity:1; pointer-events:auto; }
+    .modal-box {
+        background:#fff; border-radius:14px; padding:22px 24px; width:min(90vw, 380px);
+        box-shadow:0 24px 60px rgba(10,12,30,.35); transform:translateY(8px) scale(.98);
+        transition:transform .18s ease;
+    }
+    .modal-overlay.show .modal-box { transform:translateY(0) scale(1); }
+    .modal-title { font-family:'Poppins','Segoe UI',sans-serif; font-weight:800; font-size:1.05rem; color:#1a237e; margin-bottom:10px; }
+    .modal-msg { font-size:.88rem; color:#333; line-height:1.5; margin-bottom:18px; }
+    .modal-actions { display:flex; gap:10px; }
+    .modal-actions .btn { margin-top:0; flex:1; }
+    .shortcuts-box { width:min(90vw, 420px); }
+    .shortcuts-list { display:flex; flex-direction:column; gap:8px; margin-bottom:18px; }
+    .shortcut-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:7px 10px; background:#f5f6fb; border-radius:8px; border:1px solid #e6e9f5; }
+    .shortcut-row .key-cap {
+        font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; font-size:.72rem; font-weight:700;
+        color:#1a237e; background:#fff; border:1px solid #c5cae9; border-radius:6px; padding:4px 8px;
+        box-shadow:0 1px 0 #c5cae9, inset 0 1px 0 #fff; white-space:nowrap;
+    }
+    .shortcut-row .shortcut-label { font-size:.82rem; color:#333; font-weight:600; text-align:right; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+    <!-- ===================== CONTROL PANEL ===================== -->
+    <div class="panel no-print">
+        <h2>📋 Order Details</h2>
+        <div class="row2">
+            <div><label>Customer</label><input type="text" id="customer" value="Addidas"></div>
+            <div><label>Ex Factory</label><input type="text" id="exFactory" value="2026"></div>
+        </div>
+        <div class="row2">
+            <div><label>P.I. #</label>
+                <div style="display:flex;align-items:center;gap:0;border:1.5px solid #cbd5e1;border-radius:6px;overflow:hidden;background:#fff;">
+                    <span style="padding:8px 6px 8px 10px;font-weight:800;color:#1a237e;background:#eef0f8;border-right:1px solid #ddd;font-size:.95rem;">E</span>
+                    <input type="text" id="piNo" value="3771" style="border:none;padding:8px 10px;width:100%;font-size:.9rem;outline:none;" inputmode="numeric" placeholder="3771">
+                </div>
+            </div>
+            <div style="position:relative;">
+                <label>Cust Art #</label>
+                <input type="text" id="custArt" value="J-IJF3SMU" autocomplete="off" oninput="onCustArtInput(this.value)" onfocus="onCustArtInput(this.value)">
+                <div id="custArtSuggest" style="display:none;position:absolute;left:0;right:0;top:100%;z-index:50;background:#fff;border:1.5px solid #c5cae9;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.12);max-height:200px;overflow-y:auto;"></div>
+            </div>
+        </div>
+
+        <button type="button" class="btn" style="margin-top:12px;background:#2e7d32;" onclick="newOrder()">New Order</button>
+
+        <hr class="sep">
+        <h2>📄 Order Pages</h2>
+        <div class="order-kind-help" style="margin-bottom:6px;">Same order, different articles. Har page ka apna Cust Art # + layout.</div>
+        <div id="pageTabs" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+        <div class="row2">
+            <button type="button" class="btn btn-add" style="margin-top:0;flex:1;" onclick="addPage()">+ Add</button>
+            <button type="button" class="btn btn-add" style="margin-top:0;flex:1;background:#6a1b9a;" onclick="duplicatePage()">Dup</button>
+            <button type="button" class="btn btn-remove" style="margin-top:0;flex:1;width:auto;" id="removePageBtn" onclick="removeCurrentPage()">X</button>
+        </div>
+        <div class="preset-badge" id="pageBadge" style="margin-top:8px;">Page 1 of 1</div>
+
+        <hr class="sep">
+        <h2>🧩 Order Kind</h2>
+        <div class="order-kind-box">
+            <label for="orderKind">Choose layout for this order</label>
+            <select id="orderKind" onchange="applyOrderKind(this.value)">
+                <option value="single">Single Logo — 1 Logo</option>
+                <option value="combo">Logo + Stripe — 1 Logo + 1 Stripe</option>
+                <option value="kit1" selected>Kit 1 — 3 Logos + 2 Stripes</option>
+                <option value="kit2">Kit 2 — 3 Logos + 2 Stripes</option>
+            </select>
+            <div class="preset-badge" id="orderKindBadge">3 Logos • 2 Stripes</div>
+            <div class="order-kind-help">Select the order type and the spec-sheet layout/counts will switch automatically.<br>Kit 1 defaults: Logo1 Red · Logo2 Blue · Logo3 Black · Stripe1 Red · Stripe2 Blue.<br>Kit 2 defaults: Logo1 Red · Logo2 Blue · Logo3 White · Stripe1 Red · Stripe2 Blue.<br>Logo1 / Stripe1 size is the master for all logos/stripes. Colors and sizes can still be changed manually — re-selecting a Kit restores its defaults.</div>
+        </div>
+
+        <hr class="sep">
+        <h2 style="cursor:pointer;user-select:none;" onclick="toggleSection('placementsBody', this)">Placements <span style="float:right;font-size:.85rem;">▼</span></h2>
+        <div id="placementsBody">
+            <div class="chk-list">
+                <label class="chk-item"><input type="checkbox" id="pLogoFront" checked> Logo on Jacket Front</label>
+                <label class="chk-item"><input type="checkbox" id="pLogoBack" checked> Logo on Jacket Back</label>
+                <label class="chk-item"><input type="checkbox" id="pLogoPant" checked> Logo on Pant</label>
+                <label class="chk-item"><input type="checkbox" id="pLogoShoulder" checked> Logo on Shoulder</label>
+                <label class="chk-item"><input type="checkbox" id="pStripesShoulder" checked> Stripes on Shoulders</label>
+            </div>
+            <label>Placement Notes (free text)</label>
+            <input type="text" id="placementNotes" placeholder="e.g. Logo centered 20mm below collar">
+        </div>
+
+        <hr class="sep">
+        <h2 id="stripeHeading" style="cursor:pointer;user-select:none;" onclick="toggleSection('stripeBody', this)">Stripes <span id="stripeToggleIcon" style="float:right;font-size:.85rem;">▼</span></h2>
+        <div id="stripeBody">
+            <div id="stripeVariants"></div>
+            <button type="button" class="btn btn-add" id="addStripeBtn" onclick="addStripeVariant()">+ Add More Stripe</button>
+        </div>
+
+        <hr class="sep">
+        <h2 style="cursor:pointer;user-select:none;" onclick="toggleSection('logoBody', this)">Logo <span id="logoToggleIcon" style="float:right;font-size:.85rem;">▼</span></h2>
+        <div id="logoBody">
+            <div id="logoVariants"></div>
+            <button type="button" class="btn btn-add" onclick="addLogoVariant()">+ Add More Logo</button>
+        </div>
+
+        <hr class="sep">
+        <h2>🖼 Garment Image <span style="font-weight:400;text-transform:none;">(replaces sheet diagram)</span></h2>
+        <div class="drop-zone main-drop" id="mainDropZone">
+            Drag & drop, click to browse,<br>or paste (Ctrl+V) the garment image
+            <input type="file" id="mainFileInput" accept="image/*" style="display:none;">
+        </div>
+        <div class="thumb-row" id="mainThumbRow"></div>
+
+        <hr class="sep">
+        <h2 style="cursor:pointer;user-select:none;" onclick="toggleSection('signoffBody', this)">Sign-off <span style="float:right;font-size:.85rem;">▼</span></h2>
+        <div id="signoffBody">
+            <div class="row2">
+                <div><label>Prepared By</label><input type="text" id="preparedBy" value="Haider"></div>
+                <div><label>Checked By</label><input type="text" id="checkedBy" value="Ayoub"></div>
+            </div>
+            <div class="row2">
+                <div><label>Verified By</label><input type="text" id="verifiedBy" value="Hassan Javed"></div>
+                <div><label>Over All Checked By</label><input type="text" id="overallBy" value="Qasim Shah"></div>
+            </div>
+        </div>
+
+        <button class="btn" onclick="updateSheet()">Update Sheet</button>
+        <button class="btn btn-print" id="exportPdfBtn" onclick="exportPDF()">Export PDF</button>
+        <button class="btn btn-print" style="background:#1565c0; margin-top:8px;" onclick="saveCurrentArticle()">Save Order <span class="shortcut-hint" style="background:#0d47a1;color:#fff;">Ctrl+S</span></button>
+        <button type="button" class="btn" style="background:#5c6bc0;margin-top:8px;" onclick="handleUndo()">Undo <span class="shortcut-hint" style="background:#3949ab;color:#fff;">Ctrl+Z</span></button>
+        <button class="btn btn-clear" onclick="clearMainImage()">Clear Garment Image</button>
+        <button type="button" class="btn" style="background:#37474f;margin-top:8px;" onclick="openShortcutsModal()">⌨️ Keyboard Shortcuts</button>
+    </div>
+
+    <!-- ===================== ARTICLE LIBRARY (side panel) ===================== -->
+    <div class="library-panel no-print">
+        <h2>Article Library</h2>
+        <div class="lib-help">Search or browse saved Cust Art #. Click any result to load logos, stripes & layout on the current page.</div>
+        <div id="recentArticles"></div>
+        <input type="text" id="articleSearch" placeholder="Search Cust Art # e.g. JT275" oninput="searchArticles(this.value)">
+        <div id="articleResults"></div>
+        <div class="lib-actions">
+            <button type="button" class="btn" style="background:#455a64;" onclick="saveCurrentArticle()">Save</button>
+            <button type="button" class="btn" style="background:#546e7a;" onclick="exportArticleLibrary()">JSON</button>
+            <button type="button" class="btn" style="background:#546e7a;" onclick="document.getElementById('importLibraryInput').click()">Import</button>
+        </div>
+        <input type="file" id="importLibraryInput" accept=".json,application/json" style="display:none;" onchange="importArticleLibrary(event)">
+        <button type="button" class="btn" style="margin-top:8px;background:#5c6bc0;font-size:.8rem;padding:8px;" onclick="searchArticles('')">Show All Articles</button>
+    </div>
+
+    <!-- ===================== SPEC SHEET ===================== -->
+    <div class="sheet-outer">
+        <div class="sheet" id="sheet">
+            <div class="company-logo-top" id="logoDropZone">
+                <input type="file" id="logoFileInput" accept="image/*" style="display:none;">
+                <div class="company-logo-placeholder">Company Logo<br><span>Drag & drop / click / Ctrl+V</span></div>
+            </div>
+            <div class="sheet-title"><span class="brand-name">OUTMAKER</span><span class="brand-sub">Spec Sheet</span></div>
+            <table class="head-table">
+                <tr>
+                    <td class="lbl">Customer:</td>
+                    <td id="outCustomer"></td>
+                    <td class="lbl">Ex Factory:</td>
+                    <td id="outExFactory"></td>
+                </tr>
+                <tr>
+                    <td class="lbl">P.I. #</td>
+                    <td id="outPiNo"></td>
+                    <td class="lbl">Cust Art #</td>
+                    <td id="outCustArt"></td>
+                </tr>
+            </table>
+
+            <div class="flag-row" id="flagRow"></div>
+            <div id="notesRow" style="font-size:.75rem;margin-bottom:6px;"></div>
+
+<div style="display:none" aria-hidden="true"><svg id="logoVectorTemplate" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 992.54 624.74" aria-label="Embedded logo vector">
+
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#373435;stroke-width:7.16;stroke-miterlimit:17}
+    .fil0 {fill:url(#logo_id0);fill-rule:nonzero}
+    .fil1 {fill:url(#logo_id1);fill-rule:nonzero}
+    .fil2 {fill:url(#logo_id2);fill-rule:nonzero}
+   ]]>
+  </style>
+  <linearGradient id="logo_id0" gradientUnits="userSpaceOnUse" x1="440.03" y1="313.01" x2="986.29" y2="313.01">
+   <stop offset="0" style="stop-opacity:1; stop-color:#F3DBA3"/>
+   <stop offset="0.0627451" style="stop-opacity:1; stop-color:#C2AD7A"/>
+   <stop offset="0.129412" style="stop-opacity:1; stop-color:#907E51"/>
+   <stop offset="0.184314" style="stop-opacity:1; stop-color:#AD996D"/>
+   <stop offset="0.270588" style="stop-opacity:1; stop-color:#CBB589"/>
+   <stop offset="0.345098" style="stop-opacity:1; stop-color:#DCC69A"/>
+   <stop offset="0.4" style="stop-opacity:1; stop-color:#EDD7AB"/>
+   <stop offset="0.533333" style="stop-opacity:1; stop-color:#E5D0A1"/>
+   <stop offset="0.541176" style="stop-opacity:1; stop-color:#DDC897"/>
+   <stop offset="0.631373" style="stop-opacity:1; stop-color:#E5CFA1"/>
+   <stop offset="0.701961" style="stop-opacity:1; stop-color:#EDD7AB"/>
+   <stop offset="0.752941" style="stop-opacity:1; stop-color:#DCC69A"/>
+   <stop offset="0.839216" style="stop-opacity:1; stop-color:#CBB589"/>
+   <stop offset="0.917647" style="stop-opacity:1; stop-color:#AA9770"/>
+   <stop offset="1" style="stop-opacity:1; stop-color:#897956"/>
+  </linearGradient>
+  <linearGradient id="logo_id1" gradientUnits="userSpaceOnUse" xlink:href="#logo_id0" x1="222.19" y1="417.8" x2="647.47" y2="417.8">
+  </linearGradient>
+  <linearGradient id="logo_id2" gradientUnits="userSpaceOnUse" xlink:href="#logo_id0" x1="4.89" y1="522.8" x2="308.93" y2="522.8">
+  </linearGradient>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <polygon class="fil0 str0" points="986.33,621.16 630.54,4.89 440.03,114.88 732.34,621.16 "/>
+  <polygon class="fil1 str0" points="647.5,621.16 412.7,214.47 222.2,324.45 393.5,621.16 "/>
+  <polygon class="fil2 str0" points="308.95,621.16 195.39,424.46 4.89,534.45 54.96,621.16 "/>
+ </g>
+
+                        </svg><svg id="stripeVectorTemplate" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 401.17 140.52" aria-label="Embedded stripe vector">
+
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .str0 {stroke:#373435;stroke-width:1.55;stroke-miterlimit:17}
+    .fil2 {fill:url(#stripe_id0);fill-rule:nonzero}
+    .fil0 {fill:url(#stripe_id1);fill-rule:nonzero}
+    .fil1 {fill:url(#stripe_id2);fill-rule:nonzero}
+   ]]>
+  </style>
+  <linearGradient id="stripe_id0" gradientUnits="userSpaceOnUse" x1="0.77" y1="122.37" x2="400.37" y2="122.37">
+   <stop offset="0" style="stop-opacity:1; stop-color:#F3DBA3"/>
+   <stop offset="0.0627451" style="stop-opacity:1; stop-color:#C2AD7A"/>
+   <stop offset="0.129412" style="stop-opacity:1; stop-color:#907E51"/>
+   <stop offset="0.184314" style="stop-opacity:1; stop-color:#AD996D"/>
+   <stop offset="0.270588" style="stop-opacity:1; stop-color:#CBB589"/>
+   <stop offset="0.345098" style="stop-opacity:1; stop-color:#DCC69A"/>
+   <stop offset="0.4" style="stop-opacity:1; stop-color:#EDD7AB"/>
+   <stop offset="0.533333" style="stop-opacity:1; stop-color:#E5D0A1"/>
+   <stop offset="0.541176" style="stop-opacity:1; stop-color:#DDC897"/>
+   <stop offset="0.631373" style="stop-opacity:1; stop-color:#E5CFA1"/>
+   <stop offset="0.701961" style="stop-opacity:1; stop-color:#EDD7AB"/>
+   <stop offset="0.752941" style="stop-opacity:1; stop-color:#DCC69A"/>
+   <stop offset="0.839216" style="stop-opacity:1; stop-color:#CBB589"/>
+   <stop offset="0.917647" style="stop-opacity:1; stop-color:#AA9770"/>
+   <stop offset="1" style="stop-opacity:1; stop-color:#897956"/>
+  </linearGradient>
+  <linearGradient id="stripe_id1" gradientUnits="userSpaceOnUse" xlink:href="#stripe_id0" x1="0.77" y1="18.15" x2="400.37" y2="18.15">
+  </linearGradient>
+  <linearGradient id="stripe_id2" gradientUnits="userSpaceOnUse" xlink:href="#stripe_id0" x1="0.77" y1="70.26" x2="400.37" y2="70.26">
+  </linearGradient>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <polygon class="fil0 str0" points="400.4,35.52 0.78,35.52 0.78,0.78 400.4,0.78 "/>
+  <polygon class="fil1 str0" points="400.4,87.63 0.78,87.63 0.78,52.89 400.4,52.89 "/>
+  <polygon class="fil2 str0" points="400.4,139.74 0.78,139.74 0.78,105 400.4,105 "/>
+ </g>
+
+                        </svg></div>
+
+            <div class="vector-specs" id="vectorSpecs">
+                <div class="logo-specs-grid" id="logoSpecsGrid"></div>
+                <div class="stripe-specs-stack" id="stripeSpecsStack"></div>
+            </div>
+
+            <div class="diagram-area" id="diagramArea">
+                <div class="diagram-placeholder" id="diagramPlaceholder">
+                    <div class="icon">🖼️</div>
+                    Drop / paste / upload the garment image<br>using the panel on the left
+                </div>
+                <img id="mainGarmentImg" style="display:none;" alt="garment">
+            </div>
+
+            <div class="cb-row">
+                <div class="cell"><div class="line">Prepared By</div><span id="outPreparedBy"></span></div>
+                <div class="cell"><div class="line">Checked By</div><span id="outCheckedBy"></span></div>
+                <div class="cell"><div class="line">Verified By</div><span id="outVerifiedBy"></span></div>
+                <div class="cell"><div class="line">Over All Checked By</div><span id="outOverallBy"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let mainImage = null;    
+let logoImage = null;    
+let pasteTarget = null;  
+
+let pages = [];
+let currentPageIndex = 0;
+
+// History Stack for Undo (Ctrl+Z)
+let undoStack = [];
+const MAX_HISTORY = 20;
+
+function pushStateToHistory() {
+    saveCurrentPage();
+    const currentState = {
+        pages: JSON.parse(JSON.stringify(pages)),
+        currentPageIndex: currentPageIndex,
+        customer: document.getElementById('customer').value,
+        exFactory: document.getElementById('exFactory').value,
+        piNo: document.getElementById('piNo').value,
+        preparedBy: document.getElementById('preparedBy').value,
+        checkedBy: document.getElementById('checkedBy').value,
+        verifiedBy: document.getElementById('verifiedBy').value,
+        overallBy: document.getElementById('overallBy').value
+    };
+    undoStack.push(currentState);
+    if (undoStack.length > MAX_HISTORY) {
+        undoStack.shift();
+    }
+}
+
+function handleUndo() {
+    if (undoStack.length === 0) {
+        console.log("Nothing to undo");
+        return;
+    }
+    const previousState = undoStack.pop();
+    pages = previousState.pages;
+    currentPageIndex = Math.min(previousState.currentPageIndex, pages.length - 1);
+    
+    document.getElementById('customer').value = previousState.customer;
+    document.getElementById('exFactory').value = previousState.exFactory;
+    document.getElementById('piNo').value = previousState.piNo;
+    document.getElementById('preparedBy').value = previousState.preparedBy;
+    document.getElementById('checkedBy').value = previousState.checkedBy;
+    document.getElementById('verifiedBy').value = previousState.verifiedBy;
+    document.getElementById('overallBy').value = previousState.overallBy;
+
+    loadPage(currentPageIndex);
+}
+
+/* =========================================================
+   Toast + Confirm modal (replaces jarring native alert/confirm)
+   ========================================================= */
+function toast(message, type){
+    type = type || 'info';
+    let host = document.getElementById('toastHost');
+    if(!host){
+        host = document.createElement('div');
+        host.id = 'toastHost';
+        host.className = 'no-print';
+        document.body.appendChild(host);
+    }
+    const el = document.createElement('div');
+    el.className = 'toast toast-' + type;
+    const icon = type === 'success' ? '✓' : type === 'error' ? '✕' : type === 'warn' ? '!' : 'ℹ';
+    el.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-msg"></span>`;
+    el.querySelector('.toast-msg').textContent = message;
+    host.appendChild(el);
+    requestAnimationFrame(()=> el.classList.add('show'));
+    setTimeout(()=>{
+        el.classList.remove('show');
+        setTimeout(()=> el.remove(), 250);
+    }, 3400);
+}
+
+function showConfirm(message, opts){
+    opts = opts || {};
+    return new Promise(resolve => {
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay no-print';
+        overlay.innerHTML = `
+            <div class="modal-box">
+                <div class="modal-title">${opts.title || 'Please confirm'}</div>
+                <div class="modal-msg"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn modal-btn-cancel" style="background:#eceef3;color:#333;">${opts.cancelLabel || 'Cancel'}</button>
+                    <button type="button" class="btn modal-btn-ok" style="background:#1a237e;">${opts.okLabel || 'Confirm'}</button>
+                </div>
+            </div>`;
+        overlay.querySelector('.modal-msg').textContent = message;
+        document.body.appendChild(overlay);
+        requestAnimationFrame(()=> overlay.classList.add('show'));
+        function close(result){
+            overlay.classList.remove('show');
+            setTimeout(()=> overlay.remove(), 180);
+            resolve(result);
+        }
+        overlay.querySelector('.modal-btn-cancel').onclick = ()=> close(false);
+        overlay.querySelector('.modal-btn-ok').onclick = ()=> close(true);
+        overlay.addEventListener('click', e=>{ if(e.target === overlay) close(false); });
+    });
+}
+
+/* =========================================================
+   Keyboard Shortcuts
+   NOTE: Ctrl+N / Ctrl+T / Ctrl+W etc. are reserved by every
+   browser at the OS/UI level and can never be intercepted by
+   a webpage (this is a browser security rule, not a bug in
+   this file) — that's why Ctrl+N was opening a new window
+   instead of a New Order. All shortcuts below use Ctrl+Alt+
+   combinations, which browsers do not reserve, so they work
+   reliably. Press Ctrl+Alt+K any time to see this list again.
+   ========================================================= */
+const SHORTCUT_LIST = [
+    { keys: 'Ctrl + S',       label: 'Save Order' },
+    { keys: 'Ctrl + Z',       label: 'Undo' },
+    { keys: 'Ctrl + V',       label: 'Paste image into drop zone' },
+    { keys: 'Ctrl + Alt + N', label: 'New Order' },
+    { keys: 'Ctrl + Alt + A', label: 'Add Page' },
+    { keys: 'Ctrl + Alt + D', label: 'Duplicate Page' },
+    { keys: 'Ctrl + Alt + E', label: 'Export PDF' },
+    { keys: 'Ctrl + Alt + K', label: 'Show this shortcuts list' }
+];
+
+function openShortcutsModal(){
+    let overlay = document.getElementById('shortcutsOverlay');
+    if(overlay){ overlay.classList.add('show'); return; }
+    overlay = document.createElement('div');
+    overlay.id = 'shortcutsOverlay';
+    overlay.className = 'modal-overlay no-print';
+    overlay.innerHTML = `
+        <div class="modal-box shortcuts-box">
+            <div class="modal-title">⌨️ Keyboard Shortcuts</div>
+            <div class="shortcuts-list">
+                ${SHORTCUT_LIST.map(s => `<div class="shortcut-row"><span class="key-cap">${s.keys}</span><span class="shortcut-label">${s.label}</span></div>`).join('')}
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn modal-btn-ok" style="background:#1a237e;">Got it</button>
+            </div>
+        </div>`;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(()=> overlay.classList.add('show'));
+    function close(){ overlay.classList.remove('show'); setTimeout(()=> overlay.remove(), 180); }
+    overlay.querySelector('.modal-btn-ok').onclick = close;
+    overlay.addEventListener('click', e=>{ if(e.target === overlay) close(); });
+}
+
+// Global Keyboard Shortcuts Listener — all app shortcuts use Ctrl+Alt
+// so they never collide with the browser's own reserved shortcuts.
+document.addEventListener('keydown', function(e) {
+    const tag = (e.target && e.target.tagName) || '';
+    const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+    // Plain Ctrl+Z: let native text-undo work while typing in a field;
+    // otherwise trigger the app's own undo history.
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'z') {
+        if (isTyping) return;
+        e.preventDefault();
+        handleUndo();
+        return;
+    }
+
+    // Plain Ctrl+S: save the current order instead of the browser's
+    // "Save Page" dialog.
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        saveCurrentArticle();
+        return;
+    }
+
+    if (!(e.ctrlKey || e.metaKey) || !e.altKey) return;
+
+    switch (e.key.toLowerCase()) {
+        case 'n':
+            e.preventDefault();
+            newOrder();
+            break;
+        case 'a':
+            e.preventDefault();
+            addPage();
+            break;
+        case 'd':
+            e.preventDefault();
+            duplicatePage();
+            break;
+        case 's':
+            e.preventDefault();
+            saveCurrentArticle();
+            break;
+        case 'e':
+            e.preventDefault();
+            exportPDF();
+            break;
+        case 'k':
+            e.preventDefault();
+            openShortcutsModal();
+            break;
+    }
+});
+
+function createEmptyPage(base){
+    return {
+        custArt: base?.custArt || '',
+        orderKind: base?.orderKind || 'single',
+        pLogoFront: base?.pLogoFront ?? false,
+        pLogoBack: base?.pLogoBack ?? true,
+        pLogoPant: base?.pLogoPant ?? true,
+        pLogoShoulder: base?.pLogoShoulder ?? false,
+        pStripesShoulder: base?.pStripesShoulder ?? false,
+        placementNotes: base?.placementNotes || '',
+        logoVariants: base?.logoVariants ? JSON.parse(JSON.stringify(base.logoVariants)) : [{color:'#d4af37', size:'65'}],
+        stripeVariants: base?.stripeVariants ? JSON.parse(JSON.stringify(base.stripeVariants)) : [],
+        mainImage: base?.mainImage || null
+    };
+}
+
+function saveCurrentPage(){
+    if(!pages.length) return;
+    const p = pages[currentPageIndex];
+    if(!p) return;
+    p.custArt = document.getElementById('custArt').value;
+    p.orderKind = document.getElementById('orderKind').value;
+    p.pLogoFront = document.getElementById('pLogoFront').checked;
+    p.pLogoBack = document.getElementById('pLogoBack').checked;
+    p.pLogoPant = document.getElementById('pLogoPant').checked;
+    p.pLogoShoulder = document.getElementById('pLogoShoulder').checked;
+    p.pStripesShoulder = document.getElementById('pStripesShoulder').checked;
+    p.placementNotes = document.getElementById('placementNotes').value;
+    p.logoVariants = JSON.parse(JSON.stringify(logoVariants));
+    p.stripeVariants = JSON.parse(JSON.stringify(stripeVariants));
+    p.mainImage = mainImage;
+}
+
+function loadPage(idx){
+    if(idx < 0 || idx >= pages.length) return;
+    currentPageIndex = idx;
+    const p = pages[idx];
+    document.getElementById('custArt').value = p.custArt || '';
+    document.getElementById('orderKind').value = p.orderKind || 'single';
+    document.getElementById('pLogoFront').checked = !!p.pLogoFront;
+    document.getElementById('pLogoBack').checked = !!p.pLogoBack;
+    document.getElementById('pLogoPant').checked = !!p.pLogoPant;
+    document.getElementById('pLogoShoulder').checked = !!p.pLogoShoulder;
+    document.getElementById('pStripesShoulder').checked = !!p.pStripesShoulder;
+    document.getElementById('placementNotes').value = p.placementNotes || '';
+    logoVariants = JSON.parse(JSON.stringify(p.logoVariants || [{color:'#d4af37', size:'65'}]));
+    stripeVariants = JSON.parse(JSON.stringify(p.stripeVariants || []));
+    mainImage = p.mainImage || null;
+    window.currentOrderKind = p.orderKind || 'single';
+
+    const kind = p.orderKind || 'single';
+    const badge = document.getElementById('orderKindBadge');
+    if(badge) badge.textContent = kind==='single' ? '1 Logo • 0 Stripes' : kind==='combo' ? '1 Logo • 1 Stripe' : '3 Logos • 2 Stripes';
+    const hideStripe = kind === 'single';
+    const stripeHeading = document.getElementById('stripeHeading');
+    const stripeBody = document.getElementById('stripeBody');
+    if(stripeHeading) stripeHeading.style.display = hideStripe ? 'none' : '';
+    if(stripeBody) stripeBody.style.display = hideStripe ? 'none' : '';
+
+    renderVariantControls();
+    renderMainThumb();
+    renderPageTabs();
+    updateSheet();
+}
+
+function renderPageTabs(){
+    const host = document.getElementById('pageTabs');
+    if(!host) return;
+    host.innerHTML = pages.map((p,i) => {
+        const label = (p.custArt || 'Page '+(i+1)).substring(0,14);
+        const active = i === currentPageIndex;
+        return `<button type="button" onclick="switchPage(${i})" style="
+            padding:6px 10px;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer;
+            border:1.5px solid ${active?'#1a237e':'#ccc'};
+            background:${active?'#1a237e':'#fff'};color:${active?'#fff':'#333'};
+        ">P${i+1}: ${label}</button>`;
+    }).join('');
+    const badge = document.getElementById('pageBadge');
+    if(badge) badge.textContent = `Page ${currentPageIndex+1} of ${pages.length}`;
+    const rm = document.getElementById('removePageBtn');
+    if(rm) rm.style.display = pages.length <= 1 ? 'none' : '';
+}
+
+function switchPage(idx){
+    if(idx === currentPageIndex) return;
+    pushStateToHistory();
+    saveCurrentPage();
+    loadPage(idx);
+}
+
+function addPage(){
+    pushStateToHistory();
+    saveCurrentPage();
+    const cur = pages[currentPageIndex] || createEmptyPage();
+    const np = createEmptyPage({
+        orderKind: cur.orderKind,
+        pLogoFront: cur.pLogoFront,
+        pLogoBack: cur.pLogoBack,
+        pLogoPant: cur.pLogoPant,
+        pLogoShoulder: cur.pLogoShoulder,
+        pStripesShoulder: cur.pStripesShoulder,
+        logoVariants: cur.logoVariants,
+        stripeVariants: cur.stripeVariants,
+        custArt: '',
+        mainImage: null
+    });
+    pages.push(np);
+    loadPage(pages.length - 1);
+}
+
+function removeCurrentPage(){
+    if(pages.length <= 1) return;
+    pushStateToHistory();
+    pages.splice(currentPageIndex, 1);
+    const next = Math.min(currentPageIndex, pages.length - 1);
+    loadPage(next);
+}
+
+function duplicatePage(){
+    pushStateToHistory();
+    saveCurrentPage();
+    const cur = pages[currentPageIndex];
+    if(!cur) return;
+    const copy = createEmptyPage(cur);
+    copy.custArt = (cur.custArt || '') + (cur.custArt ? '-copy' : '');
+    pages.splice(currentPageIndex + 1, 0, copy);
+    loadPage(currentPageIndex + 1);
+}
+
+async function newOrder(){
+    const ok = await showConfirm('Current pages clear ho jayengi. Customer / Sign-off / Company Logo same rahenge.', { title: 'Start a New Order?', okLabel: 'Yes, start new' });
+    if(!ok) return;
+    pushStateToHistory();
+    const piInput = document.getElementById('piNo');
+    if(piInput) piInput.value = '';
+    document.getElementById('custArt').value = '';
+    mainImage = null;
+    pages = [createEmptyPage({
+        custArt: '',
+        orderKind: 'kit1',
+        pLogoFront: true, pLogoBack: true, pLogoPant: true, pLogoShoulder: true, pStripesShoulder: true,
+        logoVariants: JSON.parse(JSON.stringify(KIT_PRESETS.kit1.logos.map(color => ({color, size:'65'})))),
+        stripeVariants: JSON.parse(JSON.stringify(KIT_PRESETS.kit1.stripes.map(color => ({color, size:'56', width:'14 mm', gap:'7 mm'}))))
+    })];
+    currentPageIndex = 0;
+    loadPage(0);
+    if(piInput) piInput.focus();
+}
+
+function toggleSection(bodyId, headingEl){
+    const body = document.getElementById(bodyId);
+    if(!body) return;
+    const open = body.style.display !== 'none';
+    body.style.display = open ? 'none' : '';
+    const icon = headingEl.querySelector('span');
+    if(icon) icon.textContent = open ? '▶' : '▼';
+}
+
+function getPiFull(){
+    const piInput = document.getElementById('piNo');
+    const v = (piInput?.value || '').replace(/^E/i,'').trim();
+    return v ? 'E' + v : '';
+}
+
+const ARTICLE_STORE_KEY = 'outmaker_article_library_v1';
+
+function loadArticleStore(){
+    try{
+        return JSON.parse(localStorage.getItem(ARTICLE_STORE_KEY) || '{}');
+    }catch(e){ return {}; }
+}
+function writeArticleStore(store){
+    try{ localStorage.setItem(ARTICLE_STORE_KEY, JSON.stringify(store)); }
+    catch(e){ console.warn('Could not save article library', e); }
+}
+
+function articleSummary(entry){
+    const logos = (entry.logoVariants || []).map(v => {
+        const name = (typeof colorNames !== 'undefined' && colorNames[v.color]) ? colorNames[v.color] : v.color;
+        return `${name} ${v.size}mm`;
+    }).join(', ') || '—';
+    const stripes = (entry.stripeVariants || []).map(v => {
+        const name = (typeof colorNames !== 'undefined' && colorNames[v.color]) ? colorNames[v.color] : v.color;
+        return `${name} ${v.size}mm`;
+    }).join(', ') || 'none';
+    const kind = orderKindLabel(entry.orderKind);
+    return { logos, stripes, kind };
+}
+
+function saveCurrentArticle(){
+    saveCurrentPage();
+    const art = (document.getElementById('custArt').value || '').trim();
+    if(!art){
+        toast('Cust Art # empty hai — pehle article number likho.', 'warn');
+        return;
+    }
+    const store = loadArticleStore();
+    const key = art.toUpperCase();
+    const list = Array.isArray(store[key]) ? store[key] : (store[key] ? [store[key]] : []);
+    const entry = {
+        custArt: art,
+        orderKind: document.getElementById('orderKind').value,
+        pLogoFront: document.getElementById('pLogoFront').checked,
+        pLogoBack: document.getElementById('pLogoBack').checked,
+        pLogoPant: document.getElementById('pLogoPant').checked,
+        pLogoShoulder: document.getElementById('pLogoShoulder').checked,
+        pStripesShoulder: document.getElementById('pStripesShoulder').checked,
+        placementNotes: document.getElementById('placementNotes').value,
+        logoVariants: JSON.parse(JSON.stringify(logoVariants)),
+        stripeVariants: JSON.parse(JSON.stringify(stripeVariants)),
+        savedAt: new Date().toISOString(),
+        lastPi: getPiFull()
+    };
+    const same = list[0] && JSON.stringify(list[0].logoVariants) === JSON.stringify(entry.logoVariants)
+        && JSON.stringify(list[0].stripeVariants) === JSON.stringify(entry.stripeVariants)
+        && list[0].orderKind === entry.orderKind;
+    if(!same) list.unshift(entry);
+    store[key] = list.slice(0, 8);
+    const dups = findDuplicateArticles(entry, key);
+    writeArticleStore(store);
+    pushRecentArticle(art);
+    searchArticles(document.getElementById('articleSearch').value || '');
+    if(dups.length){
+        const names = dups.map(d => d.custArt + ' (' + d.kindLabel + ')').join(', ');
+        toast('Saved ' + art + ' — same embroidery setup already exists in: ' + names, 'warn');
+    } else {
+        toast('Saved: ' + art, 'success');
+    }
+}
+
+function onCustArtInput(val){
+    const box = document.getElementById('custArtSuggest');
+    if(!box) return;
+    const q = (val || '').trim().toUpperCase();
+    if(!q || q.length < 1){ box.style.display = 'none'; box.innerHTML = ''; return; }
+    const store = loadArticleStore();
+    const keys = Object.keys(store).filter(k => k.includes(q)).slice(0, 8);
+    if(!keys.length){ box.style.display = 'none'; box.innerHTML = ''; return; }
+    box.innerHTML = keys.map(key => {
+        const list = Array.isArray(store[key]) ? store[key] : [store[key]];
+        const entry = list[0] || {};
+        const kind = orderKindLabel(entry.orderKind);
+        const safe = key.replace(/'/g, "\\'");
+        return `<div onmousedown="event.preventDefault(); pickCustArtSuggest('${safe}')" style="padding:8px 10px;cursor:pointer;border-bottom:1px solid #eee;font-size:.78rem;" onmouseover="this.style.background='#e8eaf6'" onmouseout="this.style.background='#fff'">
+            <b style="color:#1a237e;">${entry.custArt || key}</b>
+            <span style="color:#666;margin-left:6px;">${kind}</span>
+            <div style="font-size:.68rem;color:#555;margin-top:2px;">${(entry.logoVariants||[]).length} logo(s) · ${(entry.stripeVariants||[]).length} stripe(s)</div>
+        </div>`;
+    }).join('');
+    box.style.display = 'block';
+}
+
+function pickCustArtSuggest(key){
+    pushStateToHistory();
+    const box = document.getElementById('custArtSuggest');
+    if(box){ box.style.display = 'none'; box.innerHTML = ''; }
+    const store = loadArticleStore();
+    if(store[key]){
+        loadArticleFromLibrary(key, 0);
+    } else {
+        document.getElementById('custArt').value = key;
+        updateSheet();
+    }
+}
+
+document.addEventListener('click', (e) => {
+    const box = document.getElementById('custArtSuggest');
+    const input = document.getElementById('custArt');
+    if(!box || !input) return;
+    if(e.target !== input && !box.contains(e.target)){
+        box.style.display = 'none';
+    }
+});
+
+function normSize(s){
+    return String(s == null ? '' : s).toLowerCase().replace(/\s+/g,'').replace(/mm$/i,'').trim();
+}
+function normColor(c){
+    return String(c == null ? '' : c).trim().toLowerCase();
+}
+function normWidth(w){
+    return String(w == null ? '' : w).toLowerCase().replace(/\s+/g,'').trim();
+}
+function fingerprintArticle(entry){
+    const kind = (entry.orderKind || 'single').toLowerCase();
+    const logos = (entry.logoVariants || []).map(v =>
+        normColor(v.color) + '|' + normSize(v.size)
+    ).sort().join(';');
+    const stripes = (entry.stripeVariants || []).map(v =>
+        normColor(v.color) + '|' + normSize(v.size) + '|' + normWidth(v.width) + '|' + normWidth(v.gap)
+    ).sort().join(';');
+    return kind + '::' + logos + '::' + stripes;
+}
+function describeSetup(entry){
+    const kind = orderKindLabel(entry.orderKind);
+    const logos = (entry.logoVariants || []).map(v => {
+        const name = (typeof colorNames !== 'undefined' && colorNames[v.color]) ? colorNames[v.color] : (v.color || '?');
+        return name + ' ' + normSize(v.size) + 'mm';
+    }).join(', ') || '—';
+    const stripes = (entry.stripeVariants || []).map(v => {
+        const name = (typeof colorNames !== 'undefined' && colorNames[v.color]) ? colorNames[v.color] : (v.color || '?');
+        return name + ' ' + normSize(v.size) + 'mm';
+    }).join(', ') || 'none';
+    return { kind, logos, stripes };
+}
+function findDuplicateArticles(entry, excludeKey){
+    const fp = fingerprintArticle(entry);
+    if(!entry.logoVariants || !entry.logoVariants.length) return [];
+    const store = loadArticleStore();
+    const hits = [];
+    const exclude = excludeKey ? String(excludeKey).toUpperCase() : null;
+    Object.keys(store).forEach(key => {
+        if(exclude && key === exclude) return;
+        const list = Array.isArray(store[key]) ? store[key] : [store[key]];
+        list.forEach((e, idx) => {
+            if(!e || !e.logoVariants || !e.logoVariants.length) return;
+            if(fingerprintArticle(e) === fp){
+                const desc = describeSetup(e);
+                hits.push({
+                    key, idx,
+                    custArt: e.custArt || key,
+                    orderKind: e.orderKind,
+                    kindLabel: desc.kind,
+                    logos: desc.logos,
+                    stripes: desc.stripes,
+                    lastPi: e.lastPi || '',
+                    savedAt: e.savedAt || ''
+                });
+            }
+        });
+    });
+    const seen = new Set();
+    return hits.filter(h => {
+        const k = (h.custArt || h.key).toUpperCase();
+        if(seen.has(k)) return false;
+        seen.add(k);
+        return true;
+    });
+}
+
+function searchArticles(query){
+    const host = document.getElementById('articleResults');
+    if(!host) return;
+    const q = (query || '').trim().toUpperCase();
+    const store = loadArticleStore();
+    const keys = q
+        ? Object.keys(store).filter(k => k.includes(q))
+        : Object.keys(store).sort();
+    if(!keys.length){
+        host.innerHTML = q
+            ? `<div style="font-size:.75rem;color:#888;padding:6px;">No saved articles match “${query}”</div>`
+            : `<div style="font-size:.75rem;color:#888;padding:6px;">Library empty — Save an article first.</div>`;
+        return;
+    }
+    let html = '';
+    keys.forEach(key => {
+        const list = Array.isArray(store[key]) ? store[key] : [store[key]];
+        list.forEach((entry, idx) => {
+            const s = articleSummary(entry);
+            const date = entry.savedAt ? new Date(entry.savedAt).toLocaleDateString() : '';
+            html += `<div onclick="loadArticleFromLibrary('${key}',${idx})" style="
+                border:1px solid #d0d4e8;border-radius:8px;padding:8px 10px;cursor:pointer;background:#f7f8fd;
+            " onmouseover="this.style.background='#e8eaf6'" onmouseout="this.style.background='#f7f8fd'">
+                <div style="font-weight:800;font-size:.82rem;color:#1a237e;">${entry.custArt || key}
+                    <span style="font-weight:600;font-size:.68rem;color:#666;margin-left:6px;">${s.kind}</span>
+                </div>
+                <div style="font-size:.7rem;color:#333;margin-top:3px;"><b>Logos:</b> ${s.logos}</div>
+                <div style="font-size:.7rem;color:#333;"><b>Stripes:</b> ${s.stripes}</div>
+                <div style="font-size:.65rem;color:#888;margin-top:2px;">${date}${entry.lastPi ? ' · last PI '+entry.lastPi : ''}</div>
+            </div>`;
+        });
+    });
+    host.innerHTML = html;
+}
+
+function pushRecentArticle(art){
+    if(!art) return;
+    const RECENT_KEY = 'outmaker_recent_articles_v1';
+    let list = [];
+    try{ list = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); }catch(e){}
+    const up = art.toUpperCase();
+    list = list.filter(x => (x || '').toUpperCase() !== up);
+    list.unshift(art);
+    list = list.slice(0, 8);
+    try{ localStorage.setItem(RECENT_KEY, JSON.stringify(list)); }catch(e){}
+    renderRecentArticles();
+}
+
+function renderRecentArticles(){
+    const host = document.getElementById('recentArticles');
+    if(!host) return;
+    let list = [];
+    try{ list = JSON.parse(localStorage.getItem('outmaker_recent_articles_v1') || '[]'); }catch(e){}
+    if(!list.length){ host.innerHTML = ''; return; }
+    host.innerHTML = list.map(a => {
+        const safe = String(a).replace(/'/g, "\\'");
+        return `<button type="button" onclick="quickLoadRecent('${safe}')" style="
+            padding:4px 9px;border-radius:12px;font-size:.68rem;font-weight:700;cursor:pointer;
+            border:1px solid #c5cae9;background:#e8eaf6;color:#1a237e;
+        ">${a}</button>`;
+    }).join('');
+}
+
+function quickLoadRecent(art){
+    pushStateToHistory();
+    const store = loadArticleStore();
+    const key = (art || '').toUpperCase();
+    if(store[key]){
+        loadArticleFromLibrary(key, 0);
+    } else {
+        document.getElementById('custArt').value = art;
+        document.getElementById('articleSearch').value = art;
+        searchArticles(art);
+        updateSheet();
+    }
+}
+
+function exportArticleLibrary(){
+    const store = loadArticleStore();
+    const blob = new Blob([JSON.stringify(store, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'outmaker-article-library.json';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+}
+
+function importArticleLibrary(ev){
+    const file = ev.target.files && ev.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        try{
+            const data = JSON.parse(reader.result);
+            if(!data || typeof data !== 'object') throw new Error('Invalid');
+            const store = loadArticleStore();
+            Object.keys(data).forEach(k => {
+                const incoming = Array.isArray(data[k]) ? data[k] : [data[k]];
+                const existing = Array.isArray(store[k]) ? store[k] : (store[k] ? [store[k]] : []);
+                store[k] = [...incoming, ...existing].slice(0, 8);
+            });
+            writeArticleStore(store);
+            renderRecentArticles();
+            const q = document.getElementById('articleSearch').value;
+            if(q) searchArticles(q);
+            toast('Library imported successfully.', 'success');
+        }catch(e){
+            toast('Invalid JSON file.', 'error');
+        }
+        ev.target.value = '';
+    };
+    reader.readAsText(file);
+}
+
+function loadArticleFromLibrary(key, idx){
+    pushStateToHistory();
+    const store = loadArticleStore();
+    const list = Array.isArray(store[key]) ? store[key] : [store[key]];
+    const entry = list[idx];
+    if(!entry) return;
+    document.getElementById('custArt').value = entry.custArt || key;
+    document.getElementById('orderKind').value = entry.orderKind || 'single';
+    document.getElementById('pLogoFront').checked = !!entry.pLogoFront;
+    document.getElementById('pLogoBack').checked = !!entry.pLogoBack;
+    document.getElementById('pLogoPant').checked = !!entry.pLogoPant;
+    document.getElementById('pLogoShoulder').checked = !!entry.pLogoShoulder;
+    document.getElementById('pStripesShoulder').checked = !!entry.pStripesShoulder;
+    document.getElementById('placementNotes').value = entry.placementNotes || '';
+    logoVariants = JSON.parse(JSON.stringify(entry.logoVariants || [{color:'#d4af37', size:'65'}]));
+    stripeVariants = JSON.parse(JSON.stringify(entry.stripeVariants || []));
+    window.currentOrderKind = entry.orderKind || 'single';
+
+    const kind = entry.orderKind || 'single';
+    const badge = document.getElementById('orderKindBadge');
+    if(badge) badge.textContent = kind==='single' ? '1 Logo • 0 Stripes' : kind==='combo' ? '1 Logo • 1 Stripe' : '3 Logos • 2 Stripes';
+    const hideStripe = kind === 'single';
+    const stripeHeading = document.getElementById('stripeHeading');
+    const stripeBody = document.getElementById('stripeBody');
+    if(stripeHeading) stripeHeading.style.display = hideStripe ? 'none' : '';
+    if(stripeBody) stripeBody.style.display = hideStripe ? 'none' : '';
+
+    renderVariantControls();
+    saveCurrentPage();
+    renderPageTabs();
+    updateSheet();
+    pushRecentArticle(entry.custArt || key);
+}
+
+function autoSaveArticleIfNamed(){
+    const art = (document.getElementById('custArt').value || '').trim();
+    if(!art || !logoVariants.length) return;
+    const store = loadArticleStore();
+    const key = art.toUpperCase();
+    const list = Array.isArray(store[key]) ? store[key] : (store[key] ? [store[key]] : []);
+    const entry = {
+        custArt: art,
+        orderKind: document.getElementById('orderKind').value,
+        pLogoFront: document.getElementById('pLogoFront').checked,
+        pLogoBack: document.getElementById('pLogoBack').checked,
+        pLogoPant: document.getElementById('pLogoPant').checked,
+        pLogoShoulder: document.getElementById('pLogoShoulder').checked,
+        pStripesShoulder: document.getElementById('pStripesShoulder').checked,
+        placementNotes: document.getElementById('placementNotes').value,
+        logoVariants: JSON.parse(JSON.stringify(logoVariants)),
+        stripeVariants: JSON.parse(JSON.stringify(stripeVariants)),
+        savedAt: new Date().toISOString(),
+        lastPi: getPiFull()
+    };
+    const same = list[0] && JSON.stringify(list[0].logoVariants) === JSON.stringify(entry.logoVariants)
+        && JSON.stringify(list[0].stripeVariants) === JSON.stringify(entry.stripeVariants)
+        && list[0].orderKind === entry.orderKind;
+    if(same) return;
+    list.unshift(entry);
+    store[key] = list.slice(0, 8);
+    writeArticleStore(store);
+}
+
+const mainDropZone = document.getElementById('mainDropZone');
+const mainFileInput = document.getElementById('mainFileInput');
+
+mainDropZone.addEventListener('click', ()=> { pasteTarget='main'; mainFileInput.click(); });
+mainFileInput.addEventListener('change', e => { pushStateToHistory(); handleMainFiles(e.target.files); });
+
+['dragenter','dragover'].forEach(ev=>{
+    mainDropZone.addEventListener(ev, e=>{ e.preventDefault(); e.stopPropagation(); mainDropZone.classList.add('drag'); });
+});
+['dragleave','drop'].forEach(ev=>{
+    mainDropZone.addEventListener(ev, e=>{ e.preventDefault(); e.stopPropagation(); mainDropZone.classList.remove('drag'); });
+});
+mainDropZone.addEventListener('drop', e=>{
+    if(e.dataTransfer.files && e.dataTransfer.files.length){ pushStateToHistory(); handleMainFiles(e.dataTransfer.files); }
+});
+
+function handleMainFiles(fileList){
+    const file = Array.from(fileList).find(f=>f.type.startsWith('image/'));
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e=>{
+        mainImage = {name:file.name || 'garment-image', dataUrl:e.target.result};
+        renderMainThumb();
+        updateSheet();
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearMainImage(){
+    if(!mainImage) return;
+    pushStateToHistory();
+    mainImage = null;
+    renderMainThumb();
+    updateSheet();
+}
+
+function renderMainThumb(){
+    const row = document.getElementById('mainThumbRow');
+    if(!mainImage){ row.innerHTML = ""; return; }
+    row.innerHTML = `
+        <div class="thumb">
+            <img src="${mainImage.dataUrl}" alt="main">
+            <div class="rm" onclick="clearMainImage()">✕</div>
+        </div>
+    `;
+}
+
+document.addEventListener('paste', e=>{
+    const items = e.clipboardData ? e.clipboardData.items : [];
+    for(const item of items){
+        if(item.type.indexOf('image') === 0){
+            const file = item.getAsFile();
+            pushStateToHistory();
+            if(pasteTarget === 'logo'){ handleLogoFiles([file]); }
+            else if(pasteTarget === 'main'){ handleMainFiles([file]); }
+            else if(!mainImage){ handleMainFiles([file]); }
+            else { handleLogoFiles([file]); }
+            pasteTarget = null;
+        }
+    }
+});
+
+bindLogoDropZone();
+
+function handleLogoFiles(fileList){
+    const file = Array.from(fileList).find(f=>f.type.startsWith('image/'));
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = e=>{
+        logoImage = {name:file.name || 'logo-photo', dataUrl:e.target.result};
+        renderLogoThumb();
+        updateSheet();
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearLogoImage(){
+    logoImage = null;
+    renderLogoThumb();
+    updateSheet();
+}
+
+function renderLogoThumb(){
+    const box = document.getElementById('logoDropZone');
+    if(!box) return;
+    const input = document.getElementById('logoFileInput');
+    if(!input) return;
+    box.querySelectorAll('.company-logo-placeholder, .company-logo-preview').forEach(el=>el.remove());
+    if(!logoImage){
+        const ph=document.createElement('div');
+        ph.className='company-logo-placeholder';
+        ph.innerHTML='Company Logo<br><span>Drag & drop / click / Ctrl+V</span>';
+        box.insertBefore(ph,input);
+        return;
+    }
+    const img=document.createElement('img');
+    img.className='company-logo-preview';
+    img.src=logoImage.dataUrl;
+    img.alt='Company Logo';
+    box.insertBefore(img,input);
+}
+
+function bindLogoDropZone(){
+    const zone=document.getElementById('logoDropZone');
+    const input=document.getElementById('logoFileInput');
+    if(!zone || !input || zone.dataset.bound==='1') return;
+    zone.dataset.bound='1';
+    zone.addEventListener('click', ()=> { pasteTarget='logo'; input.click(); });
+    input.addEventListener('change', e => { pushStateToHistory(); handleLogoFiles(e.target.files); });
+    ['dragenter','dragover'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();zone.classList.add('drag');}));
+    ['dragleave','drop'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();e.stopPropagation();zone.classList.remove('drag');}));
+    zone.addEventListener('drop', e=>{ if(e.dataTransfer.files && e.dataTransfer.files.length){ pushStateToHistory(); handleLogoFiles(e.dataTransfer.files); } });
+}
+
+const stripeSizeMap = {
+    "50": { stripe: "12.5 mm", gap: "6.25 mm" },
+    "56": { stripe: "14 mm",   gap: "7 mm"    },
+    "64": { stripe: "16 mm",   gap: "8 mm"    }
+};
+const colorOptionsHtml = `
+    <option value="#d4af37">Gold</option>
+    <option value="#ffffff">White</option>
+    <option value="#111111">Black</option>
+    <option value="#8a8f98">Grey</option>
+    <option value="#c8102e">Red</option>
+    <option value="#1a4fd6">Blue</option>
+    <option value="#c0c0c0">Silver</option>`;
+
+let logoVariants = [
+    {color:'#c8102e', size:'65'},
+    {color:'#1a4fd6', size:'65'},
+    {color:'#111111', size:'65'}
+];
+let stripeVariants = [
+    {color:'#c8102e', size:'56', width:'14 mm', gap:'7 mm'},
+    {color:'#1a4fd6', size:'56', width:'14 mm', gap:'7 mm'}
+];
+
+window.currentOrderKind = 'kit1';
+
+// ---------- Kit presets (fixed default colors per kit) ----------
+// Kit 1: Logo1=Red, Logo2=Blue, Logo3=Black | Stripe1=Red, Stripe2=Blue
+// Kit 2: Logo1=Red, Logo2=Blue, Logo3=White | Stripe1=Red, Stripe2=Blue
+const KIT_PRESETS = {
+    kit1: { logos: ['#c8102e','#1a4fd6','#111111'], stripes: ['#c8102e','#1a4fd6'] },
+    kit2: { logos: ['#c8102e','#1a4fd6','#ffffff'], stripes: ['#c8102e','#1a4fd6'] }
+};
+function isKitKind(k){ return k === 'kit1' || k === 'kit2'; }
+function kindFamily(k){ return isKitKind(k) ? 'kit' : (k || 'single'); }
+function orderKindLabel(k){
+    if(k === 'kit1') return 'Kit 1';
+    if(k === 'kit2') return 'Kit 2';
+    if(k === 'combo') return 'Combo';
+    return 'Single';
+}
+// Logo 1 / Stripe 1 act as the "master" size for the whole kit —
+// whenever the master size changes, it propagates to the rest.
+// Individual logos/stripes can still be changed manually afterwards.
+function syncKitMasterSizes(){
+    if(logoVariants.length > 1){
+        const masterSize = logoVariants[0].size;
+        for(let j=1;j<logoVariants.length;j++) logoVariants[j].size = masterSize;
+    }
+    if(stripeVariants.length > 1){
+        const masterSize = stripeVariants[0].size;
+        const preset = stripeSizeMap[masterSize];
+        for(let j=1;j<stripeVariants.length;j++){
+            stripeVariants[j].size = masterSize;
+            if(preset){ stripeVariants[j].width = preset.stripe; stripeVariants[j].gap = preset.gap; }
+        }
+    }
+}
+
+function makeLogoVariant(base){
+    return { color: base?.color || '#d4af37', size: base?.size || '65' };
+}
+function makeStripeVariant(base){
+    const size = base?.size || '50';
+    const preset = stripeSizeMap[size] || stripeSizeMap['50'];
+    return { color: base?.color || '#d4af37', size, width: base?.width || preset.stripe, gap: base?.gap || preset.gap };
+}
+function applyOrderKind(kind){
+    pushStateToHistory();
+    window.currentOrderKind = kind;
+    const logoBase = logoVariants[0] || makeLogoVariant();
+    const stripeBase = stripeVariants[0] || makeStripeVariant();
+
+    if(kind === 'single'){
+        logoVariants = [makeLogoVariant(logoBase)];
+        stripeVariants = [];
+        document.getElementById('pLogoFront').checked = false;
+        document.getElementById('pLogoBack').checked = true;
+        document.getElementById('pLogoPant').checked = true;
+        document.getElementById('pLogoShoulder').checked = false;
+        document.getElementById('pStripesShoulder').checked = false;
+    } else if(kind === 'combo'){
+        logoVariants = [makeLogoVariant(logoBase)];
+        stripeVariants = [makeStripeVariant(stripeBase)];
+        document.getElementById('pLogoFront').checked = true;
+        document.getElementById('pLogoBack').checked = true;
+        document.getElementById('pLogoPant').checked = true;
+        document.getElementById('pLogoShoulder').checked = true;
+        document.getElementById('pStripesShoulder').checked = true;
+    } else if(isKitKind(kind)){
+        const preset = KIT_PRESETS[kind];
+        const logoSize = logoBase.size || '65';
+        const stripeSize = stripeBase.size || '56';
+        // Fixed default colors for this kit — re-selecting the kit always
+        // brings these back, even if colors were manually changed before.
+        logoVariants = preset.logos.map((color,i) => makeLogoVariant({
+            color,
+            size: (logoVariants[i] && logoVariants[i].size) || logoSize
+        }));
+        stripeVariants = preset.stripes.map((color,i) => makeStripeVariant({
+            color,
+            size: (stripeVariants[i] && stripeVariants[i].size) || stripeSize
+        }));
+        // Logo 1 / Stripe 1 size becomes the master for all other logos/stripes
+        syncKitMasterSizes();
+        document.getElementById('pLogoFront').checked = true;
+        document.getElementById('pLogoBack').checked = true;
+        document.getElementById('pLogoPant').checked = true;
+        document.getElementById('pLogoShoulder').checked = true;
+        document.getElementById('pStripesShoulder').checked = true;
+    }
+
+    renderVariantControls();
+    const badge=document.getElementById('orderKindBadge');
+    if(badge){
+        badge.textContent = kind==='single' ? '1 Logo • 0 Stripes' : kind==='combo' ? '1 Logo • 1 Stripe' : '3 Logos • 2 Stripes';
+    }
+    const stripeHeading=document.getElementById('stripeHeading');
+    const stripeBody=document.getElementById('stripeBody');
+    const hideStripeControls = kind === 'single';
+    if(stripeHeading) stripeHeading.style.display = hideStripeControls ? 'none' : '';
+    if(stripeBody) stripeBody.style.display = hideStripeControls ? 'none' : '';
+    updateSheet();
+}
+
+function addLogoVariant(color='#ffffff', size='65'){
+    pushStateToHistory();
+    logoVariants.push({color, size});
+    renderVariantControls();
+    updateSheet();
+}
+function addStripeVariant(color='#c8102e', size='56', width='14 mm', gap='7 mm'){
+    pushStateToHistory();
+    stripeVariants.push({color, size, width, gap});
+    renderVariantControls();
+    updateSheet();
+}
+function removeLogoVariant(i){
+    if(logoVariants.length <= 1) return;
+    pushStateToHistory();
+    logoVariants.splice(i,1);
+    renderVariantControls();
+    updateSheet();
+}
+function removeStripeVariant(i){
+    if(stripeVariants.length <= 0) return;
+    pushStateToHistory();
+    stripeVariants.splice(i,1);
+    renderVariantControls();
+    updateSheet();
+}
+
+function renderVariantControls(){
+    const logos = document.getElementById('logoVariants');
+    const stripes = document.getElementById('stripeVariants');
+    logos.innerHTML = logoVariants.map((v,i)=>`
+        <div class="variant-item">
+            <div class="variant-head">
+                <span class="variant-title">Logo ${i+1}</span>
+                ${logoVariants.length>1 ? `<button type="button" class="btn btn-remove" onclick="removeLogoVariant(${i})">✕</button>` : ''}
+            </div>
+            <label>Logo Color</label>
+            <select onchange="pushStateToHistory(); logoVariants[${i}].color=this.value; updateSheet()">${colorOptionsHtml}</select>
+            <label>Logo Size (SVG tag)${i===0 && isKitKind(window.currentOrderKind) ? ' — master, sets all logos' : ''}</label>
+            <select onchange="setLogoSize(${i}, this.value)">
+                <option value="48">48mm</option><option value="65">65mm</option>
+            </select>
+        </div>`).join('');
+    logos.querySelectorAll('select').forEach((el,idx)=>{
+        const i=Math.floor(idx/2);
+        el.value=idx%2===0 ? logoVariants[i].color : logoVariants[i].size;
+    });
+
+    stripes.innerHTML = stripeVariants.length ? stripeVariants.map((v,i)=>`
+        <div class="variant-item">
+            <div class="variant-head">
+                <span class="variant-title">Stripe ${i+1}</span>
+                ${stripeVariants.length>1 ? `<button type="button" class="btn btn-remove" onclick="removeStripeVariant(${i})">✕</button>` : ''}
+            </div>
+            <label>Stripes Color</label>
+            <select onchange="pushStateToHistory(); stripeVariants[${i}].color=this.value; updateSheet()">${colorOptionsHtml}</select>
+            <label>Stripes Overall Size (SVG tag)${i===0 && isKitKind(window.currentOrderKind) ? ' — master, sets all stripes' : ''}</label>
+            <select onchange="setStripeSize(${i},this.value)">
+                <option value="50">50mm</option><option value="56">56mm</option><option value="64">64mm</option>
+            </select>
+            <div class="row2">
+                <div><label>Stripe Width</label><input type="text" value="${v.width}" onchange="pushStateToHistory(); stripeVariants[${i}].width=this.value; updateSheet()"></div>
+                <div><label>Gap Width</label><input type="text" value="${v.gap}" onchange="pushStateToHistory(); stripeVariants[${i}].gap=this.value; updateSheet()"></div>
+            </div>
+        </div>`).join('') : '<div class="order-kind-help">No stripe specification for this order.</div>';
+    stripes.querySelectorAll('select').forEach((el,idx)=>{
+        const i=Math.floor(idx/2);
+        el.value=idx%2===0 ? stripeVariants[i].color : stripeVariants[i].size;
+    });
+}
+function setLogoSize(i, value){
+    pushStateToHistory();
+    logoVariants[i].size = value;
+    // Logo 1 is the master in kit mode: propagate to every other logo.
+    if(i === 0 && isKitKind(window.currentOrderKind)){
+        for(let j=1;j<logoVariants.length;j++) logoVariants[j].size = value;
+    }
+    renderVariantControls();
+    updateSheet();
+}
+function setStripeSize(i,value){
+    pushStateToHistory();
+    stripeVariants[i].size=value;
+    const preset=stripeSizeMap[value];
+    if(preset){ stripeVariants[i].width=preset.stripe; stripeVariants[i].gap=preset.gap; }
+    // Stripe 1 is the master in kit mode: propagate to every other stripe.
+    if(i === 0 && isKitKind(window.currentOrderKind)){
+        for(let j=1;j<stripeVariants.length;j++){
+            stripeVariants[j].size = value;
+            if(preset){ stripeVariants[j].width = preset.stripe; stripeVariants[j].gap = preset.gap; }
+        }
+    }
+    renderVariantControls();
+    updateSheet();
+}
+
+function buildFlags(){
+    const flags = [];
+    if(document.getElementById('pLogoFront').checked) flags.push('LOGO ON JACKET FRONT');
+    if(document.getElementById('pLogoBack').checked) flags.push('LOGO ON JACKET BACK');
+    if(document.getElementById('pLogoPant').checked) flags.push('LOGO ON PANT');
+    if(document.getElementById('pLogoShoulder').checked) flags.push('LOGO ON SHOULDER');
+    if(document.getElementById('pStripesShoulder').checked) flags.push('STRIPES ON SHOULDERS');
+    const row = document.getElementById('flagRow');
+    row.innerHTML = flags.length ? flags.map(f=>`<div class="flag">${f}</div>`).join('') : `<div class="flag flag-empty">No placements selected</div>`;
+    const notes = document.getElementById('placementNotes').value.trim();
+    document.getElementById('notesRow').textContent = notes ? `Notes: ${notes}` : '';
+}
+
+const colorPalettes = {
+    "#d4af37": ["#F3DBA3","#C2AD7A","#907E51","#AD996D","#CBB589","#DCC69A","#EDD7AB","#E5D0A1","#DDC897","#AA9770","#897956"],
+    "#ffffff": ["#FFFFFF","#F2F2F2","#D9D9D9","#E8E8E8","#FAFAFA","#FFFFFF","#EEEEEE","#F7F7F7","#DADADA","#BEBEBE","#FFFFFF"],
+    "#111111": ["#777777","#4A4A4A","#1A1A1A","#333333","#222222","#111111","#2B2B2B","#1C1C1C","#3A3A3A","#090909","#000000"],
+    "#8a8f98": ["#D9DCE0","#AEB3BA","#6F757D","#8D939B","#B9BDC3","#C9CDD1","#E2E4E7","#B0B5BB","#969BA2","#70757C","#555A60"],
+    "#c8102e": ["#F2A1AD","#D96A7B","#A91D35","#C63C50","#D95A6B","#E57C8A","#F0A1AA","#D84A5D","#B72A40","#8C1328","#680A1A"],
+    "#1a4fd6": ["#A9C0FA","#6F8FEA","#234AAE","#4169C8","#7897E5","#9FB5EE","#C5D3F5","#587AD5","#3158B9","#193C96","#102D73"],
+    "#c0c0c0": ["#F4F4F4","#C8C8C8","#8C8C8C","#A8A8A8","#D0D0D0","#E2E2E2","#EEEEEE","#BEBEBE","#9E9E9E","#777777","#5E5E5E"]
+};
+const colorNames = {"#d4af37":"GOLD","#ffffff":"WHITE","#111111":"BLACK","#8a8f98":"GREY","#c8102e":"RED","#1a4fd6":"BLUE","#c0c0c0":"SILVER"};
+const metallicColors = ["#d4af37","#c0c0c0"]; 
+
+function applyVectorColor(svg, color){
+    svg.querySelectorAll(".str0").forEach(el => {
+        el.style.stroke = "#373435";
+        el.setAttribute("stroke", "#373435");
+        const base = parseFloat(getComputedStyle(el).strokeWidth) || 1;
+        const w = (color === '#ffffff') ? base * 2.4 : base;
+        el.style.strokeWidth = w;
+        el.setAttribute("stroke-width", w);
+    });
+
+    const shapes = Array.from(svg.querySelectorAll("[class*='fil']")).filter(el => {
+        const cls = (el.getAttribute("class") || "").split(/\s+/);
+        return cls.some(c => /^fil[0-9]+$/.test(c));
+    });
+
+    if (metallicColors.includes(color)) {
+        const palette = colorPalettes[color] || colorPalettes["#d4af37"];
+        const grads = Array.from(svg.querySelectorAll("linearGradient"));
+        grads.forEach(grad => {
+            grad.querySelectorAll("stop").forEach((stop, i) => {
+                const c = palette[i % palette.length];
+                stop.setAttribute("stop-color", c);
+                stop.style.stopColor = c;
+                stop.style.setProperty("stop-color", c);
+            });
+        });
+        shapes.forEach((el, i) => {
+            const grad = grads[i % grads.length] || grads[0];
+            if (grad) {
+                const fillVal = `url(#${grad.id})`;
+                el.setAttribute("fill", fillVal);
+                el.style.setProperty("fill", fillVal, "important");
+            }
+        });
+        svg.querySelectorAll("style").forEach(styleEl => {
+            let css = styleEl.textContent || "";
+            styleEl.textContent = css;
+        });
+    } else {
+        svg.querySelectorAll("style").forEach(styleEl => {
+            let css = styleEl.textContent || "";
+            css = css.replace(/\.fil([0-9]+)\s*\{[^}]*\}/g, (match, num) => {
+                return `.fil${num}{fill:${color};fill-rule:nonzero}`;
+            });
+            styleEl.textContent = css;
+        });
+        shapes.forEach(el => {
+            el.setAttribute("fill", color);
+            el.style.setProperty("fill", color, "important");
+        });
+    }
+}
+
+function cloneSvgTemplate(id, uniqueId){
+    const source=document.getElementById(id);
+    if(!source) return null;
+    const svg=source.cloneNode(true);
+    const idMap={};
+    svg.querySelectorAll('[id]').forEach(el=>{
+        const old=el.id;
+        const next=old+'_'+uniqueId;
+        idMap[old]=next;
+        el.id=next;
+    });
+    const rootOld=svg.id;
+    svg.id=uniqueId;
+    idMap[rootOld]=uniqueId;
+    svg.querySelectorAll('*').forEach(el=>{
+        ['href','xlink:href','fill','stroke','style'].forEach(attr=>{
+            if(!el.hasAttribute(attr)) return;
+            let val=el.getAttribute(attr);
+            Object.keys(idMap).forEach(oldId=>{
+                val=val.replaceAll('#'+oldId, '#'+idMap[oldId]);
+            });
+            el.setAttribute(attr,val);
+        });
+    });
+    svg.querySelectorAll('style').forEach(styleEl=>{
+        let css=styleEl.textContent || '';
+        Object.keys(idMap).forEach(oldId=>{
+            css=css.replaceAll('#'+oldId, '#'+idMap[oldId]);
+        });
+        styleEl.textContent=css;
+    });
+    return svg;
+}
+
+function renderVectorSpecs(){
+    const logoHost=document.getElementById('logoSpecsGrid');
+    const stripeHost=document.getElementById('stripeSpecsStack');
+    const vectorSpecs=document.getElementById('vectorSpecs');
+    if(!logoHost || !stripeHost) return;
+    logoHost.innerHTML='';
+    stripeHost.innerHTML='';
+    if(vectorSpecs){
+        vectorSpecs.classList.remove('kind-single','kind-combo','kind-kit');
+        vectorSpecs.classList.add('kind-' + kindFamily(window.currentOrderKind));
+    }
+
+    logoVariants.forEach((v,i)=>{
+        const card=document.createElement('div'); card.className='vector-card variant-card logo-card';
+        card.innerHTML=`
+          <div class="logo-card-body">
+            <div class="v-art">
+              <div class="dim-wrap logo-art-inner" id="logoArt_${i}"></div>
+            </div>
+          </div>
+          <div class="v-meta">
+            <span class="vector-tag">SIZE: ${v.size} mm</span>
+          </div>`;
+        const svg=cloneSvgTemplate('logoVectorTemplate',`logoVector_${i}`);
+        if(svg){
+            svg.style.width=Math.min(70, Math.max(42, Number(v.size)))+'%';
+            svg.style.height='auto';
+            applyVectorColor(svg,v.color);
+            card.querySelector('#logoArt_'+i).appendChild(svg);
+        }
+        logoHost.appendChild(card);
+    });
+
+    stripeVariants.forEach((v,i)=>{
+        const preset=stripeSizeMap[v.size] || {};
+        const total=v.size;
+        const card=document.createElement('div'); card.className='vector-card variant-card';
+        card.innerHTML=`
+          <div class="v-art">
+            <div class="stripe-art-host" id="stripeArt_${i}"></div>
+          </div>
+          <div class="v-meta">
+            <span class="vector-tag">SIZE: ${v.size} mm</span>
+            <span class="vector-tag">STRIPE: ${v.width}</span>
+            <span class="vector-tag">GAP: ${v.gap}</span>
+          </div>`;
+        const host=card.querySelector('#stripeArt_'+i);
+        const combined=buildStripeCombinedSVG(i, v, total);
+        if(combined) host.appendChild(combined);
+        stripeHost.appendChild(card);
+    });
+}
+
+function buildStripeCombinedSVG(i, v, total){
+    const svgNS = "http://www.w3.org/2000/svg";
+    const VB_W = 620, VB_H = 175;
+    const artX = 108, artY = 10, artW = 400, artH = 155;
+    const bandTop = [0.78, 52.89, 105.00];
+    const bandBot = [35.52, 87.63, 139.74];
+    const vbH = 140.52;
+    const y = (val)=> artY + (val/vbH)*artH;
+    const y1top=y(bandTop[0]), y1bot=y(bandBot[0]);
+    const y2bot=y(bandBot[1]), y3top=y(bandTop[2]);
+    const y3bot=y(bandBot[2]);
+
+    const svg=document.createElementNS(svgNS,'svg');
+    svg.setAttribute('viewBox', `0 0 ${VB_W} ${VB_H}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    svg.setAttribute('class','stripe-combined-svg');
+    svg.setAttribute('aria-hidden','true');
+
+    const art=cloneSvgTemplate('stripeVectorTemplate', `stripeVector_${i}`);
+    if(art){
+        art.removeAttribute('style');
+        art.setAttribute('x', artX);
+        art.setAttribute('y', artY);
+        art.setAttribute('width', artW);
+        art.setAttribute('height', artH);
+        applyVectorColor(art, v.color);
+        svg.appendChild(art);
+    }
+
+    const tickInnerX = artX-14, tickOuterX = artX-26, textX = artX-32;
+    const bracketX = artX+artW+16, bracketTextX = bracketX+11;
+
+    const g=document.createElementNS(svgNS,'g');
+    g.innerHTML = `
+        <line x1="${tickInnerX}" y1="${y1top}" x2="${tickInnerX}" y2="${y1bot}" class="dim-line"/>
+        <line x1="${tickOuterX}" y1="${y1top}" x2="${tickInnerX+6}" y2="${y1top}" class="dim-line"/>
+        <text x="${textX}" y="${(y1top+y1bot)/2+4}" text-anchor="end" class="dim-text-side">${v.width}</text>
+        <line x1="${tickInnerX}" y1="${y2bot}" x2="${tickInnerX}" y2="${y3top}" class="dim-line"/>
+        <line x1="${tickOuterX}" y1="${y2bot}" x2="${tickInnerX+6}" y2="${y2bot}" class="dim-line"/>
+        <text x="${textX}" y="${(y2bot+y3top)/2+4}" text-anchor="end" class="dim-text-side">${v.gap}</text>
+        <line x1="${bracketX}" y1="${y1top}" x2="${bracketX}" y2="${y3bot}" class="dim-line-black"/>
+        <line x1="${bracketX-6}" y1="${y1top}" x2="${bracketX+6}" y2="${y1top}" class="dim-line-black"/>
+        <line x1="${bracketX-6}" y1="${y3bot}" x2="${bracketX+6}" y2="${y3bot}" class="dim-line-black"/>
+        <text x="${bracketTextX}" y="${(y1top+y3bot)/2+5}" text-anchor="start" class="dim-text-big">${total} mm</text>
+    `;
+    svg.appendChild(g);
+    return svg;
+}
+
+function updateEmbeddedVectors(){ renderVectorSpecs(); }
+
+function renderMainImage(){
+    const imgEl = document.getElementById('mainGarmentImg');
+    const placeholder = document.getElementById('diagramPlaceholder');
+    const area = document.getElementById('diagramArea');
+    if(mainImage){
+        area.style.display='flex';
+        imgEl.src=mainImage.dataUrl;
+        imgEl.style.display='block';
+        placeholder.style.display='none';
+    } else {
+        imgEl.style.display='none';
+        placeholder.style.display='none';
+        area.style.display='none';
+    }
+}
+
+function updateSheet(){
+    document.getElementById('outExFactory').textContent = document.getElementById('exFactory').value;
+    document.getElementById('outCustomer').textContent = document.getElementById('customer').value;
+    document.getElementById('outPiNo').textContent = 'E' + (document.getElementById('piNo').value || '').replace(/^E/i,'').trim();
+    document.getElementById('outCustArt').textContent = document.getElementById('custArt').value;
+
+    buildFlags();
+    updateEmbeddedVectors();
+    renderLogoThumb();
+    renderMainImage();
+
+    document.getElementById('outPreparedBy').textContent = document.getElementById('preparedBy').value;
+    document.getElementById('outCheckedBy').textContent = document.getElementById('checkedBy').value;
+    document.getElementById('outVerifiedBy').textContent = document.getElementById('verifiedBy').value;
+    document.getElementById('outOverallBy').textContent = document.getElementById('overallBy').value;
+
+    if(pages.length){
+        saveCurrentPage();
+        renderPageTabs();
+    }
+    autoSaveArticleIfNamed();
+    refreshDuplicateBanner();
+}
+
+function refreshDuplicateBanner(){
+    let banner = document.getElementById('dupBanner');
+    if(!banner){
+        const host = document.getElementById('custArt')?.parentElement;
+        if(!host) return;
+        banner = document.createElement('div');
+        banner.id = 'dupBanner';
+        banner.style.cssText = 'display:none;margin-top:6px;padding:6px 8px;border-radius:6px;background:#fff3e0;border:1px solid #ffb74d;font-size:.7rem;color:#e65100;line-height:1.35;';
+        host.appendChild(banner);
+    }
+    const art = (document.getElementById('custArt')?.value || '').trim();
+    const entry = {
+        orderKind: document.getElementById('orderKind')?.value,
+        logoVariants: logoVariants,
+        stripeVariants: stripeVariants
+    };
+    const dups = findDuplicateArticles(entry, art ? art.toUpperCase() : null);
+    if(dups.length){
+        const names = dups.map(d => d.custArt + (d.kindLabel ? ' ['+d.kindLabel+']' : '')).join(', ');
+        banner.style.display = 'block';
+        banner.innerHTML = '<b>Duplicate setup</b> — same kind/logos/stripes already in: <b>' + names + '</b>';
+    } else {
+        banner.style.display = 'none';
+        banner.textContent = '';
+    }
+}
+
+document.querySelectorAll('.panel input, .panel select').forEach(el=>{
+    el.addEventListener('focus', () => { pushStateToHistory(); });
+    el.addEventListener('input', updateSheet);
+    el.addEventListener('change', updateSheet);
+});
+
+const pi = document.getElementById('piNo');
+if(pi) {
+    pi.addEventListener('input', ()=>{
+        const v = pi.value.replace(/^E+/i,'').replace(/[^0-9A-Za-z\-]/g,'');
+        if(v !== pi.value){ pi.value = v; }
+    });
+}
+
+const A4_PAGE_WIDTH_PX = 794, A4_PAGE_HEIGHT_PX = 1123;
+function fitSheetForPrint(){
+    document.body.classList.add('print-mode');
+    const sheet = document.getElementById('sheet');
+    const outer = document.querySelector('.sheet-outer');
+    if(sheet) sheet.style.transform = 'none';
+    if(outer){ outer.style.height = 'auto'; outer.style.overflow = 'visible'; }
+}
+function resetSheetFit(){
+    document.body.classList.remove('print-mode');
+    const sheet = document.getElementById('sheet');
+    const outer = document.querySelector('.sheet-outer');
+    if(sheet) sheet.style.transform = 'none';
+    if(outer){ outer.style.height = 'auto'; outer.style.overflow = 'visible'; }
+}
+window.addEventListener('beforeprint', fitSheetForPrint);
+window.addEventListener('afterprint', resetSheetFit);
+
+async function exportPDF(){
+    const btn = document.getElementById('exportPdfBtn');
+    const sheet = document.getElementById('sheet');
+    if(!sheet) return;
+    if(typeof html2canvas === 'undefined' || !window.jspdf){
+        toast('PDF libraries failed to load. Please check your internet connection and try again.', 'error');
+        return;
+    }
+
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Generating PDF…';
+
+    saveCurrentPage();
+    const returnTo = currentPageIndex;
+
+    document.body.classList.add('print-mode');
+    const sheetOuter = document.querySelector('.sheet-outer');
+    sheet.style.transform = 'none';
+    sheet.style.transformOrigin = 'top left';
+    if(sheetOuter){ sheetOuter.style.height = 'auto'; sheetOuter.style.overflow = 'visible'; }
+
+    try{
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            unit: 'px',
+            format: [A4_PAGE_WIDTH_PX, A4_PAGE_HEIGHT_PX],
+            orientation: 'portrait',
+            hotfixes: ['px_scaling']
+        });
+
+        for(let i = 0; i < pages.length; i++){
+            btn.textContent = `⏳ Page ${i+1}/${pages.length}…`;
+            loadPage(i);
+            await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+            await new Promise(r => setTimeout(r, 180));
+
+            const capture = await html2canvas(sheet, {
+                scale: 2.5,
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: '#ffffff',
+                width: A4_PAGE_WIDTH_PX,
+                height: A4_PAGE_HEIGHT_PX,
+                windowWidth: Math.max(document.documentElement.clientWidth, A4_PAGE_WIDTH_PX),
+                windowHeight: Math.max(document.documentElement.clientHeight, A4_PAGE_HEIGHT_PX),
+                scrollX: 0,
+                scrollY: 0,
+                logging: false,
+                foreignObjectRendering: false
+            });
+
+            if(i > 0) pdf.addPage([A4_PAGE_WIDTH_PX, A4_PAGE_HEIGHT_PX], 'portrait');
+            pdf.addImage(
+                capture.toDataURL('image/jpeg', 0.92),
+                'JPEG',
+                0, 0, A4_PAGE_WIDTH_PX, A4_PAGE_HEIGHT_PX,
+                undefined, 'FAST'
+            );
+        }
+
+        const customer = (document.getElementById('customer').value || 'Spec-Sheet')
+            .trim().replace(/[^a-z0-9]+/gi,'-');
+        const pi = getPiFull().replace(/[^a-z0-9]+/gi,'-');
+        pdf.save(`Outmaker-Spec-Sheet-${customer}${pi ? '-'+pi : ''}.pdf`);
+    } catch(err){
+        console.error('PDF export failed:', err);
+        toast('Sorry, the PDF could not be generated. Please try again.', 'error');
+    } finally {
+        loadPage(returnTo);
+        document.body.classList.remove('print-mode');
+        sheet.style.transform = 'none';
+        sheet.style.transformOrigin = '';
+        if(sheetOuter){ sheetOuter.style.height = 'auto'; sheetOuter.style.overflow = 'visible'; }
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+    }
+}
+
+pages = [createEmptyPage({
+    custArt: document.getElementById('custArt')?.value || 'J-IJF3SMU',
+    orderKind: 'kit1',
+    pLogoFront: true, pLogoBack: true, pLogoPant: true, pLogoShoulder: true, pStripesShoulder: true,
+    logoVariants: JSON.parse(JSON.stringify(KIT_PRESETS.kit1.logos.map(color => ({color, size:'65'})))),
+    stripeVariants: JSON.parse(JSON.stringify(KIT_PRESETS.kit1.stripes.map(color => ({color, size:'56', width:'14 mm', gap:'7 mm'}))))
+})];
+currentPageIndex = 0;
+renderVariantControls();
+applyOrderKind('kit1');
+saveCurrentPage();
+renderPageTabs();
+renderRecentArticles();
+searchArticles(''); 
+</script>
+</body>
+</html>
