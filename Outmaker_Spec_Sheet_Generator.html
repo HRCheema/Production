@@ -923,8 +923,16 @@ let supabaseClient = null;
 try{
     if(window.supabase && typeof window.supabase.createClient === 'function'){
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('[Supabase] client ready.');
+    } else {
+        console.warn('[Supabase] window.supabase is missing — the CDN script (@supabase/supabase-js) did not load. Cloud sync will be skipped; app still works on localStorage.');
     }
-}catch(e){ console.warn('Supabase client init failed — running on localStorage only.', e); }
+}catch(e){ console.warn('[Supabase] client init failed — running on localStorage only.', e); }
+if(!supabaseClient){
+    // Let the user know immediately (not just in the console) that cloud
+    // sync is unavailable this session — app still works fully offline.
+    setTimeout(() => toast('Cloud connect nahi ho saka is session me — data sirf is device par save hoga. Page reload karke dobara try karein.', 'warn'), 600);
+}
 
 function entryToSupabaseRow(entry){
     return {
@@ -963,13 +971,18 @@ function supabaseRowToEntry(row){
 // point of view — local save has already happened, so a failed/offline
 // push never blocks or loses the user's work.
 async function pushArticleToSupabase(entry){
-    if(!supabaseClient) return;
+    if(!supabaseClient){
+        console.warn('[Supabase] push skipped — client not initialized.');
+        toast('Cloud connect nahi ho saka (library load nahi hui). Data is device par save hai.', 'warn');
+        return;
+    }
     try{
         const { error } = await supabaseClient.from('articles').insert(entryToSupabaseRow(entry));
         if(error) throw error;
+        console.log('[Supabase] pushed:', entry.custArt);
     }catch(e){
-        console.warn('Supabase push failed — saved locally only.', e);
-        toast('Cloud sync nahi ho saka, data is device par save hai. Internet check karein.', 'warn');
+        console.warn('[Supabase] push failed — saved locally only.', e);
+        toast('Cloud sync nahi ho saka: ' + (e?.message || 'unknown error') + '. Data is device par save hai.', 'warn');
     }
 }
 
@@ -984,6 +997,7 @@ async function syncArticlesFromSupabase(){
             .select('*')
             .order('saved_at', { ascending: false });
         if(error) throw error;
+        console.log('[Supabase] synced rows:', data ? data.length : 0);
         if(!data || !data.length) return;
 
         const store = loadArticleStore();
