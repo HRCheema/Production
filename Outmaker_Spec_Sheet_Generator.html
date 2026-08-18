@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
     * { box-sizing:border-box; margin:0; padding:0; font-family:'Inter','Segoe UI',Tahoma,Geneva,Verdana,sans-serif; }
     body { background:radial-gradient(circle at 15% 0%,#eef1fb 0%,#e3e7f5 45%,#dde1f2 100%); padding:18px; color:#222; }
@@ -908,6 +909,103 @@ function writeArticleStore(store){
     catch(e){ console.warn('Could not save article library', e); }
 }
 
+/* =========================================================
+   Supabase cloud sync (Article Library)
+   Strategy: localStorage stays the instant, always-available
+   cache (so search/autocomplete stay snappy and offline-safe).
+   Supabase runs alongside it — on load we pull the latest rows
+   down into the local cache, and every explicit Save also pushes
+   the entry up to Supabase in the background.
+   ========================================================= */
+const SUPABASE_URL = 'https://yktnxmdlzmjuroqjpxwu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_cPOgwfRqNoZJsrHnhZpj1w_5p-17Raj';
+let supabaseClient = null;
+try{
+    if(window.supabase && typeof window.supabase.createClient === 'function'){
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+}catch(e){ console.warn('Supabase client init failed — running on localStorage only.', e); }
+
+function entryToSupabaseRow(entry){
+    return {
+        cust_art: entry.custArt,
+        order_kind: entry.orderKind,
+        p_logo_front: !!entry.pLogoFront,
+        p_logo_back: !!entry.pLogoBack,
+        p_logo_pant: !!entry.pLogoPant,
+        p_logo_shoulder: !!entry.pLogoShoulder,
+        p_stripes_shoulder: !!entry.pStripesShoulder,
+        placement_notes: entry.placementNotes || '',
+        logo_variants: entry.logoVariants || [],
+        stripe_variants: entry.stripeVariants || [],
+        last_pi: entry.lastPi || ''
+    };
+}
+function supabaseRowToEntry(row){
+    return {
+        custArt: row.cust_art,
+        orderKind: row.order_kind,
+        pLogoFront: !!row.p_logo_front,
+        pLogoBack: !!row.p_logo_back,
+        pLogoPant: !!row.p_logo_pant,
+        pLogoShoulder: !!row.p_logo_shoulder,
+        pStripesShoulder: !!row.p_stripes_shoulder,
+        placementNotes: row.placement_notes || '',
+        logoVariants: row.logo_variants || [],
+        stripeVariants: row.stripe_variants || [],
+        savedAt: row.saved_at,
+        lastPi: row.last_pi || '',
+        _supaId: row.id
+    };
+}
+
+// Push one saved entry up to Supabase. Fire-and-forget from the caller's
+// point of view — local save has already happened, so a failed/offline
+// push never blocks or loses the user's work.
+async function pushArticleToSupabase(entry){
+    if(!supabaseClient) return;
+    try{
+        const { error } = await supabaseClient.from('articles').insert(entryToSupabaseRow(entry));
+        if(error) throw error;
+    }catch(e){
+        console.warn('Supabase push failed — saved locally only.', e);
+        toast('Cloud sync nahi ho saka, data is device par save hai. Internet check karein.', 'warn');
+    }
+}
+
+// Pull every saved article down from Supabase into the local cache, so any
+// device opening this page sees the latest shared library. Runs quietly on
+// load; failures just leave the existing local cache untouched.
+async function syncArticlesFromSupabase(){
+    if(!supabaseClient) return;
+    try{
+        const { data, error } = await supabaseClient
+            .from('articles')
+            .select('*')
+            .order('saved_at', { ascending: false });
+        if(error) throw error;
+        if(!data || !data.length) return;
+
+        const store = loadArticleStore();
+        data.forEach(row => {
+            const key = (row.cust_art || '').trim().toUpperCase();
+            if(!key) return;
+            const list = Array.isArray(store[key]) ? store[key] : (store[key] ? [store[key]] : []);
+            const already = list.some(e => e._supaId === row.id);
+            if(!already){
+                list.unshift(supabaseRowToEntry(row));
+                store[key] = list.slice(0, 8);
+            }
+        });
+        writeArticleStore(store);
+        renderRecentArticles();
+        const q = document.getElementById('articleSearch');
+        searchArticles(q ? q.value : '');
+    }catch(e){
+        console.warn('Supabase sync failed — using local cache only.', e);
+    }
+}
+
 function articleSummary(entry){
     const logos = (entry.logoVariants || []).map(v => {
         const name = (typeof colorNames !== 'undefined' && colorNames[v.color]) ? colorNames[v.color] : v.color;
@@ -952,6 +1050,7 @@ function saveCurrentArticle(){
     store[key] = list.slice(0, 8);
     const dups = findDuplicateArticles(entry, key);
     writeArticleStore(store);
+    if(!same) pushArticleToSupabase(entry); // background cloud sync, doesn't block the UI
     pushRecentArticle(art);
     searchArticles(document.getElementById('articleSearch').value || '');
     if(dups.length){
@@ -1992,7 +2091,8 @@ applyOrderKind('kit1');
 saveCurrentPage();
 renderPageTabs();
 renderRecentArticles();
-searchArticles(''); 
+searchArticles('');
+syncArticlesFromSupabase(); // pulls the cloud library into the local cache on load
 </script>
 </body>
 </html>
