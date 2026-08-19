@@ -275,9 +275,221 @@
         box-shadow:0 1px 0 #c5cae9, inset 0 1px 0 #fff; white-space:nowrap;
     }
     .shortcut-row .shortcut-label { font-size:.82rem; color:#333; font-weight:600; text-align:right; }
+/* =========================================================
+   3D GLASS UI THEME — visual only, functionality unchanged
+   ========================================================= */
+:root{
+  --glass-bg:rgba(255,255,255,.68);
+  --glass-bg-strong:rgba(255,255,255,.82);
+  --glass-border:rgba(255,255,255,.78);
+  --glass-shadow:0 22px 55px rgba(31,41,92,.18), 0 6px 18px rgba(31,41,92,.10), inset 0 1px 0 rgba(255,255,255,.92);
+  --glass-blue:#3f51b5;
+  --glass-purple:#7c4dff;
+  --glass-cyan:#00acc1;
+}
+body{
+  background:
+    radial-gradient(circle at 8% 8%,rgba(124,77,255,.28),transparent 27%),
+    radial-gradient(circle at 92% 12%,rgba(0,188,212,.22),transparent 25%),
+    radial-gradient(circle at 50% 100%,rgba(63,81,181,.18),transparent 35%),
+    linear-gradient(135deg,#e9edff 0%,#dce8ff 45%,#edf4ff 100%);
+  color:#17213c;
+  min-height:100vh;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background:linear-gradient(120deg,rgba(255,255,255,.24),transparent 35%,rgba(255,255,255,.12));
+}
+.wrap{gap:18px;}
+.panel,.library-panel{
+  background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(255,255,255,.48));
+  border:1px solid var(--glass-border);
+  box-shadow:var(--glass-shadow);
+  backdrop-filter:blur(22px) saturate(150%);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  border-radius:22px;
+}
+.panel h2,.library-panel h2{
+  color:#27348f;
+  border-bottom-color:rgba(63,81,181,.16);
+}
+.panel input[type=text],.panel select,.library-panel input[type=text]{
+  background:rgba(255,255,255,.72);
+  border-color:rgba(99,115,180,.24);
+  box-shadow:inset 0 2px 5px rgba(48,62,120,.06),0 1px 0 rgba(255,255,255,.9);
+  border-radius:12px;
+}
+.panel input[type=text]:focus,.panel select:focus,.library-panel input[type=text]:focus{
+  border-color:rgba(63,81,181,.65);
+  box-shadow:0 0 0 4px rgba(63,81,181,.10),inset 0 2px 5px rgba(48,62,120,.05);
+}
+.btn{
+  background:linear-gradient(135deg,#536dfe 0%,#3f51b5 48%,#6a45d9 100%);
+  border:1px solid rgba(255,255,255,.45);
+  border-radius:13px;
+  box-shadow:0 9px 18px rgba(63,81,181,.22),inset 0 1px 0 rgba(255,255,255,.38);
+  text-shadow:0 1px 2px rgba(20,25,70,.25);
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+.btn:hover{
+  background:linear-gradient(135deg,#607dff 0%,#4659c7 48%,#744be5 100%);
+  transform:translateY(-2px);
+  box-shadow:0 13px 24px rgba(63,81,181,.28),inset 0 1px 0 rgba(255,255,255,.42);
+  filter:saturate(1.08);
+}
+.btn:active{transform:translateY(0) scale(.985);}
+.btn-print{background:linear-gradient(135deg,#00a88f,#00796b);}
+.btn-print:hover{background:linear-gradient(135deg,#12bfa5,#00897b);}
+.btn-clear{background:linear-gradient(135deg,#ef5350,#c62828);}
+.btn-clear:hover{background:linear-gradient(135deg,#ff665f,#d32f2f);}
+.drop-zone{
+  background:linear-gradient(145deg,rgba(255,255,255,.55),rgba(235,239,255,.58));
+  border-color:rgba(83,109,254,.38);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 16px rgba(63,81,181,.07);
+  border-radius:15px;
+}
+.order-kind-box{
+  background:rgba(248,250,255,.58);
+  border-color:rgba(99,115,180,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 5px 15px rgba(50,65,120,.06);
+}
+.preset-badge{
+  background:linear-gradient(135deg,rgba(83,109,254,.16),rgba(124,77,255,.14));
+  border:1px solid rgba(83,109,254,.18);
+}
+.library-panel .article-item,.library-panel .recent-chip{
+  border-radius:12px !important;
+  box-shadow:0 5px 14px rgba(42,54,120,.07),inset 0 1px 0 rgba(255,255,255,.8);
+}
+.sheet{
+  border:1px solid rgba(255,255,255,.95);
+  box-shadow:0 28px 70px rgba(30,40,90,.24),0 8px 20px rgba(30,40,90,.12),inset 0 1px 0 rgba(255,255,255,.98);
+  border-radius:18px;
+}
+.sheet-outer{filter:drop-shadow(0 4px 12px rgba(40,50,110,.06));}
+.modal-overlay{background:rgba(23,30,65,.42);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);}
+.modal-box{
+  background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(239,244,255,.78));
+  border:1px solid rgba(255,255,255,.85);
+  box-shadow:0 30px 80px rgba(20,25,70,.32),inset 0 1px 0 rgba(255,255,255,.95);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+}
+.toast{
+  border:1px solid rgba(255,255,255,.5);
+  box-shadow:0 18px 45px rgba(20,25,70,.25),inset 0 1px 0 rgba(255,255,255,.25);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+@media (max-width:900px){
+  .panel,.library-panel{border-radius:18px;}
+}
+@media print{
+  body{background:#fff !important;}
+  body::before{display:none !important;}
+  .panel,.library-panel{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;box-shadow:none !important;}
+  .sheet{box-shadow:none !important;}
+}
+
+
+/* ---------- Universal Editor Accordion / Glass Section Controls ---------- */
+.editor-section-head{
+  cursor:pointer !important; user-select:none;
+  position:relative;
+  display:flex !important; align-items:center; justify-content:space-between;
+  gap:10px;
+  padding:10px 12px !important;
+  margin:10px 0 0 !important;
+  border:1px solid rgba(255,255,255,.55) !important;
+  border-radius:14px !important;
+  background:linear-gradient(135deg,rgba(255,255,255,.72),rgba(230,236,255,.38)) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85), 0 6px 18px rgba(40,55,120,.08) !important;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.editor-section-head:hover{
+  transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 10px 24px rgba(40,55,120,.14) !important;
+}
+.editor-section-head .accordion-icon{
+  width:25px; height:25px; flex:0 0 25px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:9px;
+  background:rgba(255,255,255,.72);
+  box-shadow:0 3px 9px rgba(35,45,100,.12);
+  font-size:.72rem !important; line-height:1;
+  transition:transform .2s ease, background .2s ease;
+}
+.editor-section-head.is-collapsed .accordion-icon{transform:rotate(-90deg);}
+.editor-section-body{
+  overflow:hidden; max-height:2500px; opacity:1;
+  transition:max-height .28s ease, opacity .2s ease, padding .2s ease;
+  padding-top:2px;
+}
+.editor-section-body.is-collapsed{max-height:0 !important; opacity:0; padding-top:0;}
+.library-panel .editor-section-head{margin-top:0 !important;}
+@media print{.editor-section-head{display:none !important}.editor-section-body{max-height:none !important;opacity:1 !important;}}
+
+
+    /* ---------- Specs Hub Navigation ---------- */
+    .spec-nav{
+        max-width:1680px;
+        margin:0 auto 14px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        flex-wrap:wrap;
+        background:rgba(255,255,255,.94);
+        border:1px solid #dbe2ef;
+        border-radius:10px;
+        padding:9px 12px;
+        box-shadow:0 4px 16px rgba(20,25,60,.07);
+    }
+    .spec-nav .brand{
+        font-family:'Poppins','Segoe UI',sans-serif;
+        font-weight:800;
+        color:#1a237e;
+        font-size:.9rem;
+        letter-spacing:.2px;
+    }
+    .spec-nav-links{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+    .spec-nav a{
+        display:inline-flex;
+        align-items:center;
+        gap:5px;
+        text-decoration:none;
+        color:#1a237e;
+        background:#eef0f8;
+        border:1px solid #cbd5e1;
+        border-radius:7px;
+        padding:7px 10px;
+        font-size:.78rem;
+        font-weight:700;
+        transition:background .15s,border-color .15s,transform .1s;
+    }
+    .spec-nav a:hover{
+        background:#e8eaf6;
+        border-color:#9fa8da;
+        transform:translateY(-1px);
+    }
+    .spec-nav a.current{
+        background:#1a237e;
+        color:#fff;
+        border-color:#1a237e;
+    }
+    @media print{
+        .spec-nav{display:none !important;}
+    }
+
 </style>
 </head>
 <body>
+<div class="spec-nav no-print" aria-label="Specs navigation">
+    <div class="brand">Haider Cheema — Specs Hub</div>
+    <div class="spec-nav-links">
+        <a href="./hub.html" title="Back to Specs Hub">🏠 Specs Hub</a>
+        <a class="current" href="./Outmaker_Spec_Sheet_Generator.html" aria-current="page">🎨 Outmaker Spec Maker</a>
+    </div>
+</div>
 <div class="wrap">
 
     <!-- ===================== CONTROL PANEL ===================== -->
@@ -882,6 +1094,68 @@ async function newOrder(){
     if(piInput) piInput.focus();
 }
 
+
+/* ---------- Universal collapsible editor sections ---------- */
+function initUniversalEditorAccordions(){
+  const containers = document.querySelectorAll('.panel.no-print, .library-panel.no-print');
+  containers.forEach((container, ci) => {
+    const headings = Array.from(container.querySelectorAll(':scope > h2'));
+    headings.forEach((heading, hi) => {
+      // Remove legacy inline accordion behavior; this unified handler manages every section.
+      heading.removeAttribute('onclick');
+      heading.classList.add('editor-section-head');
+
+      let title = heading.querySelector(':scope > .accordion-title');
+      if(!title){
+        const text = (heading.textContent || '').replace(/[▼▶]\s*$/,'').trim();
+        title = document.createElement('span');
+        title.className = 'accordion-title';
+        title.textContent = text;
+        heading.innerHTML = '';
+        heading.appendChild(title);
+      }
+
+      let icon = heading.querySelector(':scope > .accordion-icon');
+      if(!icon){
+        icon = document.createElement('span');
+        icon.className = 'accordion-icon';
+        icon.setAttribute('aria-hidden','true');
+        icon.textContent = '▼';
+        heading.appendChild(icon);
+      }
+
+      // Collect the section's existing content until the next separator or heading.
+      const body = document.createElement('div');
+      body.className = 'editor-section-body';
+      body.id = `editorSectionBody_${ci}_${hi}`;
+      let next = heading.nextElementSibling;
+      while(next && !next.matches('hr.sep') && !next.matches(':scope > h2')){
+        const move = next;
+        next = next.nextElementSibling;
+        body.appendChild(move);
+      }
+      heading.after(body);
+
+      const storageKey = 'outmaker_accordion_' + container.className.replace(/\s+/g,'_') + '_' + hi;
+      let collapsed = false;
+      try{ collapsed = localStorage.getItem(storageKey) === '1'; }catch(e){}
+      const setState = (isCollapsed, save=true) => {
+        body.classList.toggle('is-collapsed', isCollapsed);
+        heading.classList.toggle('is-collapsed', isCollapsed);
+        heading.setAttribute('aria-expanded', String(!isCollapsed));
+        if(save){ try{ localStorage.setItem(storageKey, isCollapsed ? '1' : '0'); }catch(e){} }
+      };
+      setState(collapsed, false);
+      heading.addEventListener('click', () => setState(!body.classList.contains('is-collapsed')));
+      heading.setAttribute('role','button');
+      heading.setAttribute('tabindex','0');
+      heading.addEventListener('keydown', e => {
+        if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); heading.click(); }
+      });
+    });
+  });
+}
+
 function toggleSection(bodyId, headingEl){
     const body = document.getElementById(bodyId);
     if(!body) return;
@@ -897,12 +1171,38 @@ function getPiFull(){
     return v ? 'E' + v : '';
 }
 
+// Permanent built-in Article Library backup (45 articles)
+const EMBEDDED_ARTICLE_LIBRARY = {"K999":[{"custArt":"K999","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON JKT BACK | LOGO ON JKT FRONT | LOGO ON PANT | LOGO ON BACK | LOGO ON FRONT","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JKT BACK","LOGO ON JKT FRONT","LOGO ON PANT","LOGO ON BACK","LOGO ON FRONT"]}],"K999HWT":[{"custArt":"K999HWT","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON BACK | LOGO ON FRONT | LOGO ON PANT","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON BACK","LOGO ON FRONT","LOGO ON PANT"]}],"K999NHW":[{"custArt":"K999NHW","orderKind":"single","pLogoFront":false,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"1 Logo on JKT B | 1 Logo on JKT F | 1 Logo on Pant","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["1 Logo on JKT B","1 Logo on JKT F","1 Logo on Pant"]}],"K999ST-HWT":[{"custArt":"K999ST-HWT","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON JKT BACK | LOGO ON JKT FRONT | LOGO ON PANT | STRIPES ON SHOULDERS | 1 Logo on Pant | 1 Logo on jkt back","logoVariants":[{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JKT BACK","LOGO ON JKT FRONT","LOGO ON PANT","STRIPES ON SHOULDERS","1 Logo on Pant","1 Logo on jkt back"]}],"K999J":[{"custArt":"K999J","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"1 Logo on JKT BACK | 1 Logo on JKT FROT | 1 Logo on Pant","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["1 Logo on JKT BACK","1 Logo on JKT FROT","1 Logo on Pant"]}],"K999HWTP":[{"custArt":"K999HWTP","orderKind":"single","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"1 Logo on Pant","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["1 Logo on Pant"]}],"K250":[{"custArt":"K250","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON FRONT | LOGO ON pant | LOGO ON BACK | LOGO ON JKT BACK | LOGO ON JKT FRONT | LOGO ON PANT","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON FRONT","LOGO ON pant","LOGO ON BACK","LOGO ON JKT BACK","LOGO ON JKT FRONT","LOGO ON PANT"]}],"K250S":[{"custArt":"K250S","orderKind":"single","pLogoFront":false,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"1 Logo on Pant | 1 Logo on jkt back","logoVariants":[{"color":"#d4af37","size":"65"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["1 Logo on Pant","1 Logo on jkt back"]}],"K250SN":[{"custArt":"K250SN","orderKind":"single","pLogoFront":false,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"1 Logo on JKT B | 1 Logo on JKT F | 1 Logo on Pant","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["1 Logo on JKT B","1 Logo on JKT F","1 Logo on Pant"]}],"K280":[{"custArt":"K280","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON BACK | LOGO ON FRONT | LOGO ON PANT","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON BACK","LOGO ON FRONT","LOGO ON PANT"]}],"K280_2.0":[{"custArt":"K280_2.0","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":false,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON JKT BACK | LOGO ON JKT FRONT","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JKT BACK","LOGO ON JKT FRONT"]}],"K0__2__0":[{"custArt":"K0__2__0","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":false,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON BACK | LOGO ON fRONT","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON BACK","LOGO ON fRONT"]}],"KC23KT":[{"custArt":"KC23KT","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"BACK LOGO | FRONT LOGO | PANT LOGO","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["BACK LOGO","FRONT LOGO","PANT LOGO"]}],"KC280.30":[{"custArt":"KC280.30","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":false,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"BACK LOGO | FRONT LOGO","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["BACK LOGO","FRONT LOGO"]}],"J650P":[{"custArt":"J650P","orderKind":"single","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"1 Logo on Pant | LOGO ON PANT","logoVariants":[{"color":"#d4af37","size":"65"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["1 Logo on Pant","LOGO ON PANT"]}],"J650BP":[{"custArt":"J650BP","orderKind":"single","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON PANT","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON PANT"]}],"J650BR":[{"custArt":"J650BR","orderKind":"single","pLogoFront":true,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON JKT FRONT | LOGO ON PANT","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JKT FRONT","LOGO ON PANT"]}],"J-IJF3":[{"custArt":"J-IJF3","orderKind":"combo","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":true,"pStripesShoulder":true,"placementNotes":"LOGO ON JKT BACK | LOGO ON JKT FRONT | LOGO ON PANT | LOGO ON SHOULDER | STRIPES ON SHOULDERS | 1 Logo on Pant | LOGO ON SIDE","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[{"color":"#c8102e","size":"50","width":"12.5 mm","gap":"6.25 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JKT BACK","LOGO ON JKT FRONT","LOGO ON PANT","LOGO ON SHOULDER","STRIPES ON SHOULDERS","1 Logo on Pant","LOGO ON SIDE"]}],"J-IJFB3":[{"custArt":"J-IJFB3","orderKind":"combo","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"1 Logo on Pant | LOGO ON PANT | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[{"color":"#c8102e","size":"50","width":"12.5 mm","gap":"6.25 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["1 Logo on Pant","LOGO ON PANT","STRIPES ON SHOULDERS"]}],"J-IJFB3-L":[{"custArt":"J-IJFB3-L","orderKind":"combo","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":true,"pStripesShoulder":true,"placementNotes":"LOGO ON PANT | LOGO ON Shoulder | LOGO ON SIDE | STRIPES ON SHOULDERS","logoVariants":[{"color":"#ffffff","size":"65"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":"White","stripes":null},"placements":["LOGO ON PANT","LOGO ON Shoulder","LOGO ON SIDE","STRIPES ON SHOULDERS"]}],"J-IJFB3-L (SLIMFIT)":[{"custArt":"J-IJFB3-L (SLIMFIT)","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON PANT | LOGO ON SIDE | LOGO ON BACK | LOGO ON fRONT","logoVariants":[{"color":"#d4af37","size":"65"},{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON PANT","LOGO ON SIDE","LOGO ON BACK","LOGO ON fRONT"]}],"J-IJF3-L":[{"custArt":"J-IJF3-L","orderKind":"single","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":true,"pStripesShoulder":false,"placementNotes":"LOGO ON PANT | LOGO ON Shoulder","logoVariants":[{"color":"#ffffff","size":"65"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":"White","stripes":null},"placements":["LOGO ON PANT","LOGO ON Shoulder"]}],"JJ380":[{"custArt":"JJ380","orderKind":"single","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":true,"pStripesShoulder":false,"placementNotes":"LOGO ON BACK | LOGO ON PANT | LOGO ON SHOULDER | LOGO ON JKT BACK | LOGO ON JKT FRONT","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON BACK","LOGO ON PANT","LOGO ON SHOULDER","LOGO ON JKT BACK","LOGO ON JKT FRONT"]}],"JJ280":[{"custArt":"JJ280","orderKind":"single","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON PANT","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON PANT"]}],"JT275":[{"custArt":"JT275","orderKind":"single","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON PANT","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON PANT"]}],"JU730-L":[{"custArt":"JU730-L","orderKind":"single","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":true,"pStripesShoulder":false,"placementNotes":"LOGO ON PANT | LOGO ON SHOULDER","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON PANT","LOGO ON SHOULDER"]}],"UKJT300":[{"custArt":"UKJT300","orderKind":"single","pLogoFront":false,"pLogoBack":false,"pLogoPant":false,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"Black Logo 90mm","logoVariants":[{"color":"#111111","size":"90"},{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":"Black (90mm logo)","stripes":null},"placements":["Black Logo 90mm"]}],"K999ST_HWT":[{"custArt":"K999sT_HWT","orderKind":"combo","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON JKT BACK | LOGO ON JKT FRONT | LOGO ON PANT | STRIPES ON SHOULDERS | 1 Logo on Pant | 1 Logo on jkt back","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JKT BACK","LOGO ON JKT FRONT","LOGO ON PANT","STRIPES ON SHOULDERS","1 Logo on Pant","1 Logo on jkt back"]}],"K150WB":[{"custArt":"K150WB","orderKind":"combo","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON JACKET | LOGO ON PANT | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JACKET","LOGO ON PANT","STRIPES ON SHOULDERS"]}],"K200_20WB":[{"custArt":"K200_20WB","orderKind":"combo","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON JACKET | LOGO ON PANT | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JACKET","LOGO ON PANT","STRIPES ON SHOULDERS"]}],"JJ430_20TL":[{"custArt":"JJ430_20TL","orderKind":"combo","pLogoFront":false,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON JKT BACK | LOGO ON PANT | STRIPES ON SHOULDERS | LOGO ON PANT Back","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[{"color":"#c8102e","size":"64","width":"16 mm","gap":"8 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JKT BACK","LOGO ON PANT","STRIPES ON SHOULDERS","LOGO ON PANT Back"]}],"J-IJF3 (SLIMFIT)":[{"custArt":"J-IJF3 (SLIMFIT)","orderKind":"combo","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON PANT | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[{"color":"#c8102e","size":"50","width":"12.5 mm","gap":"6.25 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON PANT","STRIPES ON SHOULDERS"]}],"J-IJF-JAC":[{"custArt":"J-IJF-JAC","orderKind":"combo","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON PANT | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[{"color":"#c8102e","size":"50","width":"12.5 mm","gap":"6.25 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON PANT","STRIPES ON SHOULDERS"]}],"J-IJF3SMU":[{"custArt":"J-IJF3SMU","orderKind":"combo","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON PANT | STRIPES ON SHOULDERS | Stripes","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[{"color":"#c8102e","size":"50","width":"12.5 mm","gap":"6.25 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON PANT","STRIPES ON SHOULDERS","Stripes"]}],"J-IJF3SMU (ITALIAN)":[{"custArt":"J-IJF3SMU (ITALIAN)","orderKind":"combo","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON PANT | STRIPES ON SHOULDERS | Stripes","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[{"color":"#c8102e","size":"50","width":"12.5 mm","gap":"6.25 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON PANT","STRIPES ON SHOULDERS","Stripes"]}],"JJ430":[{"custArt":"Jj430","orderKind":"combo","pLogoFront":true,"pLogoBack":true,"pLogoPant":false,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON BACK | LOGO ON FRONT BACK | STRIPES","logoVariants":[{"color":"#d4af37","size":"48"}],"stripeVariants":[{"color":"#c8102e","size":"64","width":"16 mm","gap":"8 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON BACK","LOGO ON FRONT BACK","STRIPES"]}],"IJF":[{"custArt":"IJF","orderKind":"combo","pLogoFront":false,"pLogoBack":false,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":false,"placementNotes":"LOGO ON PANT | STRIPES","logoVariants":[{"color":"#d4af37","size":"65"}],"stripeVariants":[{"color":"#c8102e","size":"50","width":"12.5 mm","gap":"6.25 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON PANT","STRIPES"]}],"K999ST_HWT KIT":[{"custArt":"K999sT_HWT KIT","orderKind":"kit1","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":true,"pStripesShoulder":true,"placementNotes":"KIT / multi-logo + stripe setup. Measurements are editable after import.","logoVariants":[{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"}],"stripeVariants":[{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"},{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null}}],"K250-KIT":[{"custArt":"K250-KIT","orderKind":"kit1","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"Back Logo | Front Logo | Pant Logo Only | Stripes | 1 Logo on JKT BACK | 1 Logo on JKT FROT | 1 Logo on Pant | LOGO ON JKT BACK | LOGO ON JKT FRONT | LOGO ON PANT | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"}],"stripeVariants":[{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"},{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["Back Logo","Front Logo","Pant Logo Only","Stripes","1 Logo on JKT BACK","1 Logo on JKT FROT","1 Logo on Pant","LOGO ON JKT BACK","LOGO ON JKT FRONT","LOGO ON PANT","STRIPES ON SHOULDERS"]}],"K250KIT":[{"custArt":"K250Kit","orderKind":"kit1","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"Back Logo | Front Logo | Pant Logo Only | Stripes | 1 Logo on JKT BACK | 1 Logo on JKT FROT | 1 Logo on Pant | LOGO ON JKT BACK | LOGO ON JKT FRONT | LOGO ON PANT | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"}],"stripeVariants":[{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"},{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["Back Logo","Front Logo","Pant Logo Only","Stripes","1 Logo on JKT BACK","1 Logo on JKT FROT","1 Logo on Pant","LOGO ON JKT BACK","LOGO ON JKT FRONT","LOGO ON PANT","STRIPES ON SHOULDERS"]}],"K0ST20_KIT":[{"custArt":"K0ST20_KIT","orderKind":"kit1","pLogoFront":true,"pLogoBack":true,"pLogoPant":false,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON JKT BACK | LOGO ON JKT FRONT | LOGO ON JKT Front | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"}],"stripeVariants":[{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"},{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JKT BACK","LOGO ON JKT FRONT","LOGO ON JKT Front","STRIPES ON SHOULDERS"]}],"K0ST_2_0":[{"custArt":"K0ST_2_0","orderKind":"kit1","pLogoFront":true,"pLogoBack":true,"pLogoPant":false,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON JKT BACK | LOGO ON JKT FRONT | LOGO ON JKT Front | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"}],"stripeVariants":[{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"},{"color":"#c8102e","size":"56","width":"14 mm","gap":"7 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON JKT BACK","LOGO ON JKT FRONT","LOGO ON JKT Front","STRIPES ON SHOULDERS"]}],"K999KIT":[{"custArt":"K999KIT","orderKind":"kit1","pLogoFront":false,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"LOGO ON BACK | LOGO ON PANT | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"65"},{"color":"#d4af37","size":"65"},{"color":"#d4af37","size":"65"}],"stripeVariants":[{"color":"#c8102e","size":"50","width":"12.5 mm","gap":"6.25 mm"},{"color":"#c8102e","size":"50","width":"12.5 mm","gap":"6.25 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["LOGO ON BACK","LOGO ON PANT","STRIPES ON SHOULDERS"]}],"JJ430_20TL KIT":[{"custArt":"JJ430_20TL KIT","orderKind":"kit1","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":true,"pStripesShoulder":true,"placementNotes":"KIT / multi-logo + stripe setup. Measurements are editable after import.","logoVariants":[{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"}],"stripeVariants":[{"color":"#c8102e","size":"64","width":"16 mm","gap":"8 mm"},{"color":"#c8102e","size":"64","width":"16 mm","gap":"8 mm"}],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null}}],"K250 KIT":[{"custArt":"K250 KIT","orderKind":"kit1","pLogoFront":true,"pLogoBack":true,"pLogoPant":true,"pLogoShoulder":false,"pStripesShoulder":true,"placementNotes":"Back Logo | Front Logo | Pant Logo Only | Stripes | 1 Logo on JKT BACK | 1 Logo on JKT FROT | 1 Logo on Pant | LOGO ON JKT BACK | LOGO ON JKT FRONT | LOGO ON PANT | STRIPES ON SHOULDERS","logoVariants":[{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"},{"color":"#d4af37","size":"48"}],"stripeVariants":[],"savedAt":"2026-08-19T00:00:00.000Z","lastPi":"","colorSchemes":{"logo":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}],"stripes":[{"name":"White","hex":"#ffffff"},{"name":"Black","hex":"#111111"},{"name":"Red","hex":"#c8102e"},{"name":"Blue","hex":"#1a4fd6"},{"name":"Gold","hex":"#d4af37"},{"name":"Silver","hex":"#c0c0c0"},{"name":"Grey","hex":"#8a8f98"}]},"colorSchemeNote":"Color options are available for manual selection. Only explicitly extracted source colors are pre-applied below; unknown source colors are not guessed.","sourceColorEvidence":{"logo":null,"stripes":null},"placements":["Back Logo","Front Logo","Pant Logo Only","Stripes","1 Logo on JKT BACK","1 Logo on JKT FROT","1 Logo on Pant","LOGO ON JKT BACK","LOGO ON JKT FRONT","LOGO ON PANT","STRIPES ON SHOULDERS"]}]};
+const EMBEDDED_LIBRARY_MERGED_KEY = 'outmaker_embedded_library_v1';
 const ARTICLE_STORE_KEY = 'outmaker_article_library_v1';
 
 function loadArticleStore(){
     try{
-        return JSON.parse(localStorage.getItem(ARTICLE_STORE_KEY) || '{}');
-    }catch(e){ return {}; }
+        let raw = localStorage.getItem(ARTICLE_STORE_KEY);
+        let store = raw ? JSON.parse(raw) : {};
+
+        // First launch: permanently seed the browser library from the bundled backup.
+        // Existing saved articles are preserved and take priority over bundled entries.
+        if(localStorage.getItem(EMBEDDED_LIBRARY_MERGED_KEY) !== '1'){
+            const seeded = {};
+            Object.keys(EMBEDDED_ARTICLE_LIBRARY || {}).forEach(k => {
+                const v = EMBEDDED_ARTICLE_LIBRARY[k];
+                seeded[k] = Array.isArray(v) ? v.slice(0,8) : [v];
+            });
+            Object.keys(store || {}).forEach(k => {
+                const incoming = Array.isArray(store[k]) ? store[k] : [store[k]];
+                const existing = Array.isArray(seeded[k]) ? seeded[k] : (seeded[k] ? [seeded[k]] : []);
+                seeded[k] = [...incoming, ...existing].filter(Boolean).slice(0,8);
+            });
+            store = seeded;
+            localStorage.setItem(ARTICLE_STORE_KEY, JSON.stringify(store));
+            localStorage.setItem(EMBEDDED_LIBRARY_MERGED_KEY, '1');
+        }
+        return store || {};
+    }catch(e){
+        // If localStorage is unavailable/corrupt, the bundled backup still works.
+        return EMBEDDED_ARTICLE_LIBRARY || {};
+    }
 }
 function writeArticleStore(store){
     try{ localStorage.setItem(ARTICLE_STORE_KEY, JSON.stringify(store)); }
@@ -1951,35 +2251,8 @@ function updateSheet(){
         renderPageTabs();
     }
     autoSaveArticleIfNamed();
-    refreshDuplicateBanner();
 }
 
-function refreshDuplicateBanner(){
-    let banner = document.getElementById('dupBanner');
-    if(!banner){
-        const host = document.getElementById('custArt')?.parentElement;
-        if(!host) return;
-        banner = document.createElement('div');
-        banner.id = 'dupBanner';
-        banner.style.cssText = 'display:none;margin-top:6px;padding:6px 8px;border-radius:6px;background:#fff3e0;border:1px solid #ffb74d;font-size:.7rem;color:#e65100;line-height:1.35;';
-        host.appendChild(banner);
-    }
-    const art = (document.getElementById('custArt')?.value || '').trim();
-    const entry = {
-        orderKind: document.getElementById('orderKind')?.value,
-        logoVariants: logoVariants,
-        stripeVariants: stripeVariants
-    };
-    const dups = findDuplicateArticles(entry, art ? art.toUpperCase() : null);
-    if(dups.length){
-        const names = dups.map(d => d.custArt + (d.kindLabel ? ' ['+d.kindLabel+']' : '')).join(', ');
-        banner.style.display = 'block';
-        banner.innerHTML = '<b>Duplicate setup</b> — same kind/logos/stripes already in: <b>' + names + '</b>';
-    } else {
-        banner.style.display = 'none';
-        banner.textContent = '';
-    }
-}
 
 document.querySelectorAll('.panel input, .panel select').forEach(el=>{
     el.addEventListener('focus', () => { pushStateToHistory(); });
@@ -2107,6 +2380,10 @@ renderPageTabs();
 renderRecentArticles();
 searchArticles('');
 syncArticlesFromSupabase(); // pulls the cloud library into the local cache on load
+
+// Activate the universal expand/collapse controls after the editor DOM is ready.
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initUniversalEditorAccordions);
+else initUniversalEditorAccordions();
 </script>
 </body>
 </html>
