@@ -14,14 +14,14 @@
     * { box-sizing:border-box; margin:0; padding:0; font-family:'Inter','Segoe UI',Tahoma,Geneva,Verdana,sans-serif; }
     body { background:radial-gradient(circle at 15% 0%,#eef1fb 0%,#e3e7f5 45%,#dde1f2 100%); padding:18px; color:#222; }
     h1,h2,h3,.sheet-title,.v-title,.variant-title,.dim-text-big { font-family:'Poppins','Segoe UI',sans-serif; }
-    .wrap { max-width:1680px; margin:0 auto; display:flex; gap:14px; align-items:flex-start; flex-wrap:nowrap; }
+    .wrap { max-width:1520px; margin:0 auto; display:flex; gap:18px; align-items:flex-start; flex-wrap:nowrap; }
 
     /* ---------- Control Panel ---------- */
-    .panel { width:300px; flex-shrink:0; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.06); padding:16px; max-height:calc(100vh - 36px); overflow-y:auto; position:sticky; top:18px; border: 1px solid #e2e8f0; }
+    .panel { width:320px; flex-shrink:0; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.06); padding:16px; max-height:calc(100vh - 36px); overflow-y:auto; position:sticky; top:18px; border: 1px solid #e2e8f0; }
     .panel h2 { font-size:1.02rem; font-weight:700; color:#1a237e; margin-bottom:12px; border-bottom:2px solid #e8eaf6; padding-bottom:8px; letter-spacing:.2px; display: flex; justify-content: space-between; align-items: center; }
 
     /* ---------- Article Library (separate side panel) ---------- */
-    .library-panel { width:280px; flex-shrink:0; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.06); padding:16px; max-height:calc(100vh - 36px); overflow-y:auto; position:sticky; top:18px; border: 1px solid #e2e8f0; }
+    .library-panel { width:100%; flex-shrink:0; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.06); padding:16px; max-height:none; overflow:visible; position:relative; top:auto; border: 1px solid #e2e8f0; }
     .library-panel h2 { font-size:1.02rem; font-weight:700; color:#1a237e; margin-bottom:10px; border-bottom:2px solid #e8eaf6; padding-bottom:8px; }
     .library-panel .lib-help { font-size:.72rem; color:#666; margin-bottom:8px; line-height:1.35; }
     .library-panel input[type=text] { width:100%; padding:8px 10px; border:1.5px solid #cbd5e1; border-radius:6px; font-size:.88rem; margin-bottom:8px; transition: border-color .2s; }
@@ -67,8 +67,8 @@
     .main-image-count { margin-top:7px; font-size:.68rem; font-weight:700; color:#4a2aa5; text-align:center; }
 
     /* ---------- Sheet (A4) ---------- */
-    .sheet-outer { flex:1; min-width:520px; display:flex; justify-content:center; }
-    .sheet { width:794px; min-height:1123px; background:#fff; border:1px solid #2a2f45; border-radius:10px; box-shadow:0 12px 34px rgba(20,25,60,.20), 0 2px 6px rgba(20,25,60,.08); padding:0 28px 22px; position:relative; overflow:hidden; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .sheet-outer { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:10px; }
+    .sheet { width:880px; min-height:1245px; background:#fff; border:1px solid #2a2f45; border-radius:10px; box-shadow:0 12px 34px rgba(20,25,60,.20), 0 2px 6px rgba(20,25,60,.08); padding:0 28px 22px; position:relative; overflow:hidden; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .sheet::before { content:""; display:block; height:4px; margin:0 -28px 12px; background:#ffffff; }
     .head-table { width:100%; border-collapse:separate; border-spacing:0; font-size:.82rem; border:1.5px solid #1a237e; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(20,25,60,.08); }
     .head-table td { border:1px solid #dde1f0; padding:7px 12px; }
@@ -80,7 +80,7 @@
 
     .sheet-title { text-align:center; margin:16px 0 12px; letter-spacing:.4px; position:relative; padding:2px 0 12px; }
     .sheet-title .brand-name { display:block; font-weight:800; font-size:2.1rem; letter-spacing:2px; color:#1a237e; background:none !important; -webkit-background-clip:unset !important; background-clip:unset !important; -webkit-text-fill-color:#1a237e !important; }
-    .sheet-title .brand-sub { display:block; font-weight:700; font-size:.95rem; letter-spacing:6px; color:#7c4dff; margin-top:2px; text-transform:uppercase; text-shadow:0 1px 8px rgba(124,77,255,.16); }
+    .sheet-title .brand-sub { display:block; font-weight:700; font-size:.95rem; letter-spacing:6px; color:#667085; margin-top:2px; text-transform:uppercase; text-shadow:none; }
     .sheet-title::after { background:linear-gradient(90deg,#00b8d4,#7c4dff,#ff2d95) !important; height:3px !important; }
     .flag { border-color:rgba(83,109,254,.34); color:#283593; background:linear-gradient(135deg,rgba(0,188,212,.10),rgba(124,77,255,.12),rgba(255,45,149,.09)); box-shadow:0 3px 10px rgba(83,109,254,.10), inset 0 1px 0 rgba(255,255,255,.9); }
     .vector-card { border-color:rgba(83,109,254,.22); border-top:3px solid transparent; border-image:linear-gradient(90deg,#00b8d4,#7c4dff,#ff2d95) 1; background:linear-gradient(145deg,#ffffff 0%,#fbf9ff 52%,#f4fbff 100%); }
@@ -108,6 +108,7 @@
     .vector-editor-popover .ve-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#334155;margin-bottom:7px;}
     .vector-editor-popover select{width:100%;padding:7px 8px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;font-size:12px;color:#111827;}
     .vector-editor-popover .ve-close{position:absolute;right:6px;top:4px;border:0;background:transparent;color:#64748b;font-size:16px;cursor:pointer;padding:2px 5px;}
+    .vector-editor-popover .ve-size-select{width:100%;padding:7px 8px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;font-size:12px;color:#111827;cursor:pointer;}
     body.print-mode .vector-editor-popover{display:none !important;}
     .stripe-specs-stack { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:10px; align-items:start; }
 
@@ -161,7 +162,6 @@
     .logo-dim-label { position:absolute; left:0; right:0; bottom:4px; text-align:center; font-family:Arial,sans-serif; font-weight:800; font-size:13px; color:#1a1a1a; pointer-events:none; white-space:nowrap; }
     .vector-tag { border:1px solid #c3c8de; border-radius:12px; padding:2.5px 8px; font-size:.66rem; font-weight:700; color:#2a2f45; background:linear-gradient(180deg,#f6f7fb,#eceefb); }
     .vector-tag .mini-swatch { width:12px; height:12px; display:inline-block; vertical-align:-2px; border:1px solid #555; border-radius:2px; margin-right:3px; }
-    .variant-item select option[value="#00c853"], .variant-item select option[value="#ff6d00"], .variant-item select option[value="#7c4dff"], .variant-item select option[value="#00b8d4"], .variant-item select option[value="#ff2d95"], .variant-item select option[value="#ffd600"] { font-weight:800; }
 
 
     .variant-item { border:1px solid #cbd5e1; border-radius:8px; padding:9px; margin-top:8px; background:#fafbfc; position:relative; }
@@ -548,9 +548,24 @@ body::before{
         .spec-nav{display:none !important;}
     }
 
+/* ====== v11: 3-column editor layout — Library | Controls | Result Sheet ====== */
+.wrap{max-width:1520px;display:grid;grid-template-columns:300px 320px minmax(0,1fr);gap:14px;align-items:start;}
+.library-panel{width:300px;max-height:calc(100vh - 36px);overflow-y:auto;position:sticky;top:18px;padding:10px;}
+.library-panel .library-head{display:flex !important;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none;margin:0 !important;padding:12px 11px !important;font-size:.95rem !important;border-radius:12px !important;border:1px solid rgba(148,163,184,.22);background:rgba(255,255,255,.55);}
+.library-head-icon{font-size:.8rem;color:#667085;min-width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,.8);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(31,41,55,.08);}
+.library-content{display:none;margin-top:6px;}
+.library-panel.open .library-content{display:block;}
+.library-panel.open .library-head-icon{transform:rotate(90deg);}
+.library-panel.open{max-height:calc(100vh - 36px);overflow-y:auto;}
+.library-panel:not(.open){height:auto;min-height:66px;overflow:hidden;}
+.sheet-outer{min-width:0;width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.sheet{width:min(880px,100%);}
+@media (max-width:1100px){.wrap{grid-template-columns:280px 300px minmax(0,1fr);gap:10px}.library-panel{width:280px}.panel{width:300px}.sheet{width:min(820px,100%)}}
+@media (max-width:760px){.wrap{display:flex;flex-direction:column;gap:9px}.library-panel,.panel,.sheet-outer{width:100%;max-width:none;position:static}.library-panel{min-height:0}.library-panel:not(.open){height:auto}.sheet-outer{overflow-x:auto;align-items:flex-start}.sheet{min-width:794px;width:794px}}
 </style>
 </head>
 <body>
+<script>document.addEventListener("DOMContentLoaded",()=>document.getElementById("articleLibraryPanel")?.classList.remove("open"));</script>
 <div class="spec-nav no-print" aria-label="Specs navigation">
     <div class="brand">Haider Cheema — Specs Hub</div>
     <div class="spec-nav-links">
@@ -560,33 +575,54 @@ body::before{
 </div>
 <div class="wrap">
 
+    <!-- ===================== ARTICLE LIBRARY (side panel) ===================== -->
+    <div class="library-panel no-print" id="articleLibraryPanel">
+        <h2 class="library-head" onclick="toggleLibrary()" role="button" tabindex="0" onkeydown="if(event.key==="Enter"||event.key===" ") toggleLibrary()">🗂 Article Library <span class="library-head-icon" id="libraryToggleIcon">▶</span></h2>
+        <div class="library-content" id="articleLibraryContent">
+        <div class="lib-help">Search or browse saved Cust Art #. Click any result to load logos, stripes & layout on the current page.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px;"><span style="font-size:.68rem;font-weight:900;color:#667085;text-transform:uppercase;letter-spacing:.4px;">Recent Articles</span><button type="button" onclick="clearRecentArticles()" style="border:0;background:none;color:#7c4dff;font-size:.62rem;font-weight:800;cursor:pointer;">Clear</button></div>
+        <div id="recentArticles"></div>
+        <input type="text" id="articleSearch" placeholder="🔎 Search Cust Art # / Article…" oninput="searchArticles(this.value)">
+        <div id="articleResults"></div>
+        <div class="lib-actions">
+            <button type="button" class="btn" style="background:#455a64;" onclick="saveCurrentArticle()">Save</button>
+            <button type="button" class="btn" style="background:#546e7a;" onclick="exportArticleLibrary()">JSON</button>
+            <button type="button" class="btn" style="background:#546e7a;" onclick="document.getElementById('importLibraryInput').click()">Import</button>
+        </div>
+        <input type="file" id="importLibraryInput" accept=".json,application/json" style="display:none;" onchange="importArticleLibrary(event)">
+        <button type="button" class="btn" style="margin-top:8px;background:#5c6bc0;font-size:.8rem;padding:8px;" onclick="searchArticles('')">Show All Articles</button>
+        </div>
+    </div>
+
     <!-- ===================== CONTROL PANEL ===================== -->
     <div class="panel no-print">
-        <h2>📋 Order Details</h2>
+        <div class="level1-bar" aria-label="Quick order controls">
+            <div class="level1-field">
+                <label>E-number / P.I.</label>
+                <div class="pi-compact">
+                    <span>E</span>
+                    <input type="text" id="piNo" value="3771" inputmode="numeric" placeholder="3771" aria-label="E-number / P.I.">
+                </div>
+            </div>
+            <div class="level1-field level1-art">
+                <label>Article / Cust Art #</label>
+                <div style="position:relative;">
+                    <input type="text" id="custArt" value="J-IJF3SMU" autocomplete="off" aria-label="Article / Cust Art number">
+                </div>
+            </div>
+            <button type="button" class="level1-action quick-setup-btn" onclick="openQuickSetup()">⚡ Quick Setup</button>
+            <button type="button" class="level1-action level1-export" onclick="exportPDF()">📄 Export PDF</button>
+        </div>
+
+        <h2>⚙️ Order Details · Advanced</h2>
         <div class="row2">
             <div><label>Customer</label><input type="text" id="customer" value="Addidas"></div>
             <div><label>Ex Factory</label><input type="text" id="exFactory" value="2026"></div>
         </div>
-        <div class="row2">
-            <div><label>P.I. #</label>
-                <div style="display:flex;align-items:center;gap:0;border:1.5px solid #cbd5e1;border-radius:6px;overflow:hidden;background:#fff;">
-                    <span style="padding:8px 6px 8px 10px;font-weight:800;color:#1a237e;background:#eef0f8;border-right:1px solid #ddd;font-size:.95rem;">E</span>
-                    <input type="text" id="piNo" value="3771" style="border:none;padding:8px 10px;width:100%;font-size:.9rem;outline:none;" inputmode="numeric" placeholder="3771">
-                </div>
-            </div>
-            <div style="position:relative;">
-                <label>Cust Art #</label>
-                <input type="text" id="custArt" value="J-IJF3SMU" autocomplete="off" oninput="onCustArtInput(this.value)" onfocus="onCustArtInput(this.value)">
-                <div id="custArtSuggest" style="display:none;position:absolute;left:0;right:0;top:100%;z-index:50;background:#fff;border:1.5px solid #c5cae9;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.12);max-height:200px;overflow-y:auto;"></div>
-            </div>
-        </div>
-
-        <button type="button" class="btn" style="margin-top:12px;background:#2e7d32;" onclick="newOrder()">New Order</button>
-        <button type="button" class="btn quick-setup-btn" onclick="openQuickSetup()">⚡ Quick Setup</button>
 
         <hr class="sep">
-        <h2>📄 Order Pages</h2>
-        <div class="order-kind-help" style="margin-bottom:6px;">Same order, different articles. Har page ka apna Cust Art # + layout.</div>
+        <h2>📄 Page Management · Advanced</h2>
+        <div class="order-kind-help" style="margin-bottom:6px;">Advanced: same order, different articles. Har page ka apna Cust Art # + layout.</div>
         <div id="pageTabs" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
         <div class="row2">
             <button type="button" class="btn btn-add" style="margin-top:0;flex:1;" onclick="addPage()">+ Add</button>
@@ -638,16 +674,18 @@ body::before{
         </div>
 
         <hr class="sep">
-        <h2>🖼 Garment Image <span style="font-weight:400;text-transform:none;">(replaces sheet diagram)</span></h2>
-        <div class="drop-zone main-drop" id="mainDropZone">
-            Drag & drop, click to browse,<br>or paste (Ctrl+V) garment images — multiple allowed
-            <input type="file" id="mainFileInput" accept="image/*" multiple style="display:none;">
+        <h2 style="cursor:pointer;user-select:none;" onclick="toggleSection('garmentBody', this)">🖼 Garment Image <span style="font-weight:400;text-transform:none;">(replaces sheet diagram)</span> <span style="float:right;font-size:.85rem;">▼</span></h2>
+        <div id="garmentBody">
+            <div class="drop-zone main-drop" id="mainDropZone">
+                Drag & drop, click to browse,<br>or paste (Ctrl+V) garment images — multiple allowed
+                <input type="file" id="mainFileInput" accept="image/*" multiple style="display:none;">
+            </div>
+            <div class="main-image-count" id="mainImageCount"></div>
+            <div class="thumb-row" id="mainThumbRow"></div>
         </div>
-        <div class="main-image-count" id="mainImageCount"></div>
-        <div class="thumb-row" id="mainThumbRow"></div>
 
         <hr class="sep">
-        <h2 style="cursor:pointer;user-select:none;" onclick="toggleSection('signoffBody', this)">Sign-off <span style="float:right;font-size:.85rem;">▼</span></h2>
+        <h2 style="cursor:pointer;user-select:none;" onclick="toggleSection('signoffBody', this)">✍️ Sign-off · Advanced</h2>
         <div id="signoffBody">
             <div class="row2">
                 <div><label>Prepared By</label><input type="text" id="preparedBy" value="Haider"></div>
@@ -665,23 +703,6 @@ body::before{
         <button type="button" class="btn" style="background:#5c6bc0;margin-top:8px;" onclick="handleUndo()">Undo <span class="shortcut-hint" style="background:#3949ab;color:#fff;">Ctrl+Z</span></button>
         <button class="btn btn-clear" onclick="clearMainImage()">Clear Garment Image</button>
         <button type="button" class="btn" style="background:#37474f;margin-top:8px;" onclick="openShortcutsModal()">⌨️ Keyboard Shortcuts</button>
-    </div>
-
-    <!-- ===================== ARTICLE LIBRARY (side panel) ===================== -->
-    <div class="library-panel no-print">
-        <h2>Article Library</h2>
-        <div class="lib-help">Search or browse saved Cust Art #. Click any result to load logos, stripes & layout on the current page.</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px;"><span style="font-size:.68rem;font-weight:900;color:#667085;text-transform:uppercase;letter-spacing:.4px;">Recent Articles</span><button type="button" onclick="clearRecentArticles()" style="border:0;background:none;color:#7c4dff;font-size:.62rem;font-weight:800;cursor:pointer;">Clear</button></div>
-        <div id="recentArticles"></div>
-        <input type="text" id="articleSearch" placeholder="🔎 Search Cust Art # / Article…" oninput="searchArticles(this.value)">
-        <div id="articleResults"></div>
-        <div class="lib-actions">
-            <button type="button" class="btn" style="background:#455a64;" onclick="saveCurrentArticle()">Save</button>
-            <button type="button" class="btn" style="background:#546e7a;" onclick="exportArticleLibrary()">JSON</button>
-            <button type="button" class="btn" style="background:#546e7a;" onclick="document.getElementById('importLibraryInput').click()">Import</button>
-        </div>
-        <input type="file" id="importLibraryInput" accept=".json,application/json" style="display:none;" onchange="importArticleLibrary(event)">
-        <button type="button" class="btn" style="margin-top:8px;background:#5c6bc0;font-size:.8rem;padding:8px;" onclick="searchArticles('')">Show All Articles</button>
     </div>
 
     <div class="mobile-export-bar no-print" id="mobileExportBar"><button type="button" class="mobile-export-main" id="mobileExportBtn" onclick="exportPDF()">📄 EXPORT PDF — E3771</button><span class="mobile-export-status" id="mobileExportStatus">Ready ✓</span></div>
@@ -781,7 +802,71 @@ body::before{
     .fil0 {fill:url(#stripe_id1);fill-rule:nonzero}
     .fil1 {fill:url(#stripe_id2);fill-rule:nonzero}
    ]]>
-  </style>
+  
+/* ====== v10: compact neutral/glass accordion UI ====== */
+:root{--ui-bg:rgba(255,255,255,.72);--ui-border:rgba(148,163,184,.38);--ui-text:#243047;--ui-muted:#667085;--ui-accent:#334e8c;--ui-shadow:0 8px 24px rgba(31,41,55,.08)}
+body{background:#eef1f5 !important;color:var(--ui-text) !important;}
+.panel,.library-panel{background:rgba(255,255,255,.68) !important;border:1px solid var(--ui-border) !important;box-shadow:var(--ui-shadow) !important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);}
+.panel h2,.library-panel h2{color:#26364f !important;background:rgba(255,255,255,.45);border:1px solid rgba(148,163,184,.22);border-radius:10px;padding:9px 11px !important;margin:9px 0 7px !important;font-size:.88rem !important;line-height:1.15;}
+.panel h2:hover,.library-panel h2:hover{background:rgba(255,255,255,.72);}
+.panel h2.accordion-head::after{content:'＋';float:right;font-size:1rem;font-weight:700;color:#667085}
+.panel h2.accordion-head.open::after{content:'−'}
+.accordion-body{display:none;margin:0 0 7px;padding:8px 9px;border:1px solid rgba(148,163,184,.22);border-radius:10px;background:rgba(255,255,255,.42)}
+.accordion-body.open{display:block}
+.panel .sep{display:none !important}
+.panel .btn{box-shadow:none !important;border:1px solid rgba(71,85,105,.16) !important;transform:none !important}
+.panel .quick-setup-btn{background:#405a8f !important;color:#fff !important;box-shadow:none !important}
+.panel .btn-print{background:#2f6b59 !important}
+.panel .btn-clear{background:#8a4f55 !important}
+.panel input,.panel select,.library-panel input{background:rgba(255,255,255,.82) !important;border-color:#cbd5e1 !important;box-shadow:none !important}
+.flag,.vector-tag{background:#f5f7fa !important;color:#3f4d63 !important;border-color:#cbd5e1 !important}
+.vector-card{background:rgba(255,255,255,.68) !important;border:1px solid #cbd5e1 !important;border-top:2px solid #718096 !important;box-shadow:0 5px 16px rgba(31,41,55,.07) !important}
+.sheet-title::after{background:#7b8798 !important}
+.quick-setup-btn:hover{filter:none !important}
+.mobile-export-bar .mobile-export-main{background:#334e8c !important}
+.library-panel .lib-actions .btn{background:#5b6675 !important}
+/* Level 1 compact operator bar — buttons first, fields directly underneath */
+.level1-bar{display:grid;grid-template-columns:1fr 1fr;grid-template-areas:"quick export" "pi art";gap:8px;align-items:stretch;padding:10px;border:1px solid rgba(148,163,184,.30);border-radius:12px;background:rgba(255,255,255,.58);box-shadow:0 6px 18px rgba(31,41,55,.06);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin-bottom:8px;}
+.level1-field:first-child{grid-area:pi;}
+.level1-field.level1-art{grid-area:art;}
+.level1-action.quick-setup-btn{grid-area:quick;}
+.level1-action.level1-export{grid-area:export;}
+.level1-field label{display:block;font-size:.66rem;font-weight:800;color:#667085;text-transform:uppercase;letter-spacing:.35px;margin:0 0 4px;}
+.level1-field input{width:100%;box-sizing:border-box;padding:8px 9px;border:1px solid #cbd5e1;border-radius:7px;background:rgba(255,255,255,.9);font-size:.88rem;color:#243047;}
+.pi-compact{display:flex;align-items:center;border:1px solid #cbd5e1;border-radius:7px;overflow:hidden;background:rgba(255,255,255,.9);}
+.pi-compact span{padding:8px 8px;font-weight:900;color:#334e8c;background:#eef2f7;border-right:1px solid #d8dee8;font-size:.86rem;}
+.pi-compact input{border:0 !important;border-radius:0 !important;outline:0;padding-left:9px;}
+.level1-action{border:1px solid rgba(71,85,105,.18);border-radius:8px;padding:9px 12px;font-weight:800;font-size:.82rem;cursor:pointer;white-space:nowrap;min-height:36px;}
+.level1-action.quick-setup-btn{background:#405a8f !important;color:#fff !important;}
+.level1-export{background:#2f6b59;color:#fff;}
+.level1-action:hover{filter:brightness(.98);}
+.editor-section-head{position:relative;}
+.editor-section-head.is-collapsed{margin-bottom:7px !important;}
+.editor-section-body{overflow:hidden;transition:max-height .18s ease,opacity .15s ease;padding:8px 9px;border:1px solid rgba(148,163,184,.22);border-radius:10px;background:rgba(255,255,255,.40);margin-bottom:7px;}
+.editor-section-body.is-collapsed{display:none;}
+.editor-section-head .accordion-icon{font-size:.8rem;color:#667085;}
+@media (max-width:760px){.level1-bar{grid-template-columns:1fr 1fr;grid-template-areas:"quick export" "pi art";}.level1-action{width:100%;}.level1-art{min-width:0;}.panel{width:100%;box-sizing:border-box;}}
+
+/* Make the upload control compact but easy to spot */
+.main-drop{background:rgba(248,250,252,.7) !important;border-color:#b7c2d3 !important;color:#61708a !important;}
+/* Final operator-layout override: no internal control-panel scrolling; level-1 stays visible. */
+.panel{max-height:none !important;overflow:visible !important;}
+.library-panel{max-height:none !important;overflow:visible !important;}
+@media (min-width:1101px){
+  .wrap{display:grid;grid-template-columns:320px 330px minmax(0,1fr);gap:18px;align-items:start;}
+  .library-panel{width:320px;}
+  .panel{width:330px;}
+  .sheet-outer{width:100%;min-width:0;align-items:center;}
+  .sheet{width:min(880px,100%);}
+}
+@media (min-width:761px) and (max-width:1100px){
+  .wrap{display:grid;grid-template-columns:270px 310px minmax(0,1fr);gap:10px;align-items:start;}
+  .library-panel{width:270px;}
+  .panel{width:310px;}
+  .sheet-outer{width:100%;min-width:0;align-items:center;}
+  .sheet{width:min(820px,100%);}
+}
+</style>
   <linearGradient id="stripe_id0" gradientUnits="userSpaceOnUse" x1="0.77" y1="122.37" x2="400.37" y2="122.37">
    <stop offset="0" style="stop-opacity:1; stop-color:#F3DBA3"/>
    <stop offset="0.0627451" style="stop-opacity:1; stop-color:#C2AD7A"/>
@@ -835,6 +920,7 @@ body::before{
         </div>
     </div>
 </div>
+
 
 <script>
 let mainImage = null;
@@ -1225,8 +1311,7 @@ function initUniversalEditorAccordions(){
       heading.after(body);
 
       const storageKey = 'outmaker_accordion_' + container.className.replace(/\s+/g,'_') + '_' + hi;
-      let collapsed = false;
-      try{ collapsed = localStorage.getItem(storageKey) === '1'; }catch(e){}
+      const collapsed = true; // Start compact every time; operator opens only what is needed.
       const setState = (isCollapsed, save=true) => {
         body.classList.toggle('is-collapsed', isCollapsed);
         heading.classList.toggle('is-collapsed', isCollapsed);
@@ -1244,13 +1329,24 @@ function initUniversalEditorAccordions(){
   });
 }
 
+function toggleLibrary(){
+  const panel=document.getElementById('articleLibraryPanel');
+  if(!panel) return;
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')){
+    renderRecentArticles();
+    searchArticles(document.getElementById('articleSearch')?.value || '');
+  }
+}
+
 function toggleSection(bodyId, headingEl){
-    const body = document.getElementById(bodyId);
-    if(!body) return;
-    const open = body.style.display !== 'none';
-    body.style.display = open ? 'none' : '';
-    const icon = headingEl.querySelector('span');
-    if(icon) icon.textContent = open ? '▶' : '▼';
+    const legacy = document.getElementById(bodyId);
+    if(!legacy) return;
+    const body = legacy.closest('.editor-section-body') || legacy;
+    const head = body.previousElementSibling && body.previousElementSibling.matches('h2') ? body.previousElementSibling : headingEl;
+    const isCollapsed = body.classList.contains('is-collapsed');
+    body.classList.toggle('is-collapsed', !isCollapsed);
+    if(head) head.classList.toggle('is-collapsed', isCollapsed);
 }
 
 function getPiFull(){
@@ -1271,7 +1367,8 @@ function loadArticleStore(){
 
         // First launch: permanently seed the browser library from the bundled backup.
         // Existing saved articles are preserved and take priority over bundled entries.
-        if(localStorage.getItem(EMBEDDED_LIBRARY_MERGED_KEY) !== '1'){
+        const storeIsEmpty = !store || !Object.keys(store).length;
+        if(localStorage.getItem(EMBEDDED_LIBRARY_MERGED_KEY) !== '1' || storeIsEmpty){
             const seeded = {};
             Object.keys(EMBEDDED_ARTICLE_LIBRARY || {}).forEach(k => {
                 const v = EMBEDDED_ARTICLE_LIBRARY[k];
@@ -1877,14 +1974,40 @@ async function buildGarmentComposite(){
 }
 
 document.addEventListener('paste', e=>{
-    const items = e.clipboardData ? e.clipboardData.items : [];
-    for(const item of items){
-        if(item.type.indexOf('image') === 0){
-            const file = item.getAsFile();
+    const items = e.clipboardData ? Array.from(e.clipboardData.items || []) : [];
+    const imageItem = items.find(item => item && item.type && item.type.indexOf('image') === 0);
+
+    // IMPORTANT: any pasted image/SS goes to Garment Images, even when that
+    // section is collapsed and even if the user clicked somewhere else first.
+    // This keeps Ctrl+V predictable: image => garment, text => focused field.
+    if(imageItem){
+        const file = imageItem.getAsFile();
+        if(file){
+            e.preventDefault();
             pushStateToHistory();
-            if(pasteTarget === 'logo'){ handleLogoFiles([file]); }
-            else { handleMainFiles([file]); }
+            handleMainFiles([file]);
             pasteTarget = null;
+        }
+        return;
+    }
+
+    // For text, let normal browser paste happen in INPUT/TEXTAREA/contenteditable.
+    // SELECT elements cannot receive arbitrary pasted text, so if a pasted value
+    // matches an option (e.g. 48, 65, 50, 56, 64), apply it automatically.
+    const target = e.target;
+    if(target && target.tagName === 'SELECT'){
+        const text = (e.clipboardData.getData('text/plain') || '').trim();
+        if(text){
+            const clean = text.replace(/\s*mm\b/ig,'').trim().toLowerCase();
+            const opt = Array.from(target.options).find(o =>
+                String(o.value).trim().toLowerCase() === clean ||
+                String(o.textContent).replace(/\s*mm\b/ig,'').trim().toLowerCase() === clean
+            );
+            if(opt){
+                e.preventDefault();
+                target.value = opt.value;
+                target.dispatchEvent(new Event('change',{bubbles:true}));
+            }
         }
     }
 });
@@ -1953,13 +2076,7 @@ const colorOptionsHtml = `
     <option value="#8a8f98">Grey</option>
     <option value="#c8102e">Red</option>
     <option value="#1a4fd6">Blue</option>
-    <option value="#c0c0c0">Silver</option>
-    <option value="#00c853">Neon Green</option>
-    <option value="#ff6d00">Vibrant Orange</option>
-    <option value="#7c4dff">Electric Purple</option>
-    <option value="#00b8d4">Cyan</option>
-    <option value="#ff2d95">Hot Pink</option>
-    <option value="#ffd600">Bright Yellow</option>`;
+    <option value="#c0c0c0">Silver</option>`;
 
 let logoVariants = [
     {color:'#c8102e', size:'65'},
@@ -2250,15 +2367,9 @@ const colorPalettes = {
     "#8a8f98": ["#D9DCE0","#AEB3BA","#6F757D","#8D939B","#B9BDC3","#C9CDD1","#E2E4E7","#B0B5BB","#969BA2","#70757C","#555A60"],
     "#c8102e": ["#F2A1AD","#D96A7B","#A91D35","#C63C50","#D95A6B","#E57C8A","#F0A1AA","#D84A5D","#B72A40","#8C1328","#680A1A"],
     "#1a4fd6": ["#A9C0FA","#6F8FEA","#234AAE","#4169C8","#7897E5","#9FB5EE","#C5D3F5","#587AD5","#3158B9","#193C96","#102D73"],
-    "#c0c0c0": ["#F4F4F4","#C8C8C8","#8C8C8C","#A8A8A8","#D0D0D0","#E2E2E2","#EEEEEE","#BEBEBE","#9E9E9E","#777777","#5E5E5E"],
-    "#00c853": ["#B9FFD0","#5EF59B","#00E676","#00C853","#00A844","#008F3A","#006E2C"],
-    "#ff6d00": ["#FFD0A8","#FFAB66","#FF8A00","#FF6D00","#E85C00","#C94E00","#9E3D00"],
-    "#7c4dff": ["#D8C8FF","#B79CFF","#9575FF","#7C4DFF","#673DE6","#5630C7","#3F2499"],
-    "#00b8d4": ["#B8F5FF","#6FE8F7","#00D4FF","#00B8D4","#009DB7","#007F96","#005E70"],
-    "#ff2d95": ["#FFD0E6","#FF8FC2","#FF5EAA","#FF2D95","#E51F7D","#C9156B","#94104E"],
-    "#ffd600": ["#FFF5A8","#FFEA61","#FFE033","#FFD600","#E8C100","#C9A700","#967D00"]
+    "#c0c0c0": ["#F4F4F4","#C8C8C8","#8C8C8C","#A8A8A8","#D0D0D0","#E2E2E2","#EEEEEE","#BEBEBE","#9E9E9E","#777777","#5E5E5E"]
 };
-const colorNames = {"#d4af37":"GOLD","#ffffff":"WHITE","#111111":"BLACK","#8a8f98":"GREY","#c8102e":"RED","#1a4fd6":"BLUE","#c0c0c0":"SILVER","#00c853":"NEON GREEN","#ff6d00":"VIBRANT ORANGE","#7c4dff":"ELECTRIC PURPLE","#00b8d4":"CYAN","#ff2d95":"HOT PINK","#ffd600":"BRIGHT YELLOW"};
+const colorNames = {"#d4af37":"GOLD","#ffffff":"WHITE","#111111":"BLACK","#8a8f98":"GREY","#c8102e":"RED","#1a4fd6":"BLUE","#c0c0c0":"SILVER"};
 const metallicColors = ["#d4af37","#c0c0c0"]; 
 
 function applyVectorColor(svg, color){
@@ -2407,7 +2518,7 @@ function openVectorEditor(ev, mode, index, card){
       <button type="button" class="ve-close" aria-label="Close">×</button>
       <div class="ve-title">${isLogo ? 'Logo' : 'Stripe'} ${isSize ? 'Size' : 'Color'}</div>
       ${isSize
-        ? `<select class="ve-select">${vectorSelectOptions(isLogo ? [{value:'65',label:'65 mm'},{value:'48',label:'48 mm'}] : [{value:'50',label:'50 mm'},{value:'56',label:'56 mm'},{value:'64',label:'64 mm'}], v.size)}</select>`
+        ? `<select class="ve-select ve-size-select" aria-label="${isLogo ? 'Logo size in mm' : 'Stripe size in mm'}">${(isLogo ? ['48','65'] : ['50','56','64']).map(sz=>`<option value="${sz}" ${String(v.size)==sz?'selected':''}>${sz} mm</option>`).join('')}</select>`
         : `<select class="ve-select">${colorOptionsHtml}</select>`}
     `;
     document.body.appendChild(pop);
@@ -2420,16 +2531,23 @@ function openVectorEditor(ev, mode, index, card){
 
     const select = pop.querySelector('.ve-select');
     if(!isSize) select.value = v.color;
-    select.addEventListener('change', ()=>{
+    const applyVectorValue = ()=>{
+        const value = String(select.value || '').trim().replace(/\s*mm\b/ig,'');
         if(isLogo){
-            if(isSize) setLogoSize(index, select.value);
-            else { pushStateToHistory(); logoVariants[index].color=select.value; renderVectorSpecs(); updateSheet(); }
+            if(isSize){
+                if(value === '48' || value === '65') setLogoSize(index, value);
+                else { toast('Logo size sirf 48 ya 65 mm hai.','warn'); return; }
+            } else { pushStateToHistory(); logoVariants[index].color=select.value; renderVectorSpecs(); updateSheet(); }
         } else {
-            if(isSize) setStripeSize(index, select.value);
-            else { pushStateToHistory(); stripeVariants[index].color=select.value; renderVectorSpecs(); updateSheet(); }
+            if(isSize){
+                if(value === '50' || value === '56' || value === '64') setStripeSize(index, value);
+                else { toast('Stripe size sirf 50, 56 ya 64 mm hai.','warn'); return; }
+            } else { pushStateToHistory(); stripeVariants[index].color=select.value; renderVectorSpecs(); updateSheet(); }
         }
         closeVectorEditor();
-    });
+    };
+    select.addEventListener('change', applyVectorValue);
+    if(isSize) select.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); applyVectorValue(); } });
     pop.querySelector('.ve-close').addEventListener('click', e=>{e.stopPropagation();closeVectorEditor();});
     setTimeout(()=>{
         document.addEventListener('click', outsideVectorEditor, {once:true});
@@ -2562,16 +2680,42 @@ function buildStripeCombinedSVG(i, v, total){
         : [v.color, v.color, v.color];
     const barY = [y1top, y2bot - (y2bot-y1top), y3top];
     const barHeight = (y1bot-y1top);
+    // Match the polished logo treatment for metallic stripes and keep white visible on A4.
+    const defs = document.createElementNS(svgNS,'defs');
+    svg.appendChild(defs);
     [0,1,2].forEach((idx)=>{
+        const color = String(colors[idx] || '#111111').toLowerCase();
         const r=document.createElementNS(svgNS,'rect');
         r.setAttribute('x',artX);
         r.setAttribute('y',[y1top,y(52.89),y3top][idx]);
         r.setAttribute('width',artW);
         r.setAttribute('height',barHeight);
-        r.setAttribute('fill',colors[idx] || '#111111');
         r.setAttribute('class','special-stripe-bar');
         r.dataset.bar = String(idx);
         r.setAttribute('rx','1');
+
+        if(color === '#d4af37' || color === '#c0c0c0'){
+            const grad = document.createElementNS(svgNS,'linearGradient');
+            const gid = `stripeMetal_${i}_${idx}_${Date.now()}`;
+            grad.setAttribute('id', gid);
+            grad.setAttribute('x1','0%'); grad.setAttribute('y1','0%');
+            grad.setAttribute('x2','100%'); grad.setAttribute('y2','0%');
+            const palette = colorPalettes[color] || [color];
+            palette.forEach((stopColor, si)=>{
+                const stop=document.createElementNS(svgNS,'stop');
+                stop.setAttribute('offset', `${(si/(Math.max(1,palette.length-1)))*100}%`);
+                stop.setAttribute('stop-color', stopColor);
+                grad.appendChild(stop);
+            });
+            defs.appendChild(grad);
+            r.setAttribute('fill', `url(#${gid})`);
+        } else {
+            r.setAttribute('fill', color);
+            if(color === '#ffffff'){
+                r.setAttribute('stroke','#cbd5e1');
+                r.setAttribute('stroke-width','1.5');
+            }
+        }
         svg.appendChild(r);
     });
 
@@ -2776,5 +2920,7 @@ syncArticlesFromSupabase(); // pulls the cloud library into the local cache on l
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initUniversalEditorAccordions);
 else initUniversalEditorAccordions();
 </script>
+
+
 </body>
 </html>
