@@ -6,38 +6,38 @@
 <title>Outmaker Spec Sheet Generator (Editable)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-    * { box-sizing:border-box; margin:0; padding:0; font-family:'Inter','Segoe UI',Tahoma,Geneva,Verdana,sans-serif; }
+    * { box-sizing:border-box; margin:0; padding:0; font-family:'IBM Plex Sans','Segoe UI',Tahoma,Geneva,Verdana,sans-serif; }
     body { background:radial-gradient(circle at 15% 0%,#eef1fb 0%,#e3e7f5 45%,#dde1f2 100%); padding:18px; color:#222; }
-    h1,h2,h3,.sheet-title,.v-title,.variant-title,.dim-text-big { font-family:'Poppins','Segoe UI',sans-serif; }
+    h1,h2,h3,.sheet-title,.v-title,.variant-title,.dim-text-big { font-family:'Bebas Neue',Impact,'Segoe UI',sans-serif; font-weight:400; letter-spacing:.03em; }
+    .panel h2, .library-panel h2 { text-transform:uppercase; }
     .wrap { max-width:1520px; margin:0 auto; display:flex; gap:18px; align-items:flex-start; flex-wrap:nowrap; }
 
     /* ---------- Control Panel ---------- */
     .panel { width:320px; flex-shrink:0; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.06); padding:16px; max-height:calc(100vh - 36px); overflow-y:auto; position:sticky; top:18px; border: 1px solid #e2e8f0; }
-    .panel h2 { font-size:1.02rem; font-weight:700; color:#1a237e; margin-bottom:12px; border-bottom:2px solid #e8eaf6; padding-bottom:8px; letter-spacing:.2px; display: flex; justify-content: space-between; align-items: center; }
+    .panel h2 { font-size:1.02rem; font-weight:700; color:var(--brass-dark); margin-bottom:12px; border-bottom:2px solid #e8eaf6; padding-bottom:8px; letter-spacing:.2px; display: flex; justify-content: space-between; align-items: center; }
 
     /* ---------- Article Library (separate side panel) ---------- */
     .library-panel { width:100%; flex-shrink:0; background:#fff; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,.06); padding:16px; max-height:none; overflow:visible; position:relative; top:auto; border: 1px solid #e2e8f0; }
-    .library-panel h2 { font-size:1.02rem; font-weight:700; color:#1a237e; margin-bottom:10px; border-bottom:2px solid #e8eaf6; padding-bottom:8px; }
+    .library-panel h2 { font-size:1.02rem; font-weight:700; color:var(--brass-dark); margin-bottom:10px; border-bottom:2px solid #e8eaf6; padding-bottom:8px; }
     .library-panel .lib-help { font-size:.72rem; color:#666; margin-bottom:8px; line-height:1.35; }
     .library-panel input[type=text] { width:100%; padding:8px 10px; border:1.5px solid #cbd5e1; border-radius:6px; font-size:.88rem; margin-bottom:8px; transition: border-color .2s; }
-    .library-panel input[type=text]:focus { border-color:#1a237e; outline:none; }
+    .library-panel input[type=text]:focus { border-color:var(--brass-dark); outline:none; }
     #articleResults { display:flex; flex-direction:column; gap:6px; }
     #recentArticles { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
     .lib-actions { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
     .lib-actions .btn { margin-top:0; padding:8px; font-size:.78rem; flex:1; min-width:70px; }
     .panel label { display:block; font-size:.76rem; font-weight:700; color:#444; margin:9px 0 4px; text-transform:uppercase; letter-spacing:.4px; }
     .panel input[type=text], .panel select { width:100%; padding:8px 10px; border:1.5px solid #cbd5e1; border-radius:6px; font-size:.9rem; background:#fff; transition: border-color .2s; }
-    .panel input[type=text]:focus, .panel select:focus { border-color:#1a237e; outline:none; }
+    .panel input[type=text]:focus, .panel select:focus { border-color:var(--brass-dark); outline:none; }
     .panel select { cursor:pointer; }
     .row2 { display:flex; gap:8px; }
     .row2 > div { flex:1; }
-    .btn { display:block; width:100%; margin-top:16px; padding:11px; border:none; border-radius:8px; font-weight:700; font-size:.95rem; cursor:pointer; background:#1a237e; color:#fff; transition: background .2s, transform .1s; }
-    .btn:hover { background:#0d1657; }
+    .btn { display:block; width:100%; margin-top:16px; padding:11px; border:none; border-radius:8px; font-weight:700; font-size:.95rem; cursor:pointer; background:var(--brass-dark); color:#fff; transition: background .2s, transform .1s; }
+    .btn:hover { background:#5c3f14; }
     .btn:active { transform: scale(0.98); }
     .btn-print { background:#2e7d32; margin-top:8px; }
     .btn-print:hover { background:#245f26; }
@@ -48,17 +48,17 @@
     /* checkboxes */
     .chk-list { display:flex; flex-direction:column; gap:7px; margin-top:6px; }
     .chk-item { display:flex; align-items:center; gap:8px; font-size:.86rem; font-weight:600; color:#333; cursor: pointer; }
-    .chk-item input { width:16px; height:16px; accent-color:#1a237e; cursor:pointer; }
+    .chk-item input { width:16px; height:16px; accent-color:var(--brass-dark); cursor:pointer; }
 
     /* ---------- Order Kind presets ---------- */
     .order-kind-box { background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:10px; margin-top:6px; }
     .order-kind-box label { margin-top:0; }
     .order-kind-help { font-size:.68rem; color:#666; margin-top:5px; line-height:1.35; }
-    .preset-badge { display:inline-flex; margin-top:6px; padding:4px 8px; border-radius:12px; background:#e8eaf6; color:#1a237e; font-size:.65rem; font-weight:700; }
+    .preset-badge { display:inline-flex; margin-top:6px; padding:4px 8px; border-radius:12px; background:#e8eaf6; color:var(--brass-dark); font-size:.65rem; font-weight:700; }
 
     /* image drop zones */
     .drop-zone { margin-top:8px; border:2px dashed #9fa8da; border-radius:8px; padding:14px 10px; text-align:center; font-size:.78rem; color:#5c6bc0; cursor:pointer; background:#f5f6fd; transition:.15s; }
-    .drop-zone.drag { background:#e8eaf6; border-color:#3949ab; }
+    .drop-zone.drag { background:#e8eaf6; border-color:var(--brass); }
     .drop-zone.main-drop { min-height:70px; display:flex; align-items:center; justify-content:center; }
     .thumb-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:8px; }
     .thumb { position:relative; width:58px; height:58px; border:0; border-radius:8px; overflow:hidden; background:#f8fafc; }
@@ -68,22 +68,22 @@
 
     /* ---------- Sheet (A4) ---------- */
     .sheet-outer { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:10px; }
-    .sheet { width:880px; min-height:1245px; background:#fff; border:1px solid #2a2f45; border-radius:10px; box-shadow:0 12px 34px rgba(20,25,60,.20), 0 2px 6px rgba(20,25,60,.08); padding:0 28px 22px; position:relative; overflow:hidden; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .sheet { width:1060px; min-height:1245px; background:#fff; border:1px solid #2a2f45; border-radius:10px; box-shadow:0 12px 34px rgba(20,25,60,.20), 0 2px 6px rgba(20,25,60,.08); padding:0 28px 22px; position:relative; overflow:hidden; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
     .sheet::before { content:""; display:block; height:4px; margin:0 -28px 12px; background:#ffffff; }
-    .head-table { width:100%; border-collapse:separate; border-spacing:0; font-size:.82rem; border:1.5px solid #1a237e; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(20,25,60,.08); }
+    .head-table { width:100%; border-collapse:separate; border-spacing:0; font-size:.82rem; border:1.5px solid var(--brass-dark); border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(20,25,60,.08); }
     .head-table td { border:1px solid #dde1f0; padding:7px 12px; }
-    .head-table .lbl { font-weight:700; color:#1a237e; background:linear-gradient(180deg,#f2f4fb,#e7eafa); white-space:nowrap; width:1%; }
+    .head-table .lbl { font-weight:700; color:var(--brass-dark); background:linear-gradient(180deg,#f2f4fb,#e7eafa); white-space:nowrap; width:1%; }
 
     .flag-row { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
-    .flag { flex:1 1 22%; border:1.5px solid #1a237e; border-radius:20px; padding:7px 10px; font-size:.71rem; font-weight:700; letter-spacing:.2px; color:#1a237e; background:linear-gradient(180deg,#f2f4fb,#e6e9fa); min-height:30px; display:flex; align-items:center; justify-content:center; text-align:center; box-shadow:0 1px 3px rgba(26,35,126,.12); }
+    .flag { flex:1 1 22%; border:1.5px solid var(--brass-dark); border-radius:20px; padding:7px 10px; font-size:.71rem; font-weight:700; letter-spacing:.2px; color:var(--brass-dark); background:linear-gradient(180deg,#f2f4fb,#e6e9fa); min-height:30px; display:flex; align-items:center; justify-content:center; text-align:center; box-shadow:0 1px 3px rgba(26,35,126,.12); }
     .flag-empty { color:#999; font-style:italic; font-weight:400; border-color:#ccc; background:#fafafa; box-shadow:none; }
 
     .sheet-title { text-align:center; margin:16px 0 12px; letter-spacing:.4px; position:relative; padding:2px 0 12px; }
-    .sheet-title .brand-name { display:block; font-weight:800; font-size:2.1rem; letter-spacing:2px; color:#1a237e; background:none !important; -webkit-background-clip:unset !important; background-clip:unset !important; -webkit-text-fill-color:#1a237e !important; }
+    .sheet-title .brand-name { display:block; font-weight:800; font-size:2.1rem; letter-spacing:2px; color:var(--brass-dark); background:none !important; -webkit-background-clip:unset !important; background-clip:unset !important; -webkit-text-fill-color:var(--brass-dark) !important; }
     .sheet-title .brand-sub { display:block; font-weight:700; font-size:.95rem; letter-spacing:6px; color:#667085; margin-top:2px; text-transform:uppercase; text-shadow:none; }
-    .sheet-title::after { background:linear-gradient(90deg,#00b8d4,#7c4dff,#ff2d95) !important; height:3px !important; }
-    .flag { border-color:rgba(83,109,254,.34); color:#283593; background:linear-gradient(135deg,rgba(0,188,212,.10),rgba(124,77,255,.12),rgba(255,45,149,.09)); box-shadow:0 3px 10px rgba(83,109,254,.10), inset 0 1px 0 rgba(255,255,255,.9); }
-    .vector-card { border-color:rgba(83,109,254,.22); border-top:3px solid transparent; border-image:linear-gradient(90deg,#00b8d4,#7c4dff,#ff2d95) 1; background:linear-gradient(145deg,#ffffff 0%,#fbf9ff 52%,#f4fbff 100%); }
+    .sheet-title::after { background:linear-gradient(90deg,var(--brass),var(--thread)) !important; height:3px !important; }
+    .flag { border-color:rgba(83,109,254,.34); color:var(--brass-dark); background:linear-gradient(135deg,rgba(0,188,212,.10),rgba(124,77,255,.12),rgba(255,45,149,.09)); box-shadow:0 3px 10px rgba(83,109,254,.10), inset 0 1px 0 rgba(255,255,255,.9); }
+    .vector-card { border-color:rgba(83,109,254,.22); border-top:3px solid transparent; border-image:linear-gradient(90deg,var(--brass),var(--thread)) 1; background:linear-gradient(145deg,#ffffff 0%,#fbf9ff 52%,#f4fbff 100%); }
     .vector-tag { border-color:rgba(83,109,254,.22); color:#26325f; background:linear-gradient(135deg,rgba(0,188,212,.10),rgba(124,77,255,.10)); }
     .preset-badge { color:#4a2aa5; box-shadow:0 2px 8px rgba(124,77,255,.10); }
 
@@ -91,7 +91,7 @@
     .sheet-title::after { content:""; position:absolute; left:50%; bottom:0; transform:translateX(-50%); width:100px; height:2px; border-radius:2px; background:#d4af37; }
 
     .company-logo-top { position:absolute; top:18px; left:28px; width:150px; min-height:72px; border:none; border-radius:0; background:transparent; display:flex; align-items:center; justify-content:center; text-align:center; padding:4px; cursor:pointer; overflow:hidden; z-index:2; }
-    .company-logo-top.drag { background:#f0f2fa; border:1.5px dashed #3949ab; border-radius:6px; }
+    .company-logo-top.drag { background:#f0f2fa; border:1.5px dashed var(--brass); border-radius:6px; }
     .company-logo-top img { width:100%; height:100%; max-height:72px; object-fit:contain; display:block; }
     .company-logo-placeholder { font-size:.78rem; font-weight:700; color:#5c6bc0; line-height:1.35; }
     .company-logo-placeholder span { font-size:.58rem; font-weight:500; color:#8388a8; }
@@ -167,8 +167,8 @@
     .variant-item { border:1px solid #cbd5e1; border-radius:8px; padding:9px; margin-top:8px; background:#fafbfc; position:relative; }
     .variant-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px; }
     .variant-title { font-size:.74rem; font-weight:800; color:#333; text-transform:uppercase; letter-spacing:.3px; }
-    .btn-add { background:#3949ab; margin-top:9px; }
-    .btn-add:hover { background:#283593; }
+    .btn-add { background:var(--brass); margin-top:9px; }
+    .btn-add:hover { background:var(--brass-dark); }
     .btn-remove { width:auto; margin:0; padding:4px 7px; font-size:.72rem; background:#c8102e; border-radius:5px; }
     .btn-remove:hover { background:#96061e; }
     .variant-item .row2 { margin-top:2px; }
@@ -234,12 +234,6 @@
     }
     
     /* ---------- General beautification polish ---------- */
-    body { background:
-        radial-gradient(circle at 12% -6%, #eef1fd 0%, transparent 42%),
-        radial-gradient(circle at 100% 0%, #fdf6e3 0%, transparent 38%),
-        linear-gradient(160deg,#eef1fb 0%,#e3e7f5 45%,#dde1f2 100%);
-        min-height:100vh;
-    }
     .panel, .library-panel { transition: box-shadow .2s ease; }
     .panel:hover, .library-panel:hover { box-shadow:0 8px 28px rgba(20,25,60,.10); }
     .panel h2, .library-panel h2 { position:relative; }
@@ -260,26 +254,26 @@
     .drop-zone:hover { border-color:#5c6bc0; box-shadow:0 2px 10px rgba(63,81,181,.10); }
     .vector-card { transition: box-shadow .15s ease, transform .15s ease; }
     .vector-card:hover { box-shadow:0 5px 16px rgba(20,25,60,.16); transform:translateY(-1px); }
-    .quick-setup-btn{margin-top:10px !important;background:linear-gradient(135deg,#00b8d4,#7c4dff,#ff2d95) !important;color:#fff !important;border:0;box-shadow:0 5px 16px rgba(124,77,255,.24) !important;}
+    .quick-setup-btn{margin-top:10px !important;background:linear-gradient(135deg,var(--brass),var(--thread)) !important;color:#fff !important;border:0;box-shadow:0 5px 16px rgba(124,77,255,.24) !important;}
     .quick-setup-btn:hover{filter:saturate(1.15) brightness(1.04);}
     .vector-actions{display:flex;justify-content:center;gap:5px;margin-top:6px;flex-wrap:wrap;}
-    .vector-action-btn{border:1px solid #c5cae9;background:#f5f7ff;color:#283593;border-radius:10px;padding:3px 7px;font-size:.62rem;font-weight:800;cursor:pointer;}
+    .vector-action-btn{border:1px solid #c5cae9;background:#f5f7ff;color:var(--brass-dark);border-radius:10px;padding:3px 7px;font-size:.62rem;font-weight:800;cursor:pointer;}
     .vector-action-btn:hover{background:#e8eaf6;border-color:#9fa8da;}
     .quick-modal{position:fixed;inset:0;z-index:9000;background:rgba(10,15,35,.55);display:none;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(7px);}
     .quick-modal.open{display:flex;}
     .quick-card{width:min(620px,100%);max-height:92vh;overflow:auto;background:#fff;border:1px solid #dbe1f0;border-radius:18px;box-shadow:0 24px 70px rgba(20,25,60,.28);padding:18px;}
     .quick-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;}
-    .quick-head h3{font-size:1.15rem;color:#1a237e;}
-    .quick-close{border:0;background:#eef0f8;color:#1a237e;border-radius:10px;padding:6px 10px;font-weight:900;cursor:pointer;}
+    .quick-head h3{font-size:1.15rem;color:var(--brass-dark);}
+    .quick-close{border:0;background:#eef0f8;color:var(--brass-dark);border-radius:10px;padding:6px 10px;font-weight:900;cursor:pointer;}
     .quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
     .quick-field label{display:block;font-size:.68rem;font-weight:800;color:#475467;text-transform:uppercase;letter-spacing:.4px;margin:0 0 4px;}
     .quick-field input,.quick-field select{width:100%;padding:9px 10px;border:1.5px solid #cbd5e1;border-radius:8px;background:#fff;font-size:.88rem;}
-    .quick-field input:focus,.quick-field select:focus{outline:none;border-color:#7c4dff;box-shadow:0 0 0 3px rgba(124,77,255,.10);}
+    .quick-field input:focus,.quick-field select:focus{outline:none;border-color:var(--brass);box-shadow:0 0 0 3px rgba(124,77,255,.10);}
     .quick-placements{margin-top:12px;padding:10px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;}
-    .quick-placements-title{font-size:.7rem;font-weight:900;color:#1a237e;text-transform:uppercase;margin-bottom:7px;}
+    .quick-placements-title{font-size:.7rem;font-weight:900;color:var(--brass-dark);text-transform:uppercase;margin-bottom:7px;}
     .quick-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;}
     .quick-check{display:flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;color:#344054;}
-    .quick-check input{accent-color:#7c4dff;width:16px;height:16px;}
+    .quick-check input{accent-color:var(--brass);width:16px;height:16px;}
     .quick-actions{display:flex;gap:8px;margin-top:14px;}
     .quick-actions button{flex:1;margin:0 !important;}
     .mobile-export-bar{display:none;}
@@ -288,7 +282,7 @@
       .sheet-outer{min-width:0;width:100%;overflow-x:auto;justify-content:flex-start;} .sheet{min-width:794px;} .library-panel{position:static;}
       .quick-grid{grid-template-columns:1fr;} .quick-checks{grid-template-columns:1fr;} .quick-card{padding:14px;border-radius:14px;}
       .mobile-export-bar{position:fixed;display:flex;z-index:8000;left:8px;right:8px;bottom:8px;align-items:center;gap:8px;padding:8px 9px;border-radius:15px;background:rgba(15,23,42,.94);box-shadow:0 10px 35px rgba(0,0,0,.28);backdrop-filter:blur(12px);}
-      .mobile-export-bar .mobile-export-main{flex:1;min-width:0;border:0;border-radius:10px;padding:11px 12px;background:linear-gradient(135deg,#00b8d4,#7c4dff,#ff2d95);color:#fff;font-weight:900;font-size:.88rem;cursor:pointer;}
+      .mobile-export-bar .mobile-export-main{flex:1;min-width:0;border:0;border-radius:10px;padding:11px 12px;background:linear-gradient(135deg,var(--brass),var(--thread));color:#fff;font-weight:900;font-size:.88rem;cursor:pointer;}
       .mobile-export-status{font-size:.67rem;color:#d1fae5;font-weight:800;white-space:nowrap;} .vector-action-btn{padding:5px 8px;font-size:.65rem;}
     }
     @media print{.quick-modal,.mobile-export-bar{display:none !important;} body.print-mode .vector-actions{display:none !important;} }
@@ -304,7 +298,7 @@
     /* ---------- Toasts ---------- */
     #toastHost { position:fixed; right:18px; bottom:18px; z-index:9999; display:flex; flex-direction:column; gap:10px; max-width:340px; }
     .toast {
-        display:flex; align-items:flex-start; gap:8px; background:#1a237e; color:#fff; padding:11px 14px;
+        display:flex; align-items:flex-start; gap:8px; background:var(--brass-dark); color:#fff; padding:11px 14px;
         border-radius:10px; font-size:.82rem; font-weight:600; box-shadow:0 8px 24px rgba(20,25,60,.28);
         opacity:0; transform:translateY(12px) scale(.97); transition:opacity .22s ease, transform .22s ease;
         line-height:1.4;
@@ -315,7 +309,7 @@
     .toast-success { background:#1b5e20; }
     .toast-error { background:#a91d35; }
     .toast-warn { background:#8a5a00; }
-    .toast-info { background:#1a237e; }
+    .toast-info { background:var(--brass-dark); }
 
     /* ---------- Modal (confirm + shortcuts) ---------- */
     .modal-overlay {
@@ -330,7 +324,7 @@
         transition:transform .18s ease;
     }
     .modal-overlay.show .modal-box { transform:translateY(0) scale(1); }
-    .modal-title { font-family:'Poppins','Segoe UI',sans-serif; font-weight:800; font-size:1.05rem; color:#1a237e; margin-bottom:10px; }
+    .modal-title { font-family:'Bebas Neue',Impact,sans-serif; font-weight:400; text-transform:uppercase; letter-spacing:.03em; font-size:1.25rem; color:var(--brass-dark); margin-bottom:10px; }
     .modal-msg { font-size:.88rem; color:#333; line-height:1.5; margin-bottom:18px; }
     .modal-actions { display:flex; gap:10px; }
     .modal-actions .btn { margin-top:0; flex:1; }
@@ -339,122 +333,66 @@
     .shortcut-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:7px 10px; background:#f5f6fb; border-radius:8px; border:1px solid #e6e9f5; }
     .shortcut-row .key-cap {
         font-family:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace; font-size:.72rem; font-weight:700;
-        color:#1a237e; background:#fff; border:1px solid #c5cae9; border-radius:6px; padding:4px 8px;
+        color:var(--brass-dark); background:#fff; border:1px solid #c5cae9; border-radius:6px; padding:4px 8px;
         box-shadow:0 1px 0 #c5cae9, inset 0 1px 0 #fff; white-space:nowrap;
     }
     .shortcut-row .shortcut-label { font-size:.82rem; color:#333; font-weight:600; text-align:right; }
 /* =========================================================
-   3D GLASS UI THEME — visual only, functionality unchanged
+   ATELIER THEME — matches the rest of the Specs Hub (ink + brass).
+   Dark ambient shell behind paper-toned control panels.
+   Visual only — functionality unchanged.
    ========================================================= */
 :root{
-  --glass-bg:rgba(255,255,255,.68);
-  --glass-bg-strong:rgba(255,255,255,.82);
-  --glass-border:rgba(255,255,255,.78);
-  --glass-shadow:0 22px 55px rgba(31,41,92,.18), 0 6px 18px rgba(31,41,92,.10), inset 0 1px 0 rgba(255,255,255,.92);
-  --glass-blue:#3f51b5;
-  --glass-purple:#7c4dff;
-  --glass-cyan:#00acc1;
+  --ink:#221d18;
+  --ink-soft:#5b5145;
+  --brass:#b6832e;
+  --brass-dark:#8a611f;
+  --thread:#9c3a2c;
+  --thread-dark:#7c2c21;
+  --paper:#fffdf9;
+  --line:#ddd3bf;
+  --bg-soft:#f4eee1;
 }
 body{
   background:
-    radial-gradient(circle at 8% 8%,rgba(124,77,255,.28),transparent 27%),
-    radial-gradient(circle at 92% 12%,rgba(0,188,212,.22),transparent 25%),
-    radial-gradient(circle at 50% 100%,rgba(63,81,181,.18),transparent 35%),
-    linear-gradient(135deg,#e9edff 0%,#dce8ff 45%,#edf4ff 100%);
-  color:#17213c;
+    radial-gradient(circle at 12% 8%, rgba(182,131,46,0.16), transparent 45%),
+    radial-gradient(circle at 88% 92%, rgba(156,58,44,0.12), transparent 45%),
+    linear-gradient(160deg,#0f0c09,#171310 55%,#0c0a08);
+  background-attachment:fixed;
   min-height:100vh;
-}
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
-  background:linear-gradient(120deg,rgba(255,255,255,.24),transparent 35%,rgba(255,255,255,.12));
 }
 .wrap{gap:18px;}
 .panel,.library-panel{
-  background:linear-gradient(145deg,rgba(255,255,255,.82),rgba(255,255,255,.48));
-  border:1px solid var(--glass-border);
-  box-shadow:var(--glass-shadow);
-  backdrop-filter:blur(22px) saturate(150%);
-  -webkit-backdrop-filter:blur(22px) saturate(150%);
-  border-radius:22px;
-}
-.panel h2,.library-panel h2{
-  color:#27348f;
-  border-bottom-color:rgba(63,81,181,.16);
-}
-.panel input[type=text],.panel select,.library-panel input[type=text]{
-  background:rgba(255,255,255,.72);
-  border-color:rgba(99,115,180,.24);
-  box-shadow:inset 0 2px 5px rgba(48,62,120,.06),0 1px 0 rgba(255,255,255,.9);
+  background:var(--paper);
+  border:1px solid var(--line);
+  box-shadow:0 14px 38px rgba(0,0,0,.35);
   border-radius:12px;
 }
-.panel input[type=text]:focus,.panel select:focus,.library-panel input[type=text]:focus{
-  border-color:rgba(63,81,181,.65);
-  box-shadow:0 0 0 4px rgba(63,81,181,.10),inset 0 2px 5px rgba(48,62,120,.05);
-}
+.panel h2,.library-panel h2{ border-bottom-color:var(--bg-soft); }
 .btn{
-  background:linear-gradient(135deg,#536dfe 0%,#3f51b5 48%,#6a45d9 100%);
-  border:1px solid rgba(255,255,255,.45);
-  border-radius:13px;
-  box-shadow:0 9px 18px rgba(63,81,181,.22),inset 0 1px 0 rgba(255,255,255,.38);
-  text-shadow:0 1px 2px rgba(20,25,70,.25);
-  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+  background:linear-gradient(135deg,var(--brass) 0%,var(--brass-dark) 100%);
+  border:none;
+  box-shadow:0 6px 16px rgba(182,131,46,.32);
+  text-shadow:none;
 }
-.btn:hover{
-  background:linear-gradient(135deg,#607dff 0%,#4659c7 48%,#744be5 100%);
-  transform:translateY(-2px);
-  box-shadow:0 13px 24px rgba(63,81,181,.28),inset 0 1px 0 rgba(255,255,255,.42);
-  filter:saturate(1.08);
-}
-.btn:active{transform:translateY(0) scale(.985);}
-.btn-print{background:linear-gradient(135deg,#00a88f,#00796b);}
-.btn-print:hover{background:linear-gradient(135deg,#12bfa5,#00897b);}
-.btn-clear{background:linear-gradient(135deg,#ef5350,#c62828);}
-.btn-clear:hover{background:linear-gradient(135deg,#ff665f,#d32f2f);}
-.drop-zone{
-  background:linear-gradient(145deg,rgba(255,255,255,.55),rgba(235,239,255,.58));
-  border-color:rgba(83,109,254,.38);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 16px rgba(63,81,181,.07);
-  border-radius:15px;
-}
-.order-kind-box{
-  background:rgba(248,250,255,.58);
-  border-color:rgba(99,115,180,.22);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 5px 15px rgba(50,65,120,.06);
-}
-.preset-badge{
-  background:linear-gradient(135deg,rgba(83,109,254,.16),rgba(124,77,255,.14));
-  border:1px solid rgba(83,109,254,.18);
-}
-.library-panel .article-item,.library-panel .recent-chip{
-  border-radius:12px !important;
-  box-shadow:0 5px 14px rgba(42,54,120,.07),inset 0 1px 0 rgba(255,255,255,.8);
-}
-.sheet{
-  border:1px solid rgba(255,255,255,.95);
-  box-shadow:0 28px 70px rgba(30,40,90,.24),0 8px 20px rgba(30,40,90,.12),inset 0 1px 0 rgba(255,255,255,.98);
-  border-radius:18px;
-}
-.sheet-outer{filter:drop-shadow(0 4px 12px rgba(40,50,110,.06));}
-.modal-overlay{background:rgba(23,30,65,.42);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);}
-.modal-box{
-  background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(239,244,255,.78));
-  border:1px solid rgba(255,255,255,.85);
-  box-shadow:0 30px 80px rgba(20,25,70,.32),inset 0 1px 0 rgba(255,255,255,.95);
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-}
-.toast{
-  border:1px solid rgba(255,255,255,.5);
-  box-shadow:0 18px 45px rgba(20,25,70,.25),inset 0 1px 0 rgba(255,255,255,.25);
-  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-}
-@media (max-width:900px){
-  .panel,.library-panel{border-radius:18px;}
-}
+.btn:hover{ filter:brightness(1.08); box-shadow:0 8px 22px rgba(182,131,46,.42); }
+.btn-print{ background:linear-gradient(135deg,#5b6b73,#37444b); }
+.btn-print:hover{ filter:brightness(1.12); }
+.btn-clear{ background:linear-gradient(135deg,var(--thread),var(--thread-dark)); }
+.btn-clear:hover{ filter:brightness(1.1); }
+.drop-zone:hover,.drop-zone.drag{ border-color:var(--brass); background:var(--bg-soft); }
+.order-kind-box{ background:var(--bg-soft); border-color:var(--line); }
+.preset-badge{ background:rgba(182,131,46,.14); border:1px solid rgba(182,131,46,.3); }
+.sheet{ border:none; box-shadow:0 28px 70px rgba(0,0,0,.45),0 8px 20px rgba(0,0,0,.3); }
+.sheet-outer{ filter:drop-shadow(0 4px 12px rgba(0,0,0,.25)); }
+.modal-overlay{ background:rgba(10,8,6,.55); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+.modal-box{ background:var(--paper); border:1px solid var(--line); box-shadow:0 30px 80px rgba(0,0,0,.5); }
+.toast{ box-shadow:0 18px 45px rgba(0,0,0,.4); }
+@media (max-width:900px){ .panel,.library-panel{ border-radius:12px; } }
 @media print{
-  body{background:#fff !important;}
-  body::before{display:none !important;}
-  .panel,.library-panel{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;box-shadow:none !important;}
-  .sheet{box-shadow:none !important;}
+  body{ background:#fff !important; }
+  .panel,.library-panel{ box-shadow:none !important; }
+  .sheet{ box-shadow:none !important; }
 }
 
 
@@ -497,7 +435,7 @@ body::before{
 @media print{.editor-section-head{display:none !important}.editor-section-body{max-height:none !important;opacity:1 !important;}}
 
 
-    /* ---------- Specs Hub Navigation ---------- */
+    /* ---------- Specs Hub Navigation (matches the rest of the suite) ---------- */
     .spec-nav{
         max-width:1680px;
         margin:0 auto 14px;
@@ -506,93 +444,74 @@ body::before{
         justify-content:space-between;
         gap:10px;
         flex-wrap:wrap;
-        background:rgba(255,255,255,.94);
-        border:1px solid #dbe2ef;
+        background:rgba(28,22,16,.55);
+        backdrop-filter:blur(18px) saturate(150%);
+        -webkit-backdrop-filter:blur(18px) saturate(150%);
+        border:1px solid rgba(246,239,224,.10);
+        border-bottom:1px solid rgba(182,131,46,.45);
         border-radius:10px;
-        padding:9px 12px;
-        box-shadow:0 4px 16px rgba(20,25,60,.07);
+        padding:9px 14px;
+        box-shadow:0 8px 32px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.05);
+        position:sticky; top:12px; z-index:40;
     }
     .spec-nav .brand{
-        font-family:'Poppins','Segoe UI',sans-serif;
-        font-weight:800;
-        color:#1a237e;
-        font-size:.9rem;
-        letter-spacing:.2px;
+        font-family:'Bebas Neue',Impact,sans-serif;
+        font-weight:400;
+        text-transform:uppercase;
+        color:#fdf6e6;
+        font-size:1.05rem;
+        letter-spacing:.04em;
     }
-    .spec-nav-links{display:flex;gap:7px;flex-wrap:wrap;align-items:center;}
+    .spec-nav-links{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
     .spec-nav a{
         display:inline-flex;
         align-items:center;
         gap:5px;
         text-decoration:none;
-        color:#1a237e;
-        background:#eef0f8;
-        border:1px solid #cbd5e1;
-        border-radius:7px;
-        padding:7px 10px;
+        color:#f6efe0;
+        background:rgba(255,255,255,.04);
+        border:1px solid rgba(246,239,224,.35);
+        border-radius:3px;
+        padding:6px 10px;
         font-size:.78rem;
-        font-weight:700;
-        transition:background .15s,border-color .15s,transform .1s;
+        font-weight:600;
+        transition:background .15s,border-color .15s;
     }
     .spec-nav a:hover{
-        background:#e8eaf6;
-        border-color:#9fa8da;
-        transform:translateY(-1px);
+        background:rgba(182,131,46,.12);
+        border-color:var(--brass);
     }
     .spec-nav a.current{
-        background:#1a237e;
-        color:#fff;
-        border-color:#1a237e;
+        background:var(--brass);
+        color:#241c10;
+        border-color:var(--brass);
+        cursor:default;
     }
     @media print{
         .spec-nav{display:none !important;}
     }
 
-/* ====== v11: 3-column editor layout — Library | Controls | Result Sheet ====== */
-.wrap{max-width:1520px;display:grid;grid-template-columns:300px 320px minmax(0,1fr);gap:14px;align-items:start;}
-.library-panel{width:300px;max-height:calc(100vh - 36px);overflow-y:auto;position:sticky;top:18px;padding:10px;}
-.library-panel .library-head{display:flex !important;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none;margin:0 !important;padding:12px 11px !important;font-size:.95rem !important;border-radius:12px !important;border:1px solid rgba(148,163,184,.22);background:rgba(255,255,255,.55);}
-.library-head-icon{font-size:.8rem;color:#667085;min-width:24px;height:24px;border-radius:8px;background:rgba(255,255,255,.8);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(31,41,55,.08);}
-.library-content{display:none;margin-top:6px;}
-.library-panel.open .library-content{display:block;}
-.library-panel.open .library-head-icon{transform:rotate(90deg);}
-.library-panel.open{max-height:calc(100vh - 36px);overflow-y:auto;}
-.library-panel:not(.open){height:auto;min-height:66px;overflow:hidden;}
+/* ====== v11: editor layout — Controls | Result Sheet ====== */
+.wrap{max-width:1600px;display:grid;grid-template-columns:340px minmax(0,1fr);gap:18px;align-items:start;}
 .sheet-outer{min-width:0;width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;}
-.sheet{width:min(880px,100%);}
-@media (max-width:1100px){.wrap{grid-template-columns:280px 300px minmax(0,1fr);gap:10px}.library-panel{width:280px}.panel{width:300px}.sheet{width:min(820px,100%)}}
-@media (max-width:760px){.wrap{display:flex;flex-direction:column;gap:9px}.library-panel,.panel,.sheet-outer{width:100%;max-width:none;position:static}.library-panel{min-height:0}.library-panel:not(.open){height:auto}.sheet-outer{overflow-x:auto;align-items:flex-start}.sheet{min-width:794px;width:794px}}
+.sheet{width:min(1060px,100%);}
+@media (max-width:1100px){.wrap{grid-template-columns:300px minmax(0,1fr);gap:10px}.panel{width:300px}.sheet{width:min(900px,100%)}}
+@media (max-width:760px){.wrap{display:flex;flex-direction:column;gap:9px}.panel,.sheet-outer{width:100%;max-width:none;position:static}.sheet-outer{overflow-x:auto;align-items:flex-start}.sheet{min-width:794px;width:794px}}
 </style>
 </head>
 <body>
-<script>document.addEventListener("DOMContentLoaded",()=>document.getElementById("articleLibraryPanel")?.classList.remove("open"));</script>
 <div class="spec-nav no-print" aria-label="Specs navigation">
-    <div class="brand">Haider Cheema — Specs Hub</div>
+    <div class="brand">Haider Cheema — Tools</div>
     <div class="spec-nav-links">
-        <a href="./hub.html" title="Back to Specs Hub">🏠 Specs Hub</a>
+        <a href="./hub.html">🏠 Hub</a>
+        <a href="./index.html">📋 Dashboard</a>
+        <a href="./Order_Specs_Sheet.html">🧾 Order Specs</a>
+        <a href="./Shorts_Order_Spec_Sheet.html">🩳 Shorts Specs</a>
+        <a href="./order-manifest.html">📉 Shortfall</a>
         <a class="current" href="./Outmaker_Spec_Sheet_Generator.html" aria-current="page">🎨 Outmaker Spec Maker</a>
     </div>
 </div>
 <div class="wrap">
-
-    <!-- ===================== ARTICLE LIBRARY (side panel) ===================== -->
-    <div class="library-panel no-print" id="articleLibraryPanel">
-        <h2 class="library-head" onclick="toggleLibrary()" role="button" tabindex="0" onkeydown="if(event.key==="Enter"||event.key===" ") toggleLibrary()">🗂 Article Library <span class="library-head-icon" id="libraryToggleIcon">▶</span></h2>
-        <div class="library-content" id="articleLibraryContent">
-        <div class="lib-help">Search or browse saved Cust Art #. Click any result to load logos, stripes & layout on the current page.</div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px;"><span style="font-size:.68rem;font-weight:900;color:#667085;text-transform:uppercase;letter-spacing:.4px;">Recent Articles</span><button type="button" onclick="clearRecentArticles()" style="border:0;background:none;color:#7c4dff;font-size:.62rem;font-weight:800;cursor:pointer;">Clear</button></div>
-        <div id="recentArticles"></div>
-        <input type="text" id="articleSearch" placeholder="🔎 Search Cust Art # / Article…" oninput="searchArticles(this.value)">
-        <div id="articleResults"></div>
-        <div class="lib-actions">
-            <button type="button" class="btn" style="background:#455a64;" onclick="saveCurrentArticle()">Save</button>
-            <button type="button" class="btn" style="background:#546e7a;" onclick="exportArticleLibrary()">JSON</button>
-            <button type="button" class="btn" style="background:#546e7a;" onclick="document.getElementById('importLibraryInput').click()">Import</button>
-        </div>
-        <input type="file" id="importLibraryInput" accept=".json,application/json" style="display:none;" onchange="importArticleLibrary(event)">
-        <button type="button" class="btn" style="margin-top:8px;background:#5c6bc0;font-size:.8rem;padding:8px;" onclick="searchArticles('')">Show All Articles</button>
-        </div>
-    </div>
 
     <!-- ===================== CONTROL PANEL ===================== -->
     <div class="panel no-print">
@@ -607,7 +526,8 @@ body::before{
             <div class="level1-field level1-art">
                 <label>Article / Cust Art #</label>
                 <div style="position:relative;">
-                    <input type="text" id="custArt" value="J-IJF3SMU" autocomplete="off" aria-label="Article / Cust Art number">
+                    <input type="text" id="custArt" value="J-IJF3SMU" autocomplete="off" aria-label="Article / Cust Art number" oninput="onCustArtInput(this.value)">
+                    <div id="custArtSuggest" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:50;background:#fff;border:1px solid #c7c7c7;border-top:none;max-height:220px;overflow-y:auto;box-shadow:0 6px 14px rgba(0,0,0,0.15);"></div>
                 </div>
             </div>
             <button type="button" class="level1-action quick-setup-btn" onclick="openQuickSetup()">⚡ Quick Setup</button>
@@ -700,7 +620,6 @@ body::before{
         <button class="btn" onclick="updateSheet()">Update Sheet</button>
         <button class="btn btn-print" id="exportPdfBtn" onclick="exportPDF()">Export PDF</button>
         <button class="btn btn-print" style="background:#1565c0; margin-top:8px;" onclick="saveCurrentArticle()">Save Order <span class="shortcut-hint" style="background:#0d47a1;color:#fff;">Ctrl+S</span></button>
-        <button type="button" class="btn" style="background:#5c6bc0;margin-top:8px;" onclick="handleUndo()">Undo <span class="shortcut-hint" style="background:#3949ab;color:#fff;">Ctrl+Z</span></button>
         <button class="btn btn-clear" onclick="clearMainImage()">Clear Garment Image</button>
         <button type="button" class="btn" style="background:#37474f;margin-top:8px;" onclick="openShortcutsModal()">⌨️ Keyboard Shortcuts</button>
     </div>
@@ -853,18 +772,16 @@ body{background:#eef1f5 !important;color:var(--ui-text) !important;}
 .panel{max-height:none !important;overflow:visible !important;}
 .library-panel{max-height:none !important;overflow:visible !important;}
 @media (min-width:1101px){
-  .wrap{display:grid;grid-template-columns:320px 330px minmax(0,1fr);gap:18px;align-items:start;}
-  .library-panel{width:320px;}
-  .panel{width:330px;}
+  .wrap{display:grid;grid-template-columns:340px minmax(0,1fr);gap:18px;align-items:start;}
+  .panel{width:340px;}
   .sheet-outer{width:100%;min-width:0;align-items:center;}
-  .sheet{width:min(880px,100%);}
+  .sheet{width:min(1060px,100%);}
 }
 @media (min-width:761px) and (max-width:1100px){
-  .wrap{display:grid;grid-template-columns:270px 310px minmax(0,1fr);gap:10px;align-items:start;}
-  .library-panel{width:270px;}
-  .panel{width:310px;}
+  .wrap{display:grid;grid-template-columns:300px minmax(0,1fr);gap:10px;align-items:start;}
+  .panel{width:300px;}
   .sheet-outer{width:100%;min-width:0;align-items:center;}
-  .sheet{width:min(820px,100%);}
+  .sheet{width:min(900px,100%);}
 }
 </style>
   <linearGradient id="stripe_id0" gradientUnits="userSpaceOnUse" x1="0.77" y1="122.37" x2="400.37" y2="122.37">
@@ -933,48 +850,9 @@ let pasteTarget = null;
 let pages = [];
 let currentPageIndex = 0;
 
-// History Stack for Undo (Ctrl+Z)
-let undoStack = [];
-const MAX_HISTORY = 20;
-
-function pushStateToHistory() {
-    saveCurrentPage();
-    const currentState = {
-        pages: JSON.parse(JSON.stringify(pages)),
-        currentPageIndex: currentPageIndex,
-        customer: document.getElementById('customer').value,
-        exFactory: document.getElementById('exFactory').value,
-        piNo: document.getElementById('piNo').value,
-        preparedBy: document.getElementById('preparedBy').value,
-        checkedBy: document.getElementById('checkedBy').value,
-        verifiedBy: document.getElementById('verifiedBy').value,
-        overallBy: document.getElementById('overallBy').value
-    };
-    undoStack.push(currentState);
-    if (undoStack.length > MAX_HISTORY) {
-        undoStack.shift();
-    }
-}
-
-function handleUndo() {
-    if (undoStack.length === 0) {
-        console.log("Nothing to undo");
-        return;
-    }
-    const previousState = undoStack.pop();
-    pages = previousState.pages;
-    currentPageIndex = Math.min(previousState.currentPageIndex, pages.length - 1);
-    
-    document.getElementById('customer').value = previousState.customer;
-    document.getElementById('exFactory').value = previousState.exFactory;
-    document.getElementById('piNo').value = previousState.piNo;
-    document.getElementById('preparedBy').value = previousState.preparedBy;
-    document.getElementById('checkedBy').value = previousState.checkedBy;
-    document.getElementById('verifiedBy').value = previousState.verifiedBy;
-    document.getElementById('overallBy').value = previousState.overallBy;
-
-    loadPage(currentPageIndex);
-}
+// History/Undo feature removed — final output is always the exported PDF,
+// so there is nothing to keep an in-app undo trail for.
+function pushStateToHistory(){ /* no-op (history removed) */ }
 
 /* =========================================================
    Toast + Confirm modal (replaces jarring native alert/confirm)
@@ -1012,7 +890,7 @@ function showConfirm(message, opts){
                 <div class="modal-msg"></div>
                 <div class="modal-actions">
                     <button type="button" class="btn modal-btn-cancel" style="background:#eceef3;color:#333;">${opts.cancelLabel || 'Cancel'}</button>
-                    <button type="button" class="btn modal-btn-ok" style="background:#1a237e;">${opts.okLabel || 'Confirm'}</button>
+                    <button type="button" class="btn modal-btn-ok" style="background:var(--brass-dark);">${opts.okLabel || 'Confirm'}</button>
                 </div>
             </div>`;
         overlay.querySelector('.modal-msg').textContent = message;
@@ -1041,7 +919,6 @@ function showConfirm(message, opts){
    ========================================================= */
 const SHORTCUT_LIST = [
     { keys: 'Ctrl + S',       label: 'Save Order' },
-    { keys: 'Ctrl + Z',       label: 'Undo' },
     { keys: 'Ctrl + V',       label: 'Paste image into drop zone' },
     { keys: 'Ctrl + Alt + N', label: 'New Order' },
     { keys: 'Ctrl + Alt + A', label: 'Add Page' },
@@ -1062,7 +939,7 @@ function openShortcutsModal(){
                 ${SHORTCUT_LIST.map(s => `<div class="shortcut-row"><span class="key-cap">${s.keys}</span><span class="shortcut-label">${s.label}</span></div>`).join('')}
             </div>
             <div class="modal-actions">
-                <button type="button" class="btn modal-btn-ok" style="background:#1a237e;">Got it</button>
+                <button type="button" class="btn modal-btn-ok" style="background:var(--brass-dark);">Got it</button>
             </div>
         </div>`;
     document.body.appendChild(overlay);
@@ -1077,15 +954,6 @@ function openShortcutsModal(){
 document.addEventListener('keydown', function(e) {
     const tag = (e.target && e.target.tagName) || '';
     const isTyping = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
-
-    // Plain Ctrl+Z: let native text-undo work while typing in a field;
-    // otherwise trigger the app's own undo history.
-    if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'z') {
-        if (isTyping) return;
-        e.preventDefault();
-        handleUndo();
-        return;
-    }
 
     // Plain Ctrl+S: save the current order instead of the browser's
     // "Save Page" dialog.
@@ -1201,8 +1069,8 @@ function renderPageTabs(){
         const active = i === currentPageIndex;
         return `<button type="button" onclick="switchPage(${i})" style="
             padding:6px 10px;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer;
-            border:1.5px solid ${active?'#1a237e':'#ccc'};
-            background:${active?'#1a237e':'#fff'};color:${active?'#fff':'#333'};
+            border:1.5px solid ${active?'var(--brass-dark)':'#ccc'};
+            background:${active?'var(--brass-dark)':'#fff'};color:${active?'#fff':'#333'};
         ">P${i+1}: ${label}</button>`;
     }).join('');
     const badge = document.getElementById('pageBadge');
@@ -1394,117 +1262,6 @@ function writeArticleStore(store){
     catch(e){ console.warn('Could not save article library', e); }
 }
 
-/* =========================================================
-   Supabase cloud sync (Article Library)
-   Strategy: localStorage stays the instant, always-available
-   cache (so search/autocomplete stay snappy and offline-safe).
-   Supabase runs alongside it — on load we pull the latest rows
-   down into the local cache, and every explicit Save also pushes
-   the entry up to Supabase in the background.
-   ========================================================= */
-const SUPABASE_URL = 'https://yktnxmdlzmjuroqjpxwu.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_cPOgwfRqNoZJsrHnhZpj1w_5p-17Raj';
-let supabaseClient = null;
-try{
-    if(window.supabase && typeof window.supabase.createClient === 'function'){
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('[Supabase] client ready.');
-    } else {
-        console.warn('[Supabase] window.supabase is missing — the CDN script (@supabase/supabase-js) did not load. Cloud sync will be skipped; app still works on localStorage.');
-    }
-}catch(e){ console.warn('[Supabase] client init failed — running on localStorage only.', e); }
-if(!supabaseClient){
-    // Let the user know immediately (not just in the console) that cloud
-    // sync is unavailable this session — app still works fully offline.
-    setTimeout(() => toast('Cloud connect nahi ho saka is session me — data sirf is device par save hoga. Page reload karke dobara try karein.', 'warn'), 600);
-}
-
-function entryToSupabaseRow(entry){
-    return {
-        cust_art: entry.custArt,
-        order_kind: entry.orderKind,
-        p_logo_front: !!entry.pLogoFront,
-        p_logo_back: !!entry.pLogoBack,
-        p_logo_pant: !!entry.pLogoPant,
-        p_logo_shoulder: !!entry.pLogoShoulder,
-        p_stripes_shoulder: !!entry.pStripesShoulder,
-        placement_notes: entry.placementNotes || '',
-        logo_variants: entry.logoVariants || [],
-        stripe_variants: entry.stripeVariants || [],
-        last_pi: entry.lastPi || ''
-    };
-}
-function supabaseRowToEntry(row){
-    return {
-        custArt: row.cust_art,
-        orderKind: row.order_kind,
-        pLogoFront: !!row.p_logo_front,
-        pLogoBack: !!row.p_logo_back,
-        pLogoPant: !!row.p_logo_pant,
-        pLogoShoulder: !!row.p_logo_shoulder,
-        pStripesShoulder: !!row.p_stripes_shoulder,
-        placementNotes: row.placement_notes || '',
-        logoVariants: row.logo_variants || [],
-        stripeVariants: row.stripe_variants || [],
-        savedAt: row.saved_at,
-        lastPi: row.last_pi || '',
-        _supaId: row.id
-    };
-}
-
-// Push one saved entry up to Supabase. Fire-and-forget from the caller's
-// point of view — local save has already happened, so a failed/offline
-// push never blocks or loses the user's work.
-async function pushArticleToSupabase(entry){
-    if(!supabaseClient){
-        console.warn('[Supabase] push skipped — client not initialized.');
-        toast('Cloud connect nahi ho saka (library load nahi hui). Data is device par save hai.', 'warn');
-        return;
-    }
-    try{
-        const { error } = await supabaseClient.from('articles').insert(entryToSupabaseRow(entry));
-        if(error) throw error;
-        console.log('[Supabase] pushed:', entry.custArt);
-    }catch(e){
-        console.warn('[Supabase] push failed — saved locally only.', e);
-        toast('Cloud sync nahi ho saka: ' + (e?.message || 'unknown error') + '. Data is device par save hai.', 'warn');
-    }
-}
-
-// Pull every saved article down from Supabase into the local cache, so any
-// device opening this page sees the latest shared library. Runs quietly on
-// load; failures just leave the existing local cache untouched.
-async function syncArticlesFromSupabase(){
-    if(!supabaseClient) return;
-    try{
-        const { data, error } = await supabaseClient
-            .from('articles')
-            .select('*')
-            .order('saved_at', { ascending: false });
-        if(error) throw error;
-        console.log('[Supabase] synced rows:', data ? data.length : 0);
-        if(!data || !data.length) return;
-
-        const store = loadArticleStore();
-        data.forEach(row => {
-            const key = (row.cust_art || '').trim().toUpperCase();
-            if(!key) return;
-            const list = Array.isArray(store[key]) ? store[key] : (store[key] ? [store[key]] : []);
-            const already = list.some(e => e._supaId === row.id);
-            if(!already){
-                list.unshift(supabaseRowToEntry(row));
-                store[key] = list.slice(0, 8);
-            }
-        });
-        writeArticleStore(store);
-        renderRecentArticles();
-        const q = document.getElementById('articleSearch');
-        searchArticles(q ? q.value : '');
-    }catch(e){
-        console.warn('Supabase sync failed — using local cache only.', e);
-    }
-}
-
 function articleSummary(entry){
     const logos = (entry.logoVariants || []).map(v => {
         const name = (typeof colorNames !== 'undefined' && colorNames[v.color]) ? colorNames[v.color] : v.color;
@@ -1550,9 +1307,8 @@ function saveCurrentArticle(){
     store[key] = list.slice(0, 8);
     const dups = findDuplicateArticles(entry, key);
     writeArticleStore(store);
-    if(!same) pushArticleToSupabase(entry); // background cloud sync, doesn't block the UI
     pushRecentArticle(art);
-    searchArticles(document.getElementById('articleSearch').value || '');
+    searchArticles(document.getElementById('articleSearch')?.value || '');
     if(dups.length){
         const names = dups.map(d => d.custArt + ' (' + d.kindLabel + ')').join(', ');
         toast('Saved ' + art + ' — same embroidery setup already exists in: ' + names, 'warn');
@@ -1575,7 +1331,7 @@ function onCustArtInput(val){
         const kind = orderKindLabel(entry.orderKind);
         const safe = key.replace(/'/g, "\\'");
         return `<div onmousedown="event.preventDefault(); pickCustArtSuggest('${safe}')" style="padding:8px 10px;cursor:pointer;border-bottom:1px solid #eee;font-size:.78rem;" onmouseover="this.style.background='#e8eaf6'" onmouseout="this.style.background='#fff'">
-            <b style="color:#1a237e;">${entry.custArt || key}</b>
+            <b style="color:var(--brass-dark);">${entry.custArt || key}</b>
             <span style="color:#666;margin-left:6px;">${kind}</span>
             <div style="font-size:.68rem;color:#555;margin-top:2px;">${(entry.logoVariants||[]).length} logo(s) · ${(entry.stripeVariants||[]).length} stripe(s)</div>
         </div>`;
@@ -1695,7 +1451,7 @@ function searchArticles(query){
             html += `<div onclick="loadArticleFromLibrary('${key}',${idx})" style="
                 border:1px solid #d0d4e8;border-radius:8px;padding:8px 10px;cursor:pointer;background:#f7f8fd;
             " onmouseover="this.style.background='#e8eaf6'" onmouseout="this.style.background='#f7f8fd'">
-                <div style="font-weight:800;font-size:.82rem;color:#1a237e;">${entry.custArt || key}
+                <div style="font-weight:800;font-size:.82rem;color:var(--brass-dark);">${entry.custArt || key}
                     <span style="font-weight:600;font-size:.68rem;color:#666;margin-left:6px;">${s.kind}</span>
                 </div>
                 <div style="font-size:.7rem;color:#333;margin-top:3px;"><b>Logos:</b> ${s.logos}</div>
@@ -1730,7 +1486,7 @@ function renderRecentArticles(){
         const safe = String(a).replace(/'/g, "\\'");
         return `<button type="button" onclick="quickLoadRecent('${safe}')" style="
             padding:4px 9px;border-radius:12px;font-size:.68rem;font-weight:700;cursor:pointer;
-            border:1px solid #c5cae9;background:#e8eaf6;color:#1a237e;
+            border:1px solid #c5cae9;background:#e8eaf6;color:var(--brass-dark);
         ">${a}</button>`;
     }).join('');
 }
@@ -1745,7 +1501,7 @@ function quickLoadRecent(art){
         loadArticleFromLibrary(key, 0);
     } else {
         document.getElementById('custArt').value = art;
-        document.getElementById('articleSearch').value = art;
+        if(document.getElementById('articleSearch')) document.getElementById('articleSearch').value = art;
         searchArticles(art);
         updateSheet();
     }
@@ -1778,7 +1534,7 @@ function importArticleLibrary(ev){
             });
             writeArticleStore(store);
             renderRecentArticles();
-            const q = document.getElementById('articleSearch').value;
+            const q = document.getElementById('articleSearch')?.value;
             if(q) searchArticles(q);
             toast('Library imported successfully.', 'success');
         }catch(e){
@@ -2484,7 +2240,7 @@ function openSpecialBarEditor(ev, barIndex, card){
       <div class="ve-title">Stripe Bar ${barIndex+1} Color</div>
       <div style="font-size:.68rem;color:#667085;margin-bottom:6px;">HEX or RGB: #c8102e / rgb(200,16,46)</div>
       <div class="manual-color-row"><input class="ve-color-text" type="text" value="${current}" placeholder="#c8102e or rgb(200,16,46)"><input class="ve-color-picker" type="color" value="${picker}"></div>
-      <button type="button" class="btn" style="margin-top:8px;background:#1a237e;">Apply</button>`;
+      <button type="button" class="btn" style="margin-top:8px;background:var(--brass-dark);">Apply</button>`;
     document.body.appendChild(pop);
     const rect=card.getBoundingClientRect();
     pop.style.left=Math.min(Math.max(8,rect.left+rect.width/2-125),window.innerWidth-268)+'px';
@@ -2593,7 +2349,7 @@ function renderVectorSpecs(){
     logoHost.innerHTML='';
     stripeHost.innerHTML='';
     if(vectorSpecs){
-        vectorSpecs.classList.remove('kind-single','kind-combo','kind-kit');
+        vectorSpecs.classList.remove('kind-single','kind-combo','kind-kit','kind-special');
         vectorSpecs.classList.add('kind-' + kindFamily(window.currentOrderKind));
     }
 
@@ -2802,19 +2558,78 @@ if(pi) {
 }
 
 const A4_PAGE_WIDTH_PX = 794, A4_PAGE_HEIGHT_PX = 1123;
-function fitSheetForPrint(){
-    document.body.classList.add('print-mode');
+
+// Measures the sheet's true content height and, if it's taller than one A4
+// page, shrinks the whole sheet uniformly (via CSS transform: scale) so
+// every element — text, tables, logos, images, however many are added —
+// keeps its exact relative position and simply gets smaller together.
+// Because the scaling is uniform, nothing can newly overlap or intersect;
+// the sheet is then bounded inside a fixed, overflow-hidden A4 frame so the
+// result is always exactly one clean A4 page.
+function computeAndApplyA4Scale(){
     const sheet = document.getElementById('sheet');
     const outer = document.querySelector('.sheet-outer');
-    if(sheet) sheet.style.transform = 'none';
-    if(outer){ outer.style.height = 'auto'; outer.style.overflow = 'visible'; }
+    if(!sheet || !outer) return 1;
+
+    // Reset to natural flow so we can measure the true required height.
+    sheet.style.position = 'absolute';
+    sheet.style.top = '0';
+    sheet.style.left = '50%';
+    sheet.style.margin = '0';
+    sheet.style.transform = 'translateX(-50%)';
+    sheet.style.transformOrigin = 'top center';
+    sheet.style.height = 'auto';
+    sheet.style.minHeight = '0';
+    sheet.style.maxHeight = 'none';
+    sheet.style.overflow = 'visible';
+
+    // Force a reflow so scrollHeight reflects the untransformed content.
+    void sheet.offsetHeight;
+    const naturalHeight = sheet.scrollHeight;
+
+    let scale = 1;
+    if(naturalHeight > A4_PAGE_HEIGHT_PX){
+        scale = A4_PAGE_HEIGHT_PX / naturalHeight;
+    }
+    sheet.style.transform = `translateX(-50%) scale(${scale})`;
+
+    // Bound the frame to exactly one A4 page and clip any rounding overflow.
+    outer.style.width = A4_PAGE_WIDTH_PX + 'px';
+    outer.style.height = A4_PAGE_HEIGHT_PX + 'px';
+    outer.style.overflow = 'hidden';
+    outer.style.position = 'relative';
+    outer.style.margin = '0 auto';
+
+    return scale;
+}
+
+function fitSheetForPrint(){
+    document.body.classList.add('print-mode');
+    computeAndApplyA4Scale();
 }
 function resetSheetFit(){
     document.body.classList.remove('print-mode');
     const sheet = document.getElementById('sheet');
     const outer = document.querySelector('.sheet-outer');
-    if(sheet) sheet.style.transform = 'none';
-    if(outer){ outer.style.height = 'auto'; outer.style.overflow = 'visible'; }
+    if(sheet){
+        sheet.style.position = '';
+        sheet.style.top = '';
+        sheet.style.left = '';
+        sheet.style.margin = '';
+        sheet.style.transform = 'none';
+        sheet.style.transformOrigin = '';
+        sheet.style.height = '';
+        sheet.style.minHeight = '';
+        sheet.style.maxHeight = '';
+        sheet.style.overflow = '';
+    }
+    if(outer){
+        outer.style.width = '';
+        outer.style.height = 'auto';
+        outer.style.overflow = 'visible';
+        outer.style.position = '';
+        outer.style.margin = '';
+    }
 }
 window.addEventListener('beforeprint', fitSheetForPrint);
 window.addEventListener('afterprint', resetSheetFit);
@@ -2838,9 +2653,6 @@ async function exportPDF(){
 
     document.body.classList.add('print-mode');
     const sheetOuter = document.querySelector('.sheet-outer');
-    sheet.style.transform = 'none';
-    sheet.style.transformOrigin = 'top left';
-    if(sheetOuter){ sheetOuter.style.height = 'auto'; sheetOuter.style.overflow = 'visible'; }
 
     try{
         const { jsPDF } = window.jspdf;
@@ -2858,7 +2670,13 @@ async function exportPDF(){
             await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
             await new Promise(r => setTimeout(r, 120));
 
-            const capture = await html2canvas(sheet, {
+            // Recompute the fit-to-A4 scale for this page's actual content
+            // (amount of logos/images/text varies page to page) so nothing
+            // is ever clipped or made to overlap.
+            computeAndApplyA4Scale();
+            await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+            const capture = await html2canvas(sheetOuter, {
                 scale: 2.5,
                 useCORS: true,
                 allowTaint: false,
@@ -2891,10 +2709,7 @@ async function exportPDF(){
         toast('Sorry, the PDF could not be generated. Please try again.', 'error');
     } finally {
         loadPage(returnTo);
-        document.body.classList.remove('print-mode');
-        sheet.style.transform = 'none';
-        sheet.style.transformOrigin = '';
-        if(sheetOuter){ sheetOuter.style.height = 'auto'; sheetOuter.style.overflow = 'visible'; }
+        resetSheetFit();
         btn.disabled = false; if(mobileBtn) mobileBtn.disabled=false; if(mobileStatus) mobileStatus.textContent='Ready ✓';
         btn.textContent = originalLabel;
     }
@@ -2914,7 +2729,6 @@ saveCurrentPage();
 renderPageTabs();
 renderRecentArticles();
 searchArticles('');
-syncArticlesFromSupabase(); // pulls the cloud library into the local cache on load
 
 // Activate the universal expand/collapse controls after the editor DOM is ready.
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initUniversalEditorAccordions);
