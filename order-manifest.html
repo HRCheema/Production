@@ -14,9 +14,9 @@
     --panel:rgba(255,255,255,0.055);
     --ink:#F3EFE8;
     --ink-soft:#B9C0CC;
-    --line:rgba(228,87,27,0.22);
-    --accent:#FF6A2B;
-    --accent-soft:rgba(255,106,43,0.16);
+    --line:rgba(99,102,241,0.22);
+    --accent:#6366f1;
+    --accent-soft:rgba(99,102,241,0.16);
     --stitch:#7C8798;
     --good:#3ED598;
     --glass-border:rgba(255,255,255,0.12);
@@ -27,14 +27,14 @@
     margin:0; color:var(--ink);
     font-family:'Inter',sans-serif; padding:24px 16px 120px;
     background:
-      radial-gradient(circle at 14% 8%, rgba(228,87,27,0.16), transparent 45%),
+      radial-gradient(circle at 14% 8%, rgba(139,92,246,0.18), transparent 45%),
       radial-gradient(circle at 88% 14%, rgba(99,102,241,0.12), transparent 42%),
       radial-gradient(circle at 50% 100%, rgba(62,213,152,0.08), transparent 40%),
       linear-gradient(160deg,#0a0c12,#0d1017 55%,#090b10);
     background-attachment:fixed;
     min-height:100vh;
   }
-  ::selection{ background:rgba(228,87,27,0.35); }
+  ::selection{ background:rgba(99,102,241,0.35); }
   .glass{
     background:var(--panel);
     backdrop-filter:blur(var(--glass-blur)) saturate(150%);
@@ -56,9 +56,9 @@
   }
   .manifest-header::before{
     content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
-    background:linear-gradient(180deg,var(--accent),#ff9457); box-shadow:0 0 16px rgba(255,106,43,.6);
+    background:linear-gradient(180deg,var(--accent),#8b5cf6); box-shadow:0 0 16px rgba(99,102,241,.6);
   }
-  .manifest-header h1{font-size:22px; color:var(--ink); text-shadow:0 0 24px rgba(255,106,43,.25);}
+  .manifest-header h1{font-size:22px; color:var(--ink); text-shadow:0 0 24px rgba(99,102,241,.25);}
   .manifest-header .sub{color:var(--ink-soft); font-size:12px; margin-top:2px;}
   .header-top{display:flex; align-items:flex-start; gap:14px;}
   .header-text{flex:1; min-width:0;}
@@ -86,7 +86,7 @@
     font-family:'IBM Plex Mono',monospace; font-size:15px; background:rgba(0,0,0,.28); color:var(--ink);
   }
   .field input::placeholder{color:rgba(243,239,232,.35);}
-  .field input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(255,106,43,.22);}
+  .field input:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(99,102,241,.22);}
 
   /* ---- Card ---- */
   .card{
@@ -96,7 +96,7 @@
     box-shadow:0 8px 30px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.05);
   }
   .card h2{font-size:16px; margin-bottom:14px; display:flex; align-items:center; gap:8px; color:var(--ink);}
-  .card h2 .tag-dot{width:8px; height:8px; border-radius:50%; background:var(--accent); display:inline-block; box-shadow:0 0 10px rgba(255,106,43,.7);}
+  .card h2 .tag-dot{width:8px; height:8px; border-radius:50%; background:var(--accent); display:inline-block; box-shadow:0 0 10px rgba(99,102,241,.7);}
 
   .item-name-row{margin-bottom:16px;}
   .item-name-row label{display:block; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin-bottom:4px;}
@@ -151,8 +151,8 @@
   .form-actions{margin-top:18px; display:flex; justify-content:flex-end; gap:10px;}
   button{cursor:pointer; font-family:'Inter',sans-serif; font-weight:600; border-radius:8px; border:none; transition:transform .12s, box-shadow .12s, background .15s;}
   button:active{transform:translateY(1px);}
-  .btn-primary{background:linear-gradient(135deg,var(--accent),#ff8a4c); color:#fff; padding:11px 20px; font-size:14px; box-shadow:0 6px 20px rgba(255,106,43,.35);}
-  .btn-primary:hover{box-shadow:0 8px 26px rgba(255,106,43,.5); filter:brightness(1.06);}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),#8b5cf6); color:#fff; padding:11px 20px; font-size:14px; box-shadow:0 6px 20px rgba(99,102,241,.35);}
+  .btn-primary:hover{box-shadow:0 8px 26px rgba(99,102,241,.5); filter:brightness(1.06);}
   .btn-ghost{background:rgba(255,255,255,.05); color:var(--ink-soft); border:1px solid rgba(255,255,255,.14); padding:11px 16px; font-size:14px; backdrop-filter:blur(8px);}
   .nav-links{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
   .nav-links a{
@@ -162,8 +162,8 @@
     padding:5px 10px;transition:.15s;background:rgba(255,255,255,.04);
     backdrop-filter:blur(8px);
   }
-  .nav-links a:hover{border-color:var(--accent);color:var(--ink); background:rgba(255,106,43,.1);}
-  .nav-links a.current{background:linear-gradient(135deg,var(--accent),#ff8a4c);color:#fff;border-color:var(--accent);cursor:default; box-shadow:0 4px 14px rgba(255,106,43,.35);}
+  .nav-links a:hover{border-color:var(--accent);color:var(--ink); background:rgba(99,102,241,.1);}
+  .nav-links a.current{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border-color:var(--accent);cursor:default; box-shadow:0 4px 14px rgba(99,102,241,.35);}
   .btn-ghost:hover{border-color:rgba(255,255,255,.3); color:var(--ink); background:rgba(255,255,255,.09);}
 
   /* ---- Items list ---- */
@@ -174,7 +174,7 @@
     backdrop-filter:blur(10px);
     transition:background .15s, border-color .15s;
   }
-  .item-row:hover{background:rgba(255,255,255,.07); border-color:rgba(255,106,43,.35);}
+  .item-row:hover{background:rgba(255,255,255,.07); border-color:rgba(99,102,241,.35);}
   .item-row .thumb{
     width:52px; height:52px; border-radius:6px; object-fit:cover; background:rgba(255,255,255,.06); border:1px solid var(--glass-border); flex-shrink:0;
   }
@@ -183,9 +183,9 @@
   .item-row .info .name{font-family:'Oswald',sans-serif; font-size:15px; color:var(--ink);}
   .item-row .info .sizes{color:var(--ink-soft); font-size:12px; font-family:'IBM Plex Mono',monospace; margin-top:2px;}
   .item-row .qty-badge{
-    background:var(--accent-soft); color:#ffab7a; font-family:'IBM Plex Mono',monospace;
+    background:var(--accent-soft); color:#a5b4fc; font-family:'IBM Plex Mono',monospace;
     font-weight:600; border-radius:12px; padding:4px 12px; font-size:13px; white-space:nowrap;
-    border:1px solid rgba(255,106,43,.3);
+    border:1px solid rgba(99,102,241,.3);
   }
   .item-row .row-actions button{background:transparent; color:var(--ink-soft); font-size:16px; padding:4px 8px;}
   .item-row .row-actions button:hover{color:var(--accent);}
@@ -220,14 +220,19 @@
 </style>
 </head>
 <body>
-<div id="pwGateOverlay" style="position:fixed;inset:0;z-index:99999;background:#0b0d14;display:flex;align-items:center;justify-content:center;">
-  <div style="background:#161a24;border:1px solid rgba(148,163,184,0.25);border-radius:12px;padding:28px 26px;text-align:center;max-width:300px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,0.5);">
-    <div style="font-size:30px;margin-bottom:8px;">🔒</div>
-    <div style="font-family:Arial,sans-serif;color:#e2e8f0;font-size:16px;font-weight:600;margin-bottom:4px;">Admin Access Only</div>
-    <div style="font-family:Arial,sans-serif;color:#94a3b8;font-size:12px;margin-bottom:16px;">Ye tool sirf admin ke liye hai — password darj karein</div>
-    <input type="password" id="pwGateInput" placeholder="Password" style="width:100%;padding:10px 12px;border-radius:6px;border:1px solid rgba(148,163,184,0.3);background:#0b0d14;color:#e2e8f0;font-size:14px;box-sizing:border-box;margin-bottom:10px;">
-    <button id="pwGateBtn" style="width:100%;padding:10px;border-radius:6px;border:none;background:#6366f1;color:#fff;font-weight:600;font-size:14px;cursor:pointer;">Unlock</button>
-    <div id="pwGateError" style="display:none;color:#f87171;font-size:12px;margin-top:8px;">Galat password, dubara koshish karein</div>
+<style>
+  #pwGateOverlay input#pwGateInput:focus{border-color:rgba(139,92,246,0.6) !important; box-shadow:0 0 0 3px rgba(99,102,241,0.18);}
+  #pwGateOverlay button#pwGateBtn:hover{filter:brightness(1.1); box-shadow:0 8px 26px rgba(99,102,241,0.5) !important;}
+  #pwGateOverlay button#pwGateBtn:active{transform:translateY(1px);}
+</style>
+<div id="pwGateOverlay" style="position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 20% 15%, rgba(99,102,241,0.16), transparent 45%), radial-gradient(circle at 80% 85%, rgba(139,92,246,0.14), transparent 45%), #060912;display:flex;align-items:center;justify-content:center;">
+  <div style="background:rgba(255,255,255,0.045);backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);border:1px solid rgba(99,130,255,0.25);border-radius:18px;padding:34px 30px;text-align:center;max-width:320px;width:90%;box-shadow:0 24px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);">
+    <div style="width:56px;height:56px;margin:0 auto 14px auto;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,#6366f1,#8b5cf6);box-shadow:0 10px 28px rgba(99,102,241,0.45);">🔒</div>
+    <div style="font-family:'IBM Plex Sans',Arial,sans-serif;color:#e2e8f0;font-size:16px;font-weight:600;margin-bottom:4px;">Admin Access Only</div>
+    <div style="font-family:'IBM Plex Sans',Arial,sans-serif;color:#94a3b8;font-size:12px;margin-bottom:18px;">Ye tool sirf admin ke liye hai — password darj karein</div>
+    <input type="password" id="pwGateInput" placeholder="Password" style="width:100%;padding:11px 13px;border-radius:8px;border:1px solid rgba(148,163,184,0.28);background:rgba(0,0,0,0.25);color:#e2e8f0;font-size:14px;box-sizing:border-box;margin-bottom:10px;outline:none;transition:border-color .15s, box-shadow .15s;">
+    <button id="pwGateBtn" style="width:100%;padding:11px;border-radius:8px;border:none;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-weight:600;font-size:14px;cursor:pointer;box-shadow:0 8px 22px rgba(99,102,241,0.4);transition:filter .15s, box-shadow .15s, transform .1s;">Unlock</button>
+    <div id="pwGateError" style="display:none;color:#f87171;font-size:12px;margin-top:10px;">Galat password, dubara koshish karein</div>
   </div>
 </div>
 <script>
