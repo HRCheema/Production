@@ -2162,6 +2162,11 @@ body.light-theme .f-input[type="date"] { color-scheme: light; }
   .admin-tools-list.expanded { display: flex; }
   .admin-tools-list .hdr-btn { width: 100%; justify-content: center; }
   .admin-tools-list .divider { width: 100%; height: 1px; margin: 4px 0; }
+  .specs-tool-link { width: 100%; justify-content: center; }
+  /* Touch-friendly tap targets */
+  button, .hdr-btn, .f-input, .f-select, input, select, textarea, .art-btn, .search-input {
+    min-height: 40px;
+  }
 }
 
 @media (max-width: 560px) {
@@ -2694,6 +2699,10 @@ var _lgForm=document.getElementById('lockGateForm');if(_lgForm){_lgForm.addEvent
   </div>
   <div class="header-actions">
     <a class="hdr-btn" id="specsHubBtn" href="./hub.html" target="_blank" title="Order Specs Sheets tools kholein" style="text-decoration:none;display:none;">🧾 Specs Hub</a>
+    <a class="hdr-btn specs-tool-link" href="./Order_Specs_Sheet.html" target="_blank" title="Order Specs Sheet" style="text-decoration:none;display:none;">🧾 Order Specs</a>
+    <a class="hdr-btn specs-tool-link" href="./Shorts_Order_Spec_Sheet.html" target="_blank" title="Shorts Specs Sheet" style="text-decoration:none;display:none;">🩳 Shorts Specs</a>
+    <a class="hdr-btn specs-tool-link" href="./order-manifest.html" target="_blank" title="Order Manifest / Shortfall" style="text-decoration:none;display:none;">📉 Shortfall</a>
+    <a class="hdr-btn specs-tool-link" href="./Outmaker_Spec_Sheet_Generator.html" target="_blank" title="Outmaker Spec Maker" style="text-decoration:none;display:none;">🎨 Outmaker</a>
     <button class="hdr-btn admin-btn" id="adminBtn" onclick="adminLogin()">
       <span id="adminIcon">🔒</span> <span id="adminLabel">Viewer</span>
     </button>
@@ -3390,6 +3399,7 @@ function updateAdminUI() {
   document.getElementById('importBtn').style.display = isAdmin ? '' : 'none';
   const specsHubBtn = document.getElementById('specsHubBtn');
   if (specsHubBtn) specsHubBtn.style.display = isAdmin ? '' : 'none';
+  document.querySelectorAll('.specs-tool-link').forEach(function(el){ el.style.display = isAdmin ? '' : 'none'; });
   document.getElementById('exportBtn').style.display = isAdmin ? '' : 'none';
   document.getElementById('clearOrdersBtn').style.display = isAdmin ? '' : 'none';
   document.getElementById('cleanUndefinedBtn').style.display = isAdmin ? '' : 'none';
