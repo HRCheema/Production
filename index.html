@@ -625,6 +625,14 @@ body.light-theme > .lt-wave-layer { display: block; }
   background: rgba(var(--bg-rgb), 0.95);
   backdrop-filter: blur(20px);
   flex-shrink: 0;
+  /* Every direct child of <body> gets z-index:1 (see rule above), so
+     without this the Admin Panel dropdown — which overflows below the
+     header's own box — gets painted OVER by later siblings (alert strip,
+     main dashboard, Articles panel) since they share the header's
+     stacking order otherwise. Bumping the header itself above them fixes
+     the dropdown appearing hidden/unclickable behind the rest of the UI. */
+  position: relative;
+  z-index: 30;
 }
 
 .logo-zone {
