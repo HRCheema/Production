@@ -680,7 +680,9 @@ body.light-theme > .lt-wave-layer { display: block; }
   align-items: center;
   gap: 8px;
   flex: 1;
-  min-width: 0;
+  /* Never let the search bar get squeezed down to an unusable sliver —
+     it keeps a sensible floor width even when header-actions is full. */
+  min-width: 180px;
   max-width: 420px;
   margin: 0 24px;
 }
@@ -1981,11 +1983,31 @@ body.light-theme .f-input[type="date"] { color-scheme: light; }
 /* Thin divider */
 .divider { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
 
-/* Admin tools group — on desktop these render as plain flex children of
-   .header-actions (identical to before). On mobile they collapse behind
-   a single toggle so the header doesn't get crowded with 8 buttons. */
-.admin-tools-toggle { display: none; }
-.admin-tools-list { display: contents; }
+/* Admin Panel group (Specs Hub, Access settings, Export/Import/Clear) —
+   collapsed behind a single toggle on desktop AND mobile so the header
+   never gets crowded and the search bar above always keeps its full
+   width instead of getting squeezed. */
+.admin-panel-wrap { position: relative; display: flex; align-items: center; }
+.admin-tools-toggle { display: none; align-items: center; gap: 6px; }
+.admin-tools-toggle.show-mobile { display: flex; }
+.admin-tools-list { display: none; }
+.admin-tools-list.expanded {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: max-content;
+  max-width: 320px;
+  background: var(--surface2);
+  border: 1px solid var(--border-glow);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 20px 48px rgba(0,0,0,0.45);
+  z-index: 60;
+}
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -2141,28 +2163,30 @@ body.light-theme .f-input[type="date"] { color-scheme: light; }
     overflow: visible;
   }
 
-  /* Admin tools: collapse the 8 import/export/clear buttons behind one
-     toggle chip so the header stays clean; tap to expand the full list. */
-  .admin-tools-toggle.show-mobile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+  /* Admin Panel: on phones the dropdown becomes a full-width stacked
+     block right under its toggle chip, instead of an absolute-positioned
+     card (which wouldn't fit a narrow screen well). */
+  .admin-panel-wrap {
     width: 100%;
     order: 4;
+    flex-direction: column;
+    align-items: stretch;
   }
-  .admin-tools-list {
-    display: none;
+  .admin-tools-toggle.show-mobile {
+    justify-content: center;
     width: 100%;
+  }
+  .admin-tools-list.expanded {
+    position: static;
+    width: 100%;
+    max-width: none;
     flex-direction: column;
     gap: 6px;
-    order: 5;
-    margin-top: 2px;
+    margin-top: 6px;
+    box-shadow: none;
   }
-  .admin-tools-list.expanded { display: flex; }
   .admin-tools-list .hdr-btn { width: 100%; justify-content: center; }
   .admin-tools-list .divider { width: 100%; height: 1px; margin: 4px 0; }
-  .specs-tool-link { width: 100%; justify-content: center; }
   /* Touch-friendly tap targets */
   button, .hdr-btn, .f-input, .f-select, input, select, textarea, .art-btn, .search-input {
     min-height: 40px;
@@ -2698,18 +2722,12 @@ var _lgForm=document.getElementById('lockGateForm');if(_lgForm){_lgForm.addEvent
     </div>
   </div>
   <div class="header-actions">
-    <a class="hdr-btn" id="specsHubBtn" href="./hub.html" target="_blank" title="Order Specs Sheets tools kholein" style="text-decoration:none;display:none;">🧾 Specs Hub</a>
-    <a class="hdr-btn specs-tool-link" href="./Order_Specs_Sheet.html" target="_blank" title="Order Specs Sheet" style="text-decoration:none;display:none;">🧾 Order Specs</a>
-    <a class="hdr-btn specs-tool-link" href="./Shorts_Order_Spec_Sheet.html" target="_blank" title="Shorts Specs Sheet" style="text-decoration:none;display:none;">🩳 Shorts Specs</a>
-    <a class="hdr-btn specs-tool-link" href="./order-manifest.html" target="_blank" title="Order Manifest / Shortfall" style="text-decoration:none;display:none;">📉 Shortfall</a>
-    <a class="hdr-btn specs-tool-link" href="./Outmaker_Spec_Sheet_Generator.html" target="_blank" title="Outmaker Spec Maker" style="text-decoration:none;display:none;">🎨 Outmaker</a>
     <button class="hdr-btn admin-btn" id="adminBtn" onclick="adminLogin()">
       <span id="adminIcon">🔒</span> <span id="adminLabel">Viewer</span>
     </button>
     <button class="hdr-btn admin-btn" id="notifBtn" onclick="toggleNotifications()" title="Tap to turn on free order alerts">
       <span id="notifIcon">🔕</span> <span id="notifLabel">Alerts Off</span>
     </button>
-    <button class="hdr-btn" id="settingsBtn" onclick="openSettingsModal()" title="Viewer permissions control" style="display:none;">⚙️ Access</button>
     <div class="divider"></div>
     <div class="theme-toggle">
       <span id="themeIcon" style="font-size:0.9em;">🌙</span>
@@ -2718,20 +2736,28 @@ var _lgForm=document.getElementById('lockGateForm');if(_lgForm){_lgForm.addEvent
       </div>
     </div>
 
-    <button class="hdr-btn admin-tools-toggle" id="adminToolsToggle" onclick="toggleAdminTools()">
-      <span>🛠️ Admin Tools</span> <span id="adminToolsToggleChevron">▾</span>
-    </button>
-    <div class="admin-tools-list" id="adminToolsList">
-      <button class="hdr-btn" id="exportBtn" onclick="exportJSON()">📥 Export</button>
-      <button class="hdr-btn" id="importBtn" onclick="document.getElementById('importFile').click()">📤 Import</button>
-      <input type="file" id="importFile" style="display:none" accept=".json" onchange="importJSON(event)">
-      <button class="hdr-btn" id="clearOrdersBtn" onclick="clearAllOrders()" title="Sab Production Orders delete kar dein">🗑️ Clear Orders</button>
-      <button class="hdr-btn" id="cleanUndefinedBtn" onclick="cleanUndefinedOrders()" title="Sirf corrupted / undefined orders delete karein — sahi orders ko kuch nahi hoga">🧹 Remove Undefined</button>
-      <div class="divider"></div>
-      <button class="hdr-btn" id="exportEmbBtn" onclick="exportEmbJSON()" title="Embroidery Specs records ka backup download karein">🧵 Export Emb</button>
-      <button class="hdr-btn" id="importEmbBtn" onclick="document.getElementById('importEmbFile').click()" title="Embroidery Specs JSON import karein — ye hamesha alag rahenge, normal orders se mix nahi honge">🧵 Import Emb</button>
-      <input type="file" id="importEmbFile" style="display:none" accept=".json" onchange="importEmbJSON(event)">
-      <button class="hdr-btn" id="clearEmbBtn" onclick="clearAllEmb()" title="Sab Emb Specs records delete kar dein — nayi backup .json import karne se pehle">🗑️ Clear Emb</button>
+    <!-- Admin Panel: everything admin-only (Specs Hub, Access settings,
+         Export/Import/Clear) lives behind one collapse/expand toggle so the
+         header stays compact and the search bar above never gets squeezed. -->
+    <div class="admin-panel-wrap">
+      <button class="hdr-btn admin-tools-toggle" id="adminToolsToggle" onclick="toggleAdminTools()">
+        <span>🛠️ Admin Panel</span> <span id="adminToolsToggleChevron">▾</span>
+      </button>
+      <div class="admin-tools-list" id="adminToolsList">
+        <a class="hdr-btn" id="specsHubBtn" href="./hub.html" target="_blank" title="Order Specs Sheets tools kholein (Order Specs, Shorts Specs, Shortfall, Outmaker — sab ek jagah)" style="text-decoration:none;display:none;">🧾 Specs Hub</a>
+        <button class="hdr-btn" id="settingsBtn" onclick="openSettingsModal()" title="Viewer permissions control" style="display:none;">⚙️ Access</button>
+        <div class="divider"></div>
+        <button class="hdr-btn" id="exportBtn" onclick="exportJSON()">📥 Export</button>
+        <button class="hdr-btn" id="importBtn" onclick="document.getElementById('importFile').click()">📤 Import</button>
+        <input type="file" id="importFile" style="display:none" accept=".json" onchange="importJSON(event)">
+        <button class="hdr-btn" id="clearOrdersBtn" onclick="clearAllOrders()" title="Sab Production Orders delete kar dein">🗑️ Clear Orders</button>
+        <button class="hdr-btn" id="cleanUndefinedBtn" onclick="cleanUndefinedOrders()" title="Sirf corrupted / undefined orders delete karein — sahi orders ko kuch nahi hoga">🧹 Remove Undefined</button>
+        <div class="divider"></div>
+        <button class="hdr-btn" id="exportEmbBtn" onclick="exportEmbJSON()" title="Embroidery Specs records ka backup download karein">🧵 Export Emb</button>
+        <button class="hdr-btn" id="importEmbBtn" onclick="document.getElementById('importEmbFile').click()" title="Embroidery Specs JSON import karein — ye hamesha alag rahenge, normal orders se mix nahi honge">🧵 Import Emb</button>
+        <input type="file" id="importEmbFile" style="display:none" accept=".json" onchange="importEmbJSON(event)">
+        <button class="hdr-btn" id="clearEmbBtn" onclick="clearAllEmb()" title="Sab Emb Specs records delete kar dein — nayi backup .json import karne se pehle">🗑️ Clear Emb</button>
+      </div>
     </div>
   </div>
 </div>
@@ -3399,7 +3425,6 @@ function updateAdminUI() {
   document.getElementById('importBtn').style.display = isAdmin ? '' : 'none';
   const specsHubBtn = document.getElementById('specsHubBtn');
   if (specsHubBtn) specsHubBtn.style.display = isAdmin ? '' : 'none';
-  document.querySelectorAll('.specs-tool-link').forEach(function(el){ el.style.display = isAdmin ? '' : 'none'; });
   document.getElementById('exportBtn').style.display = isAdmin ? '' : 'none';
   document.getElementById('clearOrdersBtn').style.display = isAdmin ? '' : 'none';
   document.getElementById('cleanUndefinedBtn').style.display = isAdmin ? '' : 'none';
@@ -3409,8 +3434,9 @@ function updateAdminUI() {
   const settingsBtn = document.getElementById('settingsBtn');
   if (settingsBtn) settingsBtn.style.display = isAdmin ? '' : 'none';
 
-  // Mobile-only "Admin Tools" collapse toggle — only shown to admins,
-  // and collapsed back down whenever admin status changes (login/logout).
+  // "Admin Panel" collapse/expand toggle (desktop + mobile) — only shown
+  // to admins, and collapsed back down whenever admin status changes
+  // (login/logout).
   const toolsToggle = document.getElementById('adminToolsToggle');
   const toolsList = document.getElementById('adminToolsList');
   if (toolsToggle) toolsToggle.classList.toggle('show-mobile', isAdmin);
@@ -3460,6 +3486,18 @@ function toggleAdminTools() {
   const expanded = list.classList.toggle('expanded');
   if (chevron) chevron.textContent = expanded ? '▴' : '▾';
 }
+
+// Close the Admin Panel dropdown when tapping/clicking anywhere outside it.
+document.addEventListener('click', function(e){
+  const wrap = document.querySelector('.admin-panel-wrap');
+  const list = document.getElementById('adminToolsList');
+  if (!wrap || !list || !list.classList.contains('expanded')) return;
+  if (!wrap.contains(e.target)) {
+    list.classList.remove('expanded');
+    const chevron = document.getElementById('adminToolsToggleChevron');
+    if (chevron) chevron.textContent = '▾';
+  }
+});
 
 function openSettingsModal() {
   if (!isAdmin) {

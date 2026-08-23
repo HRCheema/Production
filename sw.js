@@ -1,4 +1,4 @@
-const CACHE_NAME = 'haider-production-v6';
+const CACHE_NAME = 'haider-production-v7';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
