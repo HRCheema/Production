@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shorts Order Specification Sheet</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -307,6 +308,19 @@
   .pdf-bottom .foot-left div{margin-bottom:2px;}
   .pdf-bottom .foot-left .spec-code{font-weight:700;font-size:13px;color:var(--brass-dark);}
 
+  /* ===================== FABRIC COST & CONSUMPTION SUMMARY PAGE ===================== */
+  .fs-block{margin-bottom:16px;}
+  .fs-heading{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--brass-dark);margin:0 0 6px 0;text-transform:uppercase;letter-spacing:.03em;}
+  .fabric-summary-table{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed;}
+  .fabric-summary-table th,.fabric-summary-table td{border:1px solid var(--line);padding:4px 3px;text-align:center;color:var(--ink);}
+  .fabric-summary-table th{background:var(--bg-soft);color:var(--ink-soft);font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:9px;}
+  .fabric-summary-table td.fs-fabric-lbl{text-align:left;font-weight:700;padding-left:8px;white-space:nowrap;}
+  .fabric-summary-table td.fs-total-col{font-weight:700;background:var(--bg-soft);color:var(--brass-dark);}
+  .fabric-summary-table tr.fs-grand-row td.grand{font-weight:700;background:var(--bg-soft);color:var(--brass-dark);}
+  .fabric-summary-table tbody tr:nth-child(2){background:#fbf8f2;}
+  .fs-footnote{font-size:10.5px;}
+  @media (max-width:760px){ .fabric-summary-table{font-size:8.5px;} }
+
   .summary-table{width:100%;border-collapse:collapse;font-size:12.5px;}
   .summary-table th,.summary-table td{border:1px solid var(--line);padding:7px 10px;text-align:center;}
   .summary-table th{
@@ -517,10 +531,10 @@
 <div class="panel-block">
   <h2>Costing &amp; Fabric Planning</h2>
   <div class="grid-fields" style="margin-bottom:16px;">
-    <div class="field"><label id="lblRollWidthSatin">Satin 160gsm — Roll Width (inches)</label><input type="number" id="fRollWidthSatin" min="1" step="0.5" value="60"></div>
-    <div class="field"><label id="lblRollWidthMesh">Mesh — Roll Width (inches)</label><input type="number" id="fRollWidthMesh" min="1" step="0.5" value="60"></div>
+    <div class="field"><label id="lblRollWidthSatin">Satin 160gsm — Roll Width (inches)</label><input type="number" id="fRollWidthSatin" min="1" step="0.5" value="58"></div>
+    <div class="field"><label id="lblRollWidthMesh">Mesh — Roll Width (inches)</label><input type="number" id="fRollWidthMesh" min="1" step="0.5" value="58"></div>
     <div class="field"><label>Wastage %</label><input type="number" id="fWastage" min="0" step="0.5" value="5"></div>
-    <div class="field"><label>Print Rate (Rs. / SQFT)</label><input type="number" id="fPrintRate" min="0" step="0.5" value="0"></div>
+    <div class="field"><label>Print Rate (Rs. / SQFT)</label><input type="number" id="fPrintRate" min="0" step="0.5" value="30"></div>
   </div>
   <div class="costing-grid">
     <div class="stat-box">
@@ -542,7 +556,7 @@
       <div class="stat-sub" id="costFabricMeshSub"></div>
     </div>
   </div>
-  <p class="color-hint" style="margin-top:12px;margin-bottom:0;">Har fabric ki length uske apne roll width se nikalti hai: Fabric SQFT ÷ (uska Roll Width ÷ 12) × (1 + Wastage%) — phir yards/meters mein convert. Cost = Total SQFT (dono fabrics) × (1 + Wastage%) × Print Rate.</p>
+  <p class="color-hint" style="margin-top:12px;margin-bottom:0;">Har fabric ki length uske apne roll width se nikalti hai: Fabric SQFT ÷ (uska Roll Width ÷ 12) × (1 + Wastage%) — phir meters mein convert. Cost = Total SQFT (dono fabrics) × (1 + Wastage%) × Print Rate.</p>
 </div>
 
 <div id="sheetContainer"></div>
@@ -769,9 +783,8 @@ function calcCosting(){
     if(rollWidthIn > 0){
       const rollWidthFt = rollWidthIn / 12;
       const fabricLengthFt = sqftW / rollWidthFt;
-      const yd = fabricLengthFt / 3;
       const m = fabricLengthFt * 0.3048;
-      return yd.toFixed(2) + ' yd  /  ' + m.toFixed(2) + ' m';
+      return m.toFixed(2) + ' m';
     }
     return '— (roll width daalein)';
   }
@@ -787,6 +800,8 @@ function calcCosting(){
 
   const totalCost = sqftWithWastageTotal * rate;
   document.getElementById('costTotalAmount').textContent = 'Rs. ' + totalCost.toLocaleString('en-PK', {maximumFractionDigits:0});
+
+  calcFabricSummary();
 }
 function wireCostingInputs(){
   ['fRollWidthSatin','fRollWidthMesh','fWastage','fPrintRate'].forEach(id=>{
@@ -841,6 +856,155 @@ function buildSummary(){
   grandRow.innerHTML = `<td class="grand">Grand Total</td><td class="grand" id="grandQty">0</td><td class="grand" id="grandPrint">0</td>`;
   body.appendChild(grandRow);
 }
+
+/* ---------- Fabric Cost & Consumption Summary page (own page in sheetContainer, exports in PDF too) ---------- */
+function setText(id, txt){ const el=document.getElementById(id); if(el) el.textContent = txt; }
+
+function buildFabricSummaryPage(){
+  const container = document.getElementById('sheetContainer');
+  const page = document.createElement('div');
+  page.className = 'pdf-page';
+  page.dataset.size = 'SUMMARY'; // never hidden by qty-based page visibility
+
+  const sizeHeaders = SIZE_ORDER.map(sz=>`<th>${sz}</th>`).join('');
+
+  function fabricRows(prefix){
+    return `
+      <tr>
+        <td class="fs-fabric-lbl clone-satinlabel-text">Satin 160gsm</td>
+        ${SIZE_ORDER.map(sz=>`<td id="${prefix}-satin-${sz}">0</td>`).join('')}
+        <td class="fs-total-col" id="${prefix}-satin-TOT">0</td>
+      </tr>
+      <tr>
+        <td class="fs-fabric-lbl clone-meshlabel-text">Mesh</td>
+        ${SIZE_ORDER.map(sz=>`<td id="${prefix}-mesh-${sz}">0</td>`).join('')}
+        <td class="fs-total-col" id="${prefix}-mesh-TOT">0</td>
+      </tr>
+      <tr class="fs-grand-row">
+        <td class="grand">Total</td>
+        ${SIZE_ORDER.map(sz=>`<td class="grand" id="${prefix}-all-${sz}">0</td>`).join('')}
+        <td class="grand" id="${prefix}-all-TOT">0</td>
+      </tr>`;
+  }
+
+  page.innerHTML = `
+    <div class="pdf-top">
+      <div class="pdf-logo-wrap" id="logoBox-SUMMARY"><div class="logo-fallback-svg">SFS</div></div>
+      <div class="pdf-title-block">
+        <div class="title">Fabric Cost &amp; Consumption Summary</div>
+        <div class="meta-row"><span>Description: <u class="clone-desc"></u></span></div>
+        <div class="meta-row"><span><b>Specification #:</b> <span class="clone-specno"></span></span></div>
+      </div>
+    </div>
+
+    <div class="pdf-coname-row">
+      <div class="pdf-coname clone-coname"></div>
+      <div class="pdf-orderdetails-lbl">SUMMARY</div>
+    </div>
+    <hr class="dashed-rule">
+
+    <div class="fs-block">
+      <h3 class="fs-heading">Total SQFT Printed — per size</h3>
+      <table class="fabric-summary-table">
+        <thead><tr><th>Fabric</th>${sizeHeaders}<th>Total</th></tr></thead>
+        <tbody>${fabricRows('fsSqft')}</tbody>
+      </table>
+    </div>
+
+    <div class="fs-block">
+      <h3 class="fs-heading">Fabric Consumption — Meters (incl. wastage) — per size</h3>
+      <table class="fabric-summary-table">
+        <thead><tr><th>Fabric</th>${sizeHeaders}<th>Total</th></tr></thead>
+        <tbody>${fabricRows('fsM')}</tbody>
+      </table>
+    </div>
+
+    <div class="fs-block">
+      <h3 class="fs-heading">Printing Cost — Rs. (incl. wastage) — per size</h3>
+      <table class="fabric-summary-table">
+        <thead><tr><th>Fabric</th>${sizeHeaders}<th>Total</th></tr></thead>
+        <tbody>${fabricRows('fsCost')}</tbody>
+      </table>
+    </div>
+
+    <p class="color-hint fs-footnote">Print Rate: <span id="fsRateLbl">Rs. 0 / sqft</span> &nbsp;|&nbsp; Wastage: <span id="fsWastageLbl">0%</span> &nbsp;|&nbsp; Roll Width — <span class="clone-satinlabel-text">Satin 160gsm</span>: <span id="fsRollSatinLbl">58"</span>, <span class="clone-meshlabel-text">Mesh</span>: <span id="fsRollMeshLbl">58"</span></p>
+
+    <hr class="dashed-rule tight">
+    <div class="pdf-bottom">
+      <div class="cell foot-left">
+        <div><b>Date:</b> <span class="clone-date"></span></div>
+        <div class="spec-code"><span class="clone-specno2"></span></div>
+      </div>
+      <div class="cell qty-cell">
+        <h4>Grand Total</h4>
+        <div class="total-qty-lbl">Total Printing Cost</div>
+        <div class="total-qty" id="fsGrandCostBig">Rs. 0</div>
+      </div>
+    </div>
+  `;
+  container.appendChild(page);
+}
+
+function calcFabricSummary(){
+  if(!document.getElementById('fsSqft-satin-'+SIZE_ORDER[0])) return; // summary page not built yet
+  const rollSatinIn = parseFloat(document.getElementById('fRollWidthSatin').value)||0;
+  const rollMeshIn = parseFloat(document.getElementById('fRollWidthMesh').value)||0;
+  const wastagePct = parseFloat(document.getElementById('fWastage').value)||0;
+  const rate = parseFloat(document.getElementById('fPrintRate').value)||0;
+  const wastageMul = 1+wastagePct/100;
+  const rollIn = {satin:rollSatinIn, mesh:rollMeshIn};
+
+  const fabTotal = {satin:{sqft:0,m:0,cost:0}, mesh:{sqft:0,m:0,cost:0}};
+  let grand = {sqft:0,m:0,cost:0};
+
+  SIZE_ORDER.forEach(sz=>{
+    let sizeSqft=0, sizeM=0, sizeCost=0;
+    ['satin','mesh'].forEach(fab=>{
+      let sqft=0;
+      PANELS.filter(p=>p.fabric===fab).forEach(p=>{
+        const printEl=document.getElementById(`print-${sz}-${p.id}`);
+        const wEl=document.getElementById(`w-${sz}-${p.id}`);
+        const hEl=document.getElementById(`h-${sz}-${p.id}`);
+        if(!printEl||!wEl||!hEl) return; // e.g. GROUND has no mesh panels
+        const printQty=parseFloat(printEl.value)||0;
+        const w=parseFloat(wEl.value)||0;
+        const h=parseFloat(hEl.value)||0;
+        sqft += printQty*(w*h/144);
+      });
+      const sqftW = sqft*wastageMul;
+      const rIn = rollIn[fab];
+      const m = rIn>0 ? (sqftW/(rIn/12))*0.3048 : 0;
+      const cost = sqftW*rate;
+
+      setText(`fsSqft-${fab}-${sz}`, sqft.toFixed(2));
+      setText(`fsM-${fab}-${sz}`, rIn>0 ? m.toFixed(2) : '—');
+      setText(`fsCost-${fab}-${sz}`, 'Rs. '+cost.toLocaleString('en-PK',{maximumFractionDigits:0}));
+
+      fabTotal[fab].sqft+=sqft; fabTotal[fab].m+=m; fabTotal[fab].cost+=cost;
+      sizeSqft+=sqft; sizeM+=m; sizeCost+=cost;
+    });
+    setText(`fsSqft-all-${sz}`, sizeSqft.toFixed(2));
+    setText(`fsM-all-${sz}`, (rollSatinIn>0||rollMeshIn>0) ? sizeM.toFixed(2) : '—');
+    setText(`fsCost-all-${sz}`, 'Rs. '+sizeCost.toLocaleString('en-PK',{maximumFractionDigits:0}));
+    grand.sqft+=sizeSqft; grand.m+=sizeM; grand.cost+=sizeCost;
+  });
+
+  ['satin','mesh'].forEach(fab=>{
+    setText(`fsSqft-${fab}-TOT`, fabTotal[fab].sqft.toFixed(2));
+    setText(`fsM-${fab}-TOT`, rollIn[fab]>0 ? fabTotal[fab].m.toFixed(2) : '—');
+    setText(`fsCost-${fab}-TOT`, 'Rs. '+fabTotal[fab].cost.toLocaleString('en-PK',{maximumFractionDigits:0}));
+  });
+  setText('fsSqft-all-TOT', grand.sqft.toFixed(2));
+  setText('fsM-all-TOT', grand.m.toFixed(2));
+  setText('fsCost-all-TOT', 'Rs. '+grand.cost.toLocaleString('en-PK',{maximumFractionDigits:0}));
+  setText('fsGrandCostBig', 'Rs. '+grand.cost.toLocaleString('en-PK',{maximumFractionDigits:0}));
+
+  setText('fsRateLbl', 'Rs. '+rate+' / sqft');
+  setText('fsWastageLbl', wastagePct+'%');
+  setText('fsRollSatinLbl', rollSatinIn+'"');
+  setText('fsRollMeshLbl', rollMeshIn+'"');
+}
+
 function updateSummaryGrand(){
   let gq=0, gp=0;
   SIZE_ORDER.forEach(sz=>{
@@ -1062,7 +1226,7 @@ function setPageVisibility(qualifying){
   const pages = Array.from(document.querySelectorAll('#sheetContainer .pdf-page'));
   let lastVisible = null;
   pages.forEach(page=>{
-    const show = qualifying.includes(page.dataset.size);
+    const show = page.dataset.size === 'SUMMARY' || qualifying.includes(page.dataset.size);
     page.style.display = show ? '' : 'none';
     page.style.pageBreakAfter = '';
     page.style.breakAfter = '';
@@ -1119,6 +1283,7 @@ function init(){
   document.getElementById('fSpecNo').value = 'SHORTS-1';
 
   buildSheet();
+  buildFabricSummaryPage();
   buildSummary();
   restoreState();
   if(!images.logo){ applyImage('logo', DEFAULT_LOGO); } // permanent default company logo
