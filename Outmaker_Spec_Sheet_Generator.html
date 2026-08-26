@@ -547,6 +547,7 @@ body{
 </div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 (function(){
   var firebaseConfig = {
@@ -730,6 +731,7 @@ body{
         <button class="btn btn-print" id="exportPdfBtn" onclick="exportPDF()">Export PDF</button>
         <button class="btn btn-print" style="background:#1565c0; margin-top:8px;" onclick="saveCurrentArticle()">Save Order <span class="shortcut-hint" style="background:#0d47a1;color:#fff;">Ctrl+S</span></button>
         <button class="btn" style="background:#00695c;margin-top:8px;" onclick="loadSavedArticleForCurrentArt()">📂 Load Saved (same Cust Art #)</button>
+        <button class="btn" style="background:#6a4fb8;margin-top:8px;" onclick="syncSpecsToEmbRegister()">🧵 Save to Specs Register</button>
         <button class="btn btn-clear" onclick="clearMainImage()">Clear Garment Image</button>
 
         <hr class="sep">
@@ -2995,6 +2997,84 @@ function resetSheetFit(){
 window.addEventListener('beforeprint', fitSheetForPrint);
 window.addEventListener('afterprint', resetSheetFit);
 
+// ═══ AUTO-SYNC — pushes finalized specs straight into the Embroidery Specs
+// register on index.html (same Firestore doc, no manual re-entry needed).
+// Keyed by E Number (PI) + Cust Art #, so re-exporting the same order just
+// updates its existing register row instead of creating a duplicate.
+var embRegDocRef = null;
+try {
+    if (typeof firebase !== 'undefined' && firebase.firestore) {
+        embRegDocRef = firebase.firestore().collection('elite_production').doc('emb_specs');
+    }
+} catch(e) { embRegDocRef = null; }
+
+// Turns a page's logo/stripe hex colors into readable names (e.g. "GOLD/RED")
+// using the same colorNames map the spec sheet itself uses.
+function collectPageColorNames(p){
+    const names = [];
+    const pushColor = (v) => {
+        if(!v || !v.color) return;
+        const n = (typeof colorNames !== 'undefined' && colorNames[v.color]) ? colorNames[v.color] : v.color;
+        if(n && names.indexOf(n) === -1) names.push(n);
+    };
+    (p.logoVariants || []).forEach(pushColor);
+    (p.stripeVariants || []).forEach(pushColor);
+    return names.join('/');
+}
+
+// Pushes every page of the current order into the shared Emb Specs register.
+// Matches existing rows by E Number + Cust Art # (case-insensitive) and
+// updates them in place; anything new is added. Never throws — sync
+// failures are reported via toast but never block the PDF export itself.
+async function syncSpecsToEmbRegister(){
+    if(!embRegDocRef){ return; }
+    const eNumber = getPiFull();
+    if(!eNumber){
+        toast('⚠️ E Number (PI) daalein — Specs Register mein save nahi ho saka', 'warn');
+        return;
+    }
+    saveCurrentPage();
+
+    try{
+        const snap = await embRegDocRef.get();
+        let embOrders = [];
+        if(snap.exists){
+            try{ embOrders = JSON.parse(snap.data().data) || []; } catch(e){ embOrders = []; }
+        }
+
+        let touched = 0;
+        pages.forEach(p => {
+            const custArt = (p.custArt || '').trim().toUpperCase();
+            if(!custArt) return; // page has no article number — nothing to key it on
+            const color = collectPageColorNames(p);
+
+            const existing = embOrders.find(r => r &&
+                (r.eNumber || '').toUpperCase() === eNumber.toUpperCase() &&
+                (r.custArt || '').toUpperCase() === custArt);
+
+            if(existing){
+                existing.color = color;
+                existing.createdAt = new Date().toISOString();
+            } else {
+                embOrders.unshift({
+                    id: Date.now() + Math.random().toString(36).substr(2, 5),
+                    eNumber, custArt, color, quantity: null,
+                    createdAt: new Date().toISOString()
+                });
+            }
+            touched++;
+        });
+
+        if(touched > 0){
+            await embRegDocRef.set({ data: JSON.stringify(embOrders) });
+            toast(`🧵 Specs Register mein save ho gaya (${eNumber})`, 'success');
+        }
+    } catch(err){
+        console.error('Emb register sync failed:', err);
+        toast('⚠️ PDF ban gayi, lekin Specs Register sync fail — connection check karein', 'warn');
+    }
+}
+
 async function exportPDF(){
     const btn = document.getElementById('exportPdfBtn');
     const sheet = document.getElementById('sheet');
@@ -3065,6 +3145,11 @@ async function exportPDF(){
             .trim().replace(/[^a-z0-9]+/gi,'-');
         const pi = getPiFull().replace(/[^a-z0-9]+/gi,'-');
         pdf.save(`${pi || 'E-Spec'}.pdf`);
+
+        // Specs are finalized at this point (PDF exported) — auto-save them
+        // into the Embroidery Specs register so they don't need re-entering
+        // by hand in index.html.
+        syncSpecsToEmbRegister();
     } catch(err){
         console.error('PDF export failed:', err);
         toast('Sorry, the PDF could not be generated. Please try again.', 'error');
