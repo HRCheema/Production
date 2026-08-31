@@ -1057,12 +1057,13 @@ function getActiveSizes(){
 }
 
 function refreshSummaryVisibility(){
-  const active=getActiveSizes();
+  // SCREEN: Summary must always show ALL sizes, just like the original sheet.
+  // Costing calculations still use only the entered Order Qty / Print values.
   document.querySelectorAll('#summaryBody tr[data-summary-size]').forEach(tr=>{
-    tr.style.display=active.includes(tr.dataset.summarySize)?'':'none';
+    tr.style.display='';
   });
   document.querySelectorAll('#sheetContainer .fs-size-col').forEach(el=>{
-    el.style.display=active.includes(el.dataset.fsSize)?'':'none';
+    el.style.display='';
   });
 }
 
