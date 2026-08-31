@@ -1366,7 +1366,27 @@ function setPageVisibility(qualifying){
   }
 }
 function refreshPageVisibility(){
+  // SCREEN: keep all size pages visible so Order Qty can always be entered.
+  // Only the Summary tables are filtered on screen.
+  document.querySelectorAll('#sheetContainer .pdf-page').forEach(page=>{
+    page.style.display = '';
+    page.style.pageBreakAfter = '';
+    page.style.breakAfter = '';
+  });
+  refreshSummaryVisibility();
+}
+
+function preparePrintVisibility(){
   setPageVisibility(getQualifyingSizes());
+}
+
+function restoreScreenVisibility(){
+  document.querySelectorAll('#sheetContainer .pdf-page').forEach(page=>{
+    page.style.display = '';
+    page.style.pageBreakAfter = '';
+    page.style.breakAfter = '';
+  });
+  refreshSummaryVisibility();
 }
 
 /* ---------- PDF export (real, downloadable file — matches on-screen layout) ---------- */
@@ -1378,7 +1398,7 @@ function exportPdf(){
 
   const source = document.getElementById('sheetContainer');
   const specNo = (document.getElementById('fSpecNo').value || 'Spec_Sheet').replace(/[^a-z0-9-_]/gi,'_');
-  refreshPageVisibility();
+  preparePrintVisibility();
 
   const opt = {
     margin: 0,
@@ -1390,12 +1410,12 @@ function exportPdf(){
   };
 
   html2pdf().set(opt).from(source).save().then(()=>{
-    refreshPageVisibility();
+    restoreScreenVisibility();
     btn.disabled = false;
     btn.textContent = prevLabel;
   }).catch((err)=>{
     console.error(err);
-    refreshPageVisibility();
+    restoreScreenVisibility();
     btn.disabled = false;
     btn.textContent = prevLabel;
     alert('PDF export mein masla aaya, dobara koshish karein ya Browser Print button use karein.');
@@ -1433,10 +1453,10 @@ function init(){
   calcCosting();
 
   document.getElementById('btnPrint').addEventListener('click', ()=>{
-    refreshPageVisibility();
+    preparePrintVisibility();
     window.print();
   });
-  window.addEventListener('afterprint', refreshPageVisibility);
+  window.addEventListener('afterprint', restoreScreenVisibility);
 
   // ===================== COLOR CUSTOMIZER =====================
   const THEME_VARS = [
