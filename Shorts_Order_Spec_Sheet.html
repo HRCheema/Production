@@ -285,39 +285,40 @@
   }
   .dashed-rule.tight{margin:6px 0;height:1.5px;}
 
-  .pdf-size-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .pdf-size-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
   .pdf-size-title-row h2{margin:0;font-family:var(--font-display);font-size:30px;font-weight:400;letter-spacing:.03em;color:var(--ink);}
-  .qty-input-wrap{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}
-  .qty-input-wrap input{width:96px;padding:9px 10px;border:1px solid var(--line);border-radius:4px;font-size:18px;font-weight:700;font-family:var(--font-mono);text-align:center;color:var(--ink);}
+  .qty-input-wrap{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}
+  .qty-input-wrap input{width:96px;padding:9px 10px;border:1px solid var(--line);border-radius:4px;font-size:18px;font-weight:700;font-family:var(--font-mono);text-align:center;color:var(--ink);background:#fff;}
 
-  .pdf-fabric-heads{display:grid;grid-template-columns:1fr 1fr;text-align:center;margin-bottom:26px;}
+  .pdf-fabric-heads{display:grid;grid-template-columns:1fr 1fr;text-align:center;margin-bottom:18px;}
   .pdf-fabric-heads input{
     border:none;background:transparent;text-align:center;font-family:var(--font-display);font-size:28px;font-weight:400;
     letter-spacing:.03em;text-transform:uppercase;
     color:var(--ink);width:100%;
   }
 
-  .pdf-columns{display:grid;grid-template-columns:1fr 1fr;column-gap:36px;flex:1;}
-  .pdf-cards{display:flex;flex-direction:column;justify-content:space-evenly;height:100%;}
+  .pdf-columns{display:grid;grid-template-columns:1fr 1fr;column-gap:30px;flex:1;min-height:0;}
+  .pdf-cards{display:flex;flex-direction:column;justify-content:space-between;height:100%;min-height:0;}
   .pdf-cards .panel-card{
-    display:flex;align-items:center;gap:20px;padding:22px 0;
+    display:flex;align-items:center;gap:16px;padding:12px 0;min-height:0;
   }
-  .pdf-cards .info{width:180px;min-width:180px;font-size:13px;text-align:center;line-height:1.5;}
-  .pdf-cards .info .row{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:5px;}
-  .pdf-cards .info label{color:var(--ink-soft);font-size:11px;min-width:50px;text-align:right;text-transform:uppercase;letter-spacing:.03em;}
+  .pdf-cards .info{width:205px;min-width:205px;font-size:14px;text-align:center;line-height:1.45;color:var(--ink);}
+  .pdf-cards .info .row{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:6px;white-space:nowrap;}
+  .pdf-cards .info label{color:var(--ink-soft);font-size:12px;min-width:55px;text-align:right;text-transform:uppercase;letter-spacing:.03em;}
   .pdf-cards .info input{
-    border:1px solid var(--line);border-radius:3px;padding:4px 6px;font-size:13px;width:64px;text-align:center;font-family:var(--font-mono);
+    border:1px solid #777;border-radius:3px;padding:5px 6px;font-size:14px;width:70px;height:31px;text-align:center;font-family:var(--font-mono);
+    color:#111;background:#fff;box-sizing:border-box;
   }
   .pdf-cards .info .print-input{
-    width:50px;font-weight:700;text-align:center;color:var(--brass-dark);
+    width:58px;height:34px;font-weight:700;text-align:center;color:#6d4b13;
     border-color:var(--brass);font-size:19px;background:#fbf3e2;
   }
-  .pdf-cards .info .panel-name{font-size:14px !important;}
-  .pdf-cards .info .size-lbl{font-weight:700;letter-spacing:.03em;font-size:13px;}
-  .pdf-cards .info .sqft-row{color:var(--brass-dark);font-weight:700;}
-  .pdf-cards .info .sqft-out{font-weight:700;color:var(--brass-dark);font-size:14px;font-family:var(--font-mono);}
+  .pdf-cards .info .panel-name{font-size:15px !important;font-weight:700 !important;}
+  .pdf-cards .info .size-lbl{font-weight:700;letter-spacing:.03em;font-size:14px;}
+  .pdf-cards .info .sqft-row{color:var(--brass-dark);font-weight:700;font-size:14px;}
+  .pdf-cards .info .sqft-out{font-weight:700;color:var(--brass-dark);font-size:15px;font-family:var(--font-mono);}
   .pdf-cards .imgwrap{
-    flex:1;height:190px;min-width:120px;
+    flex:1;height:175px;min-width:120px;
     display:flex;align-items:center;justify-content:center;overflow:hidden;background:transparent;
   }
   .pdf-cards .imgwrap img{
@@ -433,9 +434,32 @@
     .pdf-bottom h4, .pdf-title-block .title { text-decoration: none !important; border: none !important; }
 
     body{background:#fff;padding:0;}
-    .toolbar,.panel-block{display:none;}
-    .pdf-page{box-shadow:none;margin:0;}
-    #sheetContainer{max-width:100%;}
+    .toolbar,.panel-block{display:none !important;}
+    #sheetContainer{max-width:100%;margin:0;}
+    .pdf-page{
+      box-shadow:none !important;margin:0 !important;
+      width:210mm;height:297mm;min-height:297mm;
+      box-sizing:border-box;overflow:hidden;
+      page-break-after:always;break-after:page;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    }
+    .pdf-cards .info,.pdf-cards .info .row,.pdf-cards .info label,.pdf-cards .info input,
+    .pdf-cards .info .panel-name,.pdf-cards .info .size-lbl,.pdf-cards .info .sqft-row,
+    .pdf-cards .info .sqft-out{visibility:visible !important;opacity:1 !important;}
+    .pdf-cards .info input{color:#111 !important;background:#fff !important;}
+  }
+
+  /* Keep all calculation/value text readable in screen, browser print and html2pdf. */
+  .pdf-cards .info *{visibility:visible;}
+  .pdf-cards .info input::-webkit-outer-spin-button,
+  .pdf-cards .info input::-webkit-inner-spin-button{opacity:1;}
+  @media (max-width:760px){
+    .pdf-page{padding:18px 20px 14px 20px;}
+    .pdf-cards .panel-card{gap:10px;padding:10px 0;}
+    .pdf-cards .info{width:175px;min-width:175px;font-size:12px;}
+    .pdf-cards .info input{width:60px;height:29px;font-size:12px;}
+    .pdf-cards .info .print-input{width:52px;font-size:17px;}
+    .pdf-cards .imgwrap{height:155px;}
   }
 
   /* ===================== COSTING & FABRIC PLANNING ===================== */
