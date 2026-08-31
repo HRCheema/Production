@@ -1367,13 +1367,10 @@ function setPageVisibility(qualifying){
   }
 }
 function refreshPageVisibility(){
-  // SCREEN: keep all size pages visible so Order Qty can always be entered.
-  // Only the Summary tables are filtered on screen.
-  document.querySelectorAll('#sheetContainer .pdf-page').forEach(page=>{
-    page.style.display = '';
-    page.style.pageBreakAfter = '';
-    page.style.breakAfter = '';
-  });
+  // SCREEN: show only result pages for sizes whose Order Qty is > 0.
+  // The top Summary keeps ALL size rows visible, so quantities can always be entered there.
+  // The dedicated Fabric Summary page remains visible.
+  setPageVisibility(getQualifyingSizes());
   refreshSummaryVisibility();
 }
 
@@ -1382,12 +1379,7 @@ function preparePrintVisibility(){
 }
 
 function restoreScreenVisibility(){
-  document.querySelectorAll('#sheetContainer .pdf-page').forEach(page=>{
-    page.style.display = '';
-    page.style.pageBreakAfter = '';
-    page.style.breakAfter = '';
-  });
-  refreshSummaryVisibility();
+  refreshPageVisibility();
 }
 
 /* ---------- PDF export (real, downloadable file — matches on-screen layout) ---------- */
