@@ -148,6 +148,10 @@
     .stripe-art-host { width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
     .manual-color-row{display:grid;grid-template-columns:1fr 42px;gap:6px;align-items:center;}
     .manual-color-row input[type="color"]{width:42px;height:36px;padding:2px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;cursor:pointer;}
+    .manual-color-row.has-eyedropper{grid-template-columns:1fr 42px 38px;}
+    .eyedropper-btn{width:38px;height:36px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;cursor:pointer;font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;}
+    .eyedropper-btn:hover{background:#f0f2fa;border-color:var(--brass, #cbd5e1);}
+    .eyedropper-btn:disabled{opacity:.4;cursor:not-allowed;}
     .special-stripe-help{font-size:.72rem;line-height:1.35;color:#667085;background:#f7f7fb;border:1px solid #e3e5ef;border-radius:7px;padding:7px 8px;margin:6px 0 9px;}
     .special-bar-grid{display:grid;gap:7px;margin:8px 0;}
     .special-bar-row{border:1px solid #e2e8f0;border-radius:8px;padding:7px;background:#fff;}
@@ -2377,7 +2381,7 @@ function renderVariantControls(){
             return `<div class="variant-item special-variant-item">
                 <div class="variant-head"><span class="variant-title">Special Logo — Full Logo Color</span></div>
                 <label>Logo Color — HEX / RGB</label>
-                <div class="manual-color-row"><input type="text" value="${v.color}" placeholder="#c8102e or rgb(200,16,46)" onchange="setManualLogoColor(${i},this.value)"><input type="color" value="${picker}" title="Pick logo color" onchange="setManualLogoColor(${i},this.value)"></div>
+                <div class="manual-color-row has-eyedropper"><input type="text" value="${v.color}" placeholder="#c8102e or rgb(200,16,46)" onchange="setManualLogoColor(${i},this.value)"><input type="color" value="${picker}" title="Pick logo color" onchange="setManualLogoColor(${i},this.value)"><button type="button" class="eyedropper-btn" title="Screen se color uthayein (Eyedropper)" onclick="pickScreenColor(c=>setManualLogoColor(${i},c))">💧</button></div>
                 <label>Logo Size</label>
                 <select onchange="setLogoSize(${i},this.value)"><option value="48">48mm</option><option value="65">65mm</option></select>
             </div>`;
@@ -2436,6 +2440,16 @@ function renderVariantControls(){
             el.value=idx%2===0 ? stripeVariants[i].color : stripeVariants[i].size;
         });
     }
+}
+function pickScreenColor(applyFn){
+    if(!window.EyeDropper){
+        toast('Eyedropper is sirf Chrome / Edge browser me support hota hai.', 'error');
+        return;
+    }
+    const eyeDropper = new EyeDropper();
+    eyeDropper.open().then(result=>{
+        if(result && result.sRGBHex) applyFn(result.sRGBHex);
+    }).catch(()=>{ /* user cancelled — no-op */ });
 }
 function setManualLogoColor(i,value){
     pushStateToHistory();
