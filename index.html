@@ -2782,7 +2782,7 @@ var _lgForm=document.getElementById('lockGateForm');if(_lgForm){_lgForm.addEvent
   <div class="dash-widget-clock">
     <div class="dwc-icon">⏱️</div>
     <div>
-      <div class="dwc-time" id="dwcTime">--:-- <span id="dwcAmpm">--</span></div>
+      <div class="dwc-time" id="dwcTime">--:--</div>
       <div class="dwc-date" id="dwcDate">-- --- ----</div>
     </div>
   </div>
@@ -3582,9 +3582,8 @@ function updateClock() {
   if (liveClockEl) liveClockEl.textContent = h + ':' + m + ' ' + ampm;
 
   const dwcTime = document.getElementById('dwcTime');
-  const dwcAmpm = document.getElementById('dwcAmpm');
   const dwcDate = document.getElementById('dwcDate');
-  if (dwcTime && dwcAmpm) {
+  if (dwcTime) {
     const s = String(now.getSeconds()).padStart(2, '0');
     dwcTime.innerHTML = h + ':' + m + ':' + s + ' <span id="dwcAmpm">' + ampm + '</span>';
   }
