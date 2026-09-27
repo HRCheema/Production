@@ -107,6 +107,9 @@
     .vector-editor-popover{position:fixed;z-index:5000;min-width:190px;padding:10px;background:#fff;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 12px 30px rgba(15,23,42,.20);font-family:Arial,sans-serif;}
     .vector-editor-popover .ve-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#334155;margin-bottom:7px;}
     .vector-editor-popover select{width:100%;padding:7px 8px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;font-size:12px;color:#111827;}
+    .vector-editor-popover .ve-color-row{display:flex;gap:6px;align-items:center;}
+    .vector-editor-popover .ve-color-row select{flex:1;}
+    .vector-editor-popover .eyedropper-btn{flex:0 0 auto;width:32px;height:32px;}
     .vector-editor-popover .ve-close{position:absolute;right:6px;top:4px;border:0;background:transparent;color:#64748b;font-size:16px;cursor:pointer;padding:2px 5px;}
     .vector-editor-popover .ve-size-select{width:100%;padding:7px 8px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;font-size:12px;color:#111827;cursor:pointer;}
     body.print-mode .vector-editor-popover{display:none !important;}
@@ -2623,7 +2626,7 @@ function openSpecialBarEditor(ev, barIndex, card){
       <button type="button" class="ve-close" aria-label="Close">×</button>
       <div class="ve-title">Stripe Bar ${barIndex+1} Color</div>
       <div style="font-size:.68rem;color:#667085;margin-bottom:6px;">HEX or RGB: #c8102e / rgb(200,16,46)</div>
-      <div class="manual-color-row"><input class="ve-color-text" type="text" value="${current}" placeholder="#c8102e or rgb(200,16,46)"><input class="ve-color-picker" type="color" value="${picker}"></div>
+      <div class="manual-color-row has-eyedropper"><input class="ve-color-text" type="text" value="${current}" placeholder="#c8102e or rgb(200,16,46)"><input class="ve-color-picker" type="color" value="${picker}"><button type="button" class="eyedropper-btn" title="Screen se color uthayein">💧</button></div>
       <button type="button" class="btn" style="margin-top:8px;background:var(--brass-dark);">Apply</button>`;
     document.body.appendChild(pop);
     const rect=card.getBoundingClientRect();
@@ -2632,6 +2635,10 @@ function openSpecialBarEditor(ev, barIndex, card){
     activeVectorEditor=pop;
     const text=pop.querySelector('.ve-color-text'), pickerEl=pop.querySelector('.ve-color-picker');
     pickerEl.addEventListener('input',()=>{ text.value=pickerEl.value; });
+    pop.querySelector('.eyedropper-btn').addEventListener('click', e=>{
+        e.stopPropagation();
+        pickScreenColor(hex=>{ text.value=hex; pickerEl.value=hex; });
+    });
     pop.querySelector('.btn').addEventListener('click',()=>{
         pushStateToHistory();
         v.barColors[barIndex]=normalizeManualColor(text.value,current);
@@ -2659,7 +2666,7 @@ function openVectorEditor(ev, mode, index, card){
       <div class="ve-title">${isLogo ? 'Logo' : 'Stripe'} ${isSize ? 'Size' : 'Color'}</div>
       ${isSize
         ? `<select class="ve-select ve-size-select" aria-label="${isLogo ? 'Logo size in mm' : 'Stripe size in mm'}">${(isLogo ? ['48','65'] : ['50','56','64']).map(sz=>`<option value="${sz}" ${String(v.size)==sz?'selected':''}>${sz} mm</option>`).join('')}</select>`
-        : `<select class="ve-select">${colorOptionsHtml}</select>`}
+        : `<div class="ve-color-row"><select class="ve-select">${colorOptionsHtml}</select><button type="button" class="eyedropper-btn" title="Screen se color uthayein">💧</button></div>`}
     `;
     document.body.appendChild(pop);
     const rect = card.getBoundingClientRect();
@@ -2688,6 +2695,23 @@ function openVectorEditor(ev, mode, index, card){
     };
     select.addEventListener('change', applyVectorValue);
     if(isSize) select.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); applyVectorValue(); } });
+    if(!isSize){
+        const dropBtn = pop.querySelector('.eyedropper-btn');
+        if(dropBtn) dropBtn.addEventListener('click', e=>{
+            e.stopPropagation();
+            pickScreenColor(hex=>{
+                let opt = Array.from(select.options).find(o=>o.value.toLowerCase()===hex.toLowerCase());
+                if(!opt){
+                    opt = document.createElement('option');
+                    opt.value = hex;
+                    opt.textContent = 'Custom (' + hex + ')';
+                    select.insertBefore(opt, select.firstChild);
+                }
+                select.value = hex;
+                applyVectorValue();
+            });
+        });
+    }
     pop.querySelector('.ve-close').addEventListener('click', e=>{e.stopPropagation();closeVectorEditor();});
     setTimeout(()=>{
         document.addEventListener('click', outsideVectorEditor, {once:true});
