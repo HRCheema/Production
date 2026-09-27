@@ -2618,36 +2618,29 @@ function openSpecialBarEditor(ev, barIndex, card){
     if(!v) return;
     if(!Array.isArray(v.barColors)) v.barColors=['#c8102e','#1a4fd6','#111111'];
     const current=v.barColors[barIndex] || '#111111';
-    const picker=/^#[0-9a-f]{6}$/i.test(current)?current:'#111111';
     const pop=document.createElement('div');
     pop.className='vector-editor-popover';
-    pop.style.minWidth='250px';
+    pop.style.minWidth='170px';
     pop.innerHTML=`
       <button type="button" class="ve-close" aria-label="Close">×</button>
       <div class="ve-title">Stripe Bar ${barIndex+1} Color</div>
-      <div style="font-size:.68rem;color:#667085;margin-bottom:6px;">HEX or RGB: #c8102e / rgb(200,16,46)</div>
-      <div class="manual-color-row has-eyedropper"><input class="ve-color-text" type="text" value="${current}" placeholder="#c8102e or rgb(200,16,46)"><input class="ve-color-picker" type="color" value="${picker}"><button type="button" class="eyedropper-btn" title="Screen se color uthayein">💧</button></div>
-      <button type="button" class="btn" style="margin-top:8px;background:var(--brass-dark);">Apply</button>`;
+      <button type="button" class="eyedropper-btn ve-bar-eyedropper" title="Screen se color uthayein" style="width:100%;height:38px;font-size:18px;">💧 Pick Color</button>`;
     document.body.appendChild(pop);
     const rect=card.getBoundingClientRect();
-    pop.style.left=Math.min(Math.max(8,rect.left+rect.width/2-125),window.innerWidth-268)+'px';
-    pop.style.top=Math.min(Math.max(8,rect.bottom+8),window.innerHeight-210)+'px';
+    pop.style.left=Math.min(Math.max(8,rect.left+rect.width/2-85),window.innerWidth-188)+'px';
+    pop.style.top=Math.min(Math.max(8,rect.bottom+8),window.innerHeight-130)+'px';
     activeVectorEditor=pop;
-    const text=pop.querySelector('.ve-color-text'), pickerEl=pop.querySelector('.ve-color-picker');
-    pickerEl.addEventListener('input',()=>{ text.value=pickerEl.value; });
-    pop.querySelector('.eyedropper-btn').addEventListener('click', e=>{
+    pop.querySelector('.ve-bar-eyedropper').addEventListener('click', e=>{
         e.stopPropagation();
-        pickScreenColor(hex=>{ text.value=hex; pickerEl.value=hex; });
-    });
-    pop.querySelector('.btn').addEventListener('click',()=>{
-        pushStateToHistory();
-        v.barColors[barIndex]=normalizeManualColor(text.value,current);
-        renderVariantControls(); updateSheet(); closeVectorEditor();
+        pickScreenColor(hex=>{
+            pushStateToHistory();
+            v.barColors[barIndex]=normalizeManualColor(hex,current);
+            renderVariantControls(); updateSheet(); closeVectorEditor();
+        });
     });
     pop.querySelector('.ve-close').addEventListener('click', e=>{e.stopPropagation();closeVectorEditor();});
     setTimeout(()=>{
         document.addEventListener('click', outsideVectorEditor, {once:true});
-        text.focus(); text.select();
     },0);
 }
 function openVectorEditor(ev, mode, index, card){
