@@ -769,9 +769,11 @@ body{
           <div class="quick-field"><label>Article / Cust Art #</label><input id="quickCustArt" type="text" placeholder="e.g. E3771 / JT275"></div>
           <div class="quick-field"><label>E-number / P.I.</label><input id="quickPiNo" type="text" inputmode="numeric" placeholder="3771"></div>
           <div class="quick-field"><label>Logo Color</label><select id="quickLogoColor"></select></div>
-          <div class="quick-field"><label>Logo Size</label><select id="quickLogoSize"><option value="65">65 mm</option><option value="48">48 mm</option></select></div>
+          <div class="quick-field"><label>Logo Size</label><select id="quickLogoSize" onchange="updateQuickFieldState()"><option value="65">65 mm</option><option value="48">48 mm</option><option value="90">90 mm</option><option value="custom">Custom</option></select></div>
+          <div class="quick-field" id="quickLogoCustomWrap" style="display:none;grid-column:1/-1;"><label>Custom Logo Size (mm)</label><input id="quickLogoCustom" type="text" inputmode="decimal" placeholder="e.g. 75"></div>
           <div class="quick-field"><label>Stripe Color</label><select id="quickStripeColor"></select></div>
-          <div class="quick-field"><label>Stripe Size</label><select id="quickStripeSize"><option value="50">50 mm</option><option value="56">56 mm</option><option value="64">64 mm</option></select></div>
+          <div class="quick-field"><label>Stripe Size</label><select id="quickStripeSize" onchange="updateQuickFieldState()"><option value="50">50 mm</option><option value="56">56 mm</option><option value="64">64 mm</option><option value="custom">Custom</option></select></div>
+          <div class="quick-field" id="quickStripeCustomWrap" style="display:none;grid-column:1/-1;"><label>Custom Stripe (mm)</label><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;"><input id="quickStripeCustomSize" type="text" inputmode="decimal" placeholder="Size"><input id="quickStripeCustomWidth" type="text" inputmode="decimal" placeholder="Stripe"><input id="quickStripeCustomGap" type="text" inputmode="decimal" placeholder="Gap"></div></div>
         </div>
         <div class="quick-placements"><div class="quick-placements-title">Placements</div><div class="quick-checks">
           <label class="quick-check"><input type="checkbox" id="quickFront"> Jacket Front</label><label class="quick-check"><input type="checkbox" id="quickBack"> Jacket Back</label>
@@ -2268,26 +2270,57 @@ function orderKindLabel(k){
 // Individual logos/stripes can still be changed manually afterwards.
 function syncKitMasterSizes(){
     if(logoVariants.length > 1){
-        const masterSize = logoVariants[0].size;
-        for(let j=1;j<logoVariants.length;j++) logoVariants[j].size = masterSize;
+        const m = logoVariants[0];
+        for(let j=1;j<logoVariants.length;j++){ logoVariants[j].size = m.size; logoVariants[j].custom = !!m.custom; }
     }
     if(stripeVariants.length > 1){
-        const masterSize = stripeVariants[0].size;
-        const preset = stripeSizeMap[masterSize];
+        const m = stripeVariants[0];
         for(let j=1;j<stripeVariants.length;j++){
-            stripeVariants[j].size = masterSize;
-            if(preset){ stripeVariants[j].width = preset.stripe; stripeVariants[j].gap = preset.gap; }
+            stripeVariants[j].size = m.size; stripeVariants[j].width = m.width;
+            stripeVariants[j].gap = m.gap; stripeVariants[j].custom = !!m.custom;
         }
     }
 }
 
+// ---------- Size helpers (preset + custom) ----------
+const LOGO_PRESET_SIZES = ['48','65','90'];
+const LOGO_SIZE_OPTS = '<option value="48">48mm</option><option value="65">65mm</option><option value="90">90mm</option><option value="custom">Custom</option>';
+const STRIPE_SIZE_OPTS = '<option value="50">50mm</option><option value="56">56mm</option><option value="64">64mm</option><option value="custom">Custom</option>';
+function parseMm(v){
+    const n = parseFloat(String(v==null?'':v).replace(/mm/ig,'').replace(',','.').trim());
+    return (isFinite(n) && n > 0) ? n : null;
+}
+function fmtNum(n){ return String(Math.round(n*100)/100); }
+function fmtMm(n){ return fmtNum(n) + ' mm'; }
+function numOf(x){ const n = parseMm(x); return n===null ? '' : fmtNum(n); }
+function isLogoCustom(v){ return !!v && (!!v.custom || !LOGO_PRESET_SIZES.includes(String(v.size))); }
+function isStripeCustom(v){ return !!v && (!!v.custom || !stripeSizeMap[String(v.size)]); }
+function logoCustomHtml(v,i){
+    return isLogoCustom(v) ? `<div class="row2"><div><label>Custom Size (mm)</label><input type="text" inputmode="decimal" value="${numOf(v.size)}" onchange="setLogoCustomSize(${i},this.value)"></div></div>` : '';
+}
+function stripeCustomHtml(v,i){
+    return `<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:2px;">
+        <div><label>Size (mm)</label><input type="text" inputmode="decimal" value="${numOf(v.size)}" onchange="setStripeCustom(${i},'size',this.value)"></div>
+        <div><label>Stripe (mm)</label><input type="text" inputmode="decimal" value="${numOf(v.width)}" onchange="setStripeCustom(${i},'width',this.value)"></div>
+        <div><label>Gap (mm)</label><input type="text" inputmode="decimal" value="${numOf(v.gap)}" onchange="setStripeCustom(${i},'gap',this.value)"></div>
+    </div>`;
+}
+function veCustomHtml(isLogo,v){
+    const inp = 'type="text" inputmode="decimal" style="width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:7px;font-size:12px;margin:3px 0 6px;"';
+    const lab = 'style="font-size:10px;font-weight:700;color:#475467;text-transform:uppercase;"';
+    const btn = '<button type="button" class="ve-apply" style="width:100%;padding:7px;border:0;border-radius:7px;background:#1a237e;color:#fff;font-weight:700;font-size:12px;cursor:pointer;">Apply</button>';
+    return isLogo
+      ? `<div class="ve-custom" style="display:none;margin-top:8px;"><label ${lab}>Size (mm)</label><input class="ve-c-size" ${inp} value="${numOf(v.size)}">${btn}</div>`
+      : `<div class="ve-custom" style="display:none;margin-top:8px;"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;"><div><label ${lab}>Size</label><input class="ve-c-size" ${inp} value="${numOf(v.size)}"></div><div><label ${lab}>Stripe</label><input class="ve-c-width" ${inp} value="${numOf(v.width)}"></div><div><label ${lab}>Gap</label><input class="ve-c-gap" ${inp} value="${numOf(v.gap)}"></div></div>${btn}</div>`;
+}
+
 function makeLogoVariant(base){
-    return { color: base?.color || '#d4af37', size: base?.size || '65' };
+    return { color: base?.color || '#d4af37', size: base?.size || '65', custom: !!base?.custom };
 }
 function makeStripeVariant(base){
     const size = base?.size || '50';
     const preset = stripeSizeMap[size] || stripeSizeMap['50'];
-    return { color: base?.color || '#d4af37', size, width: base?.width || preset.stripe, gap: base?.gap || preset.gap, barColors: Array.isArray(base?.barColors) ? base.barColors.slice(0,3) : ['#c8102e','#1a4fd6','#111111'] };
+    return { color: base?.color || '#d4af37', size, width: base?.width || preset.stripe, gap: base?.gap || preset.gap, custom: !!base?.custom, barColors: Array.isArray(base?.barColors) ? base.barColors.slice(0,3) : ['#c8102e','#1a4fd6','#111111'] };
 }
 function normalizeManualColor(value, fallback='#111111'){
     const v=String(value||'').trim();
@@ -2343,14 +2376,15 @@ function applyOrderKind(kind){
         const stripeSize = stripeBase.size || '56';
         // Fixed default colors for this kit — re-selecting the kit always
         // brings these back, even if colors were manually changed before.
-        logoVariants = preset.logos.map((color,i) => makeLogoVariant({
-            color,
-            size: (logoVariants[i] && logoVariants[i].size) || logoSize
-        }));
-        stripeVariants = preset.stripes.map((color,i) => makeStripeVariant({
-            color,
-            size: (stripeVariants[i] && stripeVariants[i].size) || stripeSize
-        }));
+        const prevLogos = logoVariants.slice(), prevStripes = stripeVariants.slice();
+        logoVariants = preset.logos.map((color,i) => {
+            const src = prevLogos[i] || logoBase;
+            return makeLogoVariant({ color, size: src.size || logoSize, custom: src.custom });
+        });
+        stripeVariants = preset.stripes.map((color,i) => {
+            const src = prevStripes[i] || stripeBase;
+            return makeStripeVariant({ color, size: src.size || stripeSize, width: src.width, gap: src.gap, custom: src.custom });
+        });
         // Logo 1 / Stripe 1 size becomes the master for all other logos/stripes
         syncKitMasterSizes();
         document.getElementById('pLogoFront').checked = true;
@@ -2378,15 +2412,17 @@ function applyOrderKind(kind){
     updateSheet();
 }
 
-function addLogoVariant(color='#ffffff', size='65'){
+function addLogoVariant(color='#ffffff', size){
     pushStateToHistory();
-    logoVariants.push({color, size});
+    const m = logoVariants[0];
+    logoVariants.push({color, size: size || (m ? m.size : '65'), custom: m ? !!m.custom : false});
     renderVariantControls();
     updateSheet();
 }
-function addStripeVariant(color='#c8102e', size='56', width='14 mm', gap='7 mm'){
+function addStripeVariant(color='#c8102e', size, width, gap){
     pushStateToHistory();
-    stripeVariants.push({color, size, width, gap});
+    const m = stripeVariants[0];
+    stripeVariants.push({color, size: size || (m ? m.size : '56'), width: width || (m ? m.width : '14 mm'), gap: gap || (m ? m.gap : '7 mm'), custom: m ? !!m.custom : false});
     renderVariantControls();
     updateSheet();
 }
@@ -2418,7 +2454,7 @@ function renderVariantControls(){
                 <label>Logo Color — HEX / RGB</label>
                 <div class="manual-color-row has-eyedropper"><input type="text" value="${v.color}" placeholder="#c8102e or rgb(200,16,46)" onchange="setManualLogoColor(${i},this.value)"><input type="color" value="${picker}" title="Pick logo color" onchange="setManualLogoColor(${i},this.value)"><button type="button" class="eyedropper-btn" title="Screen se color uthayein (Eyedropper)" onclick="pickScreenColor(c=>setManualLogoColor(${i},c))">💧</button></div>
                 <label>Logo Size</label>
-                <select onchange="setLogoSize(${i},this.value)"><option value="48">48mm</option><option value="65">65mm</option></select>
+                <select onchange="setLogoSize(${i},this.value)">${LOGO_SIZE_OPTS}</select>${logoCustomHtml(v,i)}
             </div>`;
         }
         return `<div class="variant-item">
@@ -2428,17 +2464,17 @@ function renderVariantControls(){
             </div>
             <label>Logo Color</label>
             <select onchange="pushStateToHistory(); logoVariants[${i}].color=this.value; updateSheet()">${colorOptionsHtml}</select>
-            <label>Logo Size (SVG tag)${i===0 && isKitKind(window.currentOrderKind) ? ' — master, sets all logos' : ''}</label>
-            <select onchange="setLogoSize(${i}, this.value)"><option value="48">48mm</option><option value="65">65mm</option></select>
+            <label>Logo Size (SVG tag)${i===0 && logoVariants.length>1 ? ' — master, sets all logos' : ''}</label>
+            <select onchange="setLogoSize(${i}, this.value)">${LOGO_SIZE_OPTS}</select>${logoCustomHtml(v,i)}
         </div>`;
     }).join('') || (window.currentOrderKind==='stripe' ? '<div class="order-kind-help">No logo for this order (Stripe Only).</div>' : '');
     if(!special){
         logos.querySelectorAll('select').forEach((el,idx)=>{
             const i=Math.floor(idx/2);
-            el.value=idx%2===0 ? logoVariants[i].color : logoVariants[i].size;
+            el.value=idx%2===0 ? logoVariants[i].color : (isLogoCustom(logoVariants[i]) ? 'custom' : String(logoVariants[i].size));
         });
     } else {
-        logos.querySelectorAll('select').forEach((el,idx)=>{ el.value=logoVariants[idx].size; });
+        logos.querySelectorAll('select').forEach((el,idx)=>{ el.value=isLogoCustom(logoVariants[idx]) ? 'custom' : String(logoVariants[idx].size); });
     }
 
     if(special){
@@ -2449,14 +2485,14 @@ function renderVariantControls(){
             <div class="variant-head"><span class="variant-title">Special Stripes — 3 Independent Bars</span></div>
             <div class="special-stripe-help">Har bar ka color alag ho sakta hai. Sirf logo ek hi full color rahega.</div>
             <label>Stripe Overall Size</label>
-            <select onchange="setStripeSize(0,this.value)"><option value="50">50mm</option><option value="56">56mm</option><option value="64">64mm</option></select>
+            <select onchange="setStripeSize(0,this.value)">${STRIPE_SIZE_OPTS}</select>
             <div class="special-bar-grid">${v.barColors.map((c,j)=>{
                 const picker=/^#[0-9a-f]{6}$/i.test(c)?c:'#111111';
                 return `<div class="special-bar-row"><b>${labels[j]}</b><div class="manual-color-row"><input type="text" value="${c}" placeholder="#c8102e or rgb(200,16,46)" onchange="setSpecialBarColor(${j},this.value)"><input type="color" value="${picker}" title="Pick ${labels[j]}" onchange="setSpecialBarColor(${j},this.value)"></div></div>`;
             }).join('')}</div>
-            <div class="row2"><div><label>Stripe Width</label><input type="text" value="${v.width}" readonly></div><div><label>Gap Width</label><input type="text" value="${v.gap}" readonly></div></div>
+            ${isStripeCustom(v) ? stripeCustomHtml(v,0) : `<div class="row2"><div><label>Stripe Width</label><input type="text" value="${v.width}" readonly></div><div><label>Gap Width</label><input type="text" value="${v.gap}" readonly></div></div>`}
         </div>`;
-        stripes.querySelector('select').value=v.size;
+        stripes.querySelector('select').value=isStripeCustom(v) ? 'custom' : String(v.size);
     } else {
         stripes.innerHTML = stripeVariants.length ? stripeVariants.map((v,i)=>`
             <div class="variant-item">
@@ -2466,13 +2502,13 @@ function renderVariantControls(){
                 </div>
                 <label>Stripes Color</label>
                 <select onchange="pushStateToHistory(); stripeVariants[${i}].color=this.value; updateSheet()">${colorOptionsHtml}</select>
-                <label>Stripes Overall Size (SVG tag)${i===0 && isKitKind(window.currentOrderKind) ? ' — master, sets all stripes' : ''}</label>
-                <select onchange="setStripeSize(${i},this.value)"><option value="50">50mm</option><option value="56">56mm</option><option value="64">64mm</option></select>
-                <div class="row2"><div><label>Stripe Width</label><input type="text" value="${v.width}" onchange="pushStateToHistory(); stripeVariants[${i}].width=this.value; updateSheet()"></div><div><label>Gap Width</label><input type="text" value="${v.gap}" onchange="pushStateToHistory(); stripeVariants[${i}].gap=this.value; updateSheet()"></div></div>
+                <label>Stripes Overall Size (SVG tag)${i===0 && stripeVariants.length>1 ? ' — master, sets all stripes' : ''}</label>
+                <select onchange="setStripeSize(${i},this.value)">${STRIPE_SIZE_OPTS}</select>
+                ${isStripeCustom(v) ? stripeCustomHtml(v,i) : `<div class="row2"><div><label>Stripe Width</label><input type="text" value="${v.width}" onchange="setStripeDim(${i},'width',this.value)"></div><div><label>Gap Width</label><input type="text" value="${v.gap}" onchange="setStripeDim(${i},'gap',this.value)"></div></div>`}
             </div>`).join('') : '<div class="order-kind-help">No stripe specification for this order.</div>';
         stripes.querySelectorAll('select').forEach((el,idx)=>{
             const i=Math.floor(idx/2);
-            el.value=idx%2===0 ? stripeVariants[i].color : stripeVariants[i].size;
+            el.value=idx%2===0 ? stripeVariants[i].color : (isStripeCustom(stripeVariants[i]) ? 'custom' : String(stripeVariants[i].size));
         });
     }
 }
@@ -2500,26 +2536,63 @@ function setSpecialBarColor(barIndex,value){
 }
 function setLogoSize(i, value){
     pushStateToHistory();
-    logoVariants[i].size = value;
-    // Logo 1 is the master in kit mode: propagate to every other logo.
-    if(i === 0 && isKitKind(window.currentOrderKind)){
-        for(let j=1;j<logoVariants.length;j++) logoVariants[j].size = value;
-    }
+    const v = logoVariants[i];
+    if(value === 'custom'){ v.custom = true; }
+    else { v.custom = false; v.size = value; }
+    // Logo 1 is the master: its sizing propagates to every other logo.
+    if(i === 0) syncKitMasterSizes();
     renderVariantControls();
     updateSheet();
 }
+function setLogoCustomSize(i, value){
+    const n = parseMm(value);
+    if(n === null){ toast('Valid size (mm) likho, e.g. 75','warn'); renderVariantControls(); return false; }
+    pushStateToHistory();
+    logoVariants[i].size = fmtNum(n); logoVariants[i].custom = true;
+    if(i === 0) syncKitMasterSizes();
+    renderVariantControls();
+    updateSheet();
+    return true;
+}
 function setStripeSize(i,value){
     pushStateToHistory();
-    stripeVariants[i].size=value;
-    const preset=stripeSizeMap[value];
-    if(preset){ stripeVariants[i].width=preset.stripe; stripeVariants[i].gap=preset.gap; }
-    // Stripe 1 is the master in kit mode: propagate to every other stripe.
-    if(i === 0 && isKitKind(window.currentOrderKind)){
-        for(let j=1;j<stripeVariants.length;j++){
-            stripeVariants[j].size = value;
-            if(preset){ stripeVariants[j].width = preset.stripe; stripeVariants[j].gap = preset.gap; }
-        }
+    const v = stripeVariants[i];
+    if(value === 'custom'){ v.custom = true; }
+    else {
+        v.custom = false; v.size = value;
+        const preset = stripeSizeMap[value];
+        if(preset){ v.width = preset.stripe; v.gap = preset.gap; }
     }
+    // Stripe 1 is the master: size + stripe + gap propagate to every other stripe.
+    if(i === 0) syncKitMasterSizes();
+    renderVariantControls();
+    updateSheet();
+}
+function setStripeCustom(i, field, value){
+    const n = parseMm(value);
+    if(n === null){ toast('Valid number (mm) likho, e.g. 14','warn'); renderVariantControls(); return false; }
+    pushStateToHistory();
+    const v = stripeVariants[i];
+    v.custom = true;
+    if(field === 'size') v.size = fmtNum(n); else v[field] = fmtMm(n);
+    if(i === 0) syncKitMasterSizes();
+    renderVariantControls();
+    updateSheet();
+    return true;
+}
+function setStripeCustomAll(i, size, width, gap){
+    pushStateToHistory();
+    const v = stripeVariants[i];
+    v.custom = true; v.size = fmtNum(size); v.width = fmtMm(width); v.gap = fmtMm(gap);
+    if(i === 0) syncKitMasterSizes();
+    renderVariantControls();
+    updateSheet();
+}
+function setStripeDim(i, field, value){
+    pushStateToHistory();
+    const n = parseMm(value);
+    stripeVariants[i][field] = (n === null) ? String(value) : fmtMm(n);
+    if(i === 0) syncKitMasterSizes();
     renderVariantControls();
     updateSheet();
 }
@@ -2690,29 +2763,52 @@ function openVectorEditor(ev, mode, index, card){
       <button type="button" class="ve-close" aria-label="Close">×</button>
       <div class="ve-title">${isLogo ? 'Logo' : 'Stripe'} ${isSize ? 'Size' : 'Color'}</div>
       ${isSize
-        ? `<select class="ve-select ve-size-select" aria-label="${isLogo ? 'Logo size in mm' : 'Stripe size in mm'}">${(isLogo ? ['48','65'] : ['50','56','64']).map(sz=>`<option value="${sz}" ${String(v.size)==sz?'selected':''}>${sz} mm</option>`).join('')}</select>`
+        ? `<select class="ve-select ve-size-select" aria-label="${isLogo ? 'Logo size in mm' : 'Stripe size in mm'}">${(isLogo ? ['48','65','90'] : ['50','56','64']).map(sz=>`<option value="${sz}" ${(!(isLogo?isLogoCustom(v):isStripeCustom(v)) && String(v.size)==sz)?'selected':''}>${sz} mm</option>`).join('')}<option value="custom" ${(isLogo?isLogoCustom(v):isStripeCustom(v))?'selected':''}>Custom…</option></select>${veCustomHtml(isLogo,v)}`
         : `<div class="ve-color-row"><select class="ve-select">${colorOptionsHtml}</select><button type="button" class="eyedropper-btn" title="Screen se color uthayein">💧</button></div>`}
     `;
     document.body.appendChild(pop);
     const rect = card.getBoundingClientRect();
     const anchorX = Math.min(Math.max(8, rect.left + rect.width/2 - 95), window.innerWidth - 198);
-    const anchorY = Math.min(Math.max(8, rect.bottom + 8), window.innerHeight - 150);
+    const anchorY = Math.min(Math.max(8, rect.bottom + 8), window.innerHeight - (isSize ? 280 : 150));
     pop.style.left = anchorX + 'px';
     pop.style.top = anchorY + 'px';
     activeVectorEditor = pop;
 
     const select = pop.querySelector('.ve-select');
     if(!isSize) select.value = v.color;
+    if(isSize) pop.style.minWidth = isLogo ? '200px' : '260px';
+    const customBox = pop.querySelector('.ve-custom');
+    const openCustom = ()=>{ if(customBox) customBox.style.display = ''; };
+    if(isSize && (isLogo ? isLogoCustom(v) : isStripeCustom(v))) openCustom();
+    const veApply = pop.querySelector('.ve-apply');
+    if(veApply){
+        const doApply = (e)=>{
+            if(e) e.stopPropagation();
+            const val = cls => pop.querySelector(cls)?.value;
+            if(isLogo){
+                if(!setLogoCustomSize(index, val('.ve-c-size'))) return;
+            } else {
+                const n = parseMm(val('.ve-c-size')), w = parseMm(val('.ve-c-width')), g = parseMm(val('.ve-c-gap'));
+                if(n===null || w===null || g===null){ toast('Teeno measurements (size, stripe, gap) likho.','warn'); return; }
+                setStripeCustomAll(index, n, w, g);
+            }
+            closeVectorEditor();
+        };
+        veApply.addEventListener('click', doApply);
+        pop.querySelectorAll('.ve-custom input').forEach(inp=>inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); doApply(e); } }));
+    }
     const applyVectorValue = ()=>{
         const value = String(select.value || '').trim().replace(/\s*mm\b/ig,'');
         if(isLogo){
             if(isSize){
-                if(value === '48' || value === '65') setLogoSize(index, value);
+                if(value === '48' || value === '65' || value === '90') setLogoSize(index, value);
+                else if(value === 'custom'){ openCustom(); return; }
                 else { toast('Logo size sirf 48 ya 65 mm hai.','warn'); return; }
             } else { pushStateToHistory(); logoVariants[index].color=select.value; renderVectorSpecs(); updateSheet(); }
         } else {
             if(isSize){
                 if(value === '50' || value === '56' || value === '64') setStripeSize(index, value);
+                else if(value === 'custom'){ openCustom(); return; }
                 else { toast('Stripe size sirf 50, 56 ya 64 mm hai.','warn'); return; }
             } else { pushStateToHistory(); stripeVariants[index].color=select.value; renderVectorSpecs(); updateSheet(); }
         }
@@ -2757,7 +2853,10 @@ function openQuickSetup(){
   document.getElementById('quickCustArt').value=document.getElementById('custArt').value||'';
   document.getElementById('quickPiNo').value=document.getElementById('piNo').value||'';
   const l=logoVariants[0]||{color:'#c8102e',size:'65'}, st=stripeVariants[0]||{color:'#c8102e',size:'56'};
-  qlc.value=l.color; document.getElementById('quickLogoSize').value=l.size; qsc.value=st.color; document.getElementById('quickStripeSize').value=st.size;
+  qlc.value=l.color; qsc.value=st.color;
+  const gq=id=>document.getElementById(id);
+  if(isLogoCustom(l)){ gq('quickLogoSize').value='custom'; gq('quickLogoCustom').value=numOf(l.size); } else { gq('quickLogoSize').value=l.size; gq('quickLogoCustom').value=''; }
+  if(isStripeCustom(st)){ gq('quickStripeSize').value='custom'; gq('quickStripeCustomSize').value=numOf(st.size); gq('quickStripeCustomWidth').value=numOf(st.width); gq('quickStripeCustomGap').value=numOf(st.gap); } else { gq('quickStripeSize').value=st.size; ['Size','Width','Gap'].forEach(x=>{ gq('quickStripeCustom'+x).value=''; }); }
   document.getElementById('quickFront').checked=document.getElementById('pLogoFront').checked; document.getElementById('quickBack').checked=document.getElementById('pLogoBack').checked;
   document.getElementById('quickPant').checked=document.getElementById('pLogoPant').checked; document.getElementById('quickShoulder').checked=document.getElementById('pLogoShoulder').checked; document.getElementById('quickStripes').checked=document.getElementById('pStripesShoulder').checked;
   updateQuickFieldState(); m.classList.add('open'); document.body.style.overflow='hidden';
@@ -2775,6 +2874,9 @@ function updateQuickFieldState(){
   show('quickLogoColor',k!=='stripe'); show('quickLogoSize',k!=='stripe');
   show('quickStripeColor',k!=='single'); show('quickStripeSize',k!=='single');
   const kit=isKitKind(k);
+  const lw=document.getElementById('quickLogoCustomWrap'), sw=document.getElementById('quickStripeCustomWrap');
+  if(lw) lw.style.display=(k!=='stripe' && document.getElementById('quickLogoSize').value==='custom')?'':'none';
+  if(sw) sw.style.display=(k!=='single' && document.getElementById('quickStripeSize').value==='custom')?'':'none';
   ['quickLogoColor','quickStripeColor'].forEach(id=>{ const el=document.getElementById(id); if(el) el.disabled=kit; });
 }
 function quickKindChanged(){
@@ -2785,16 +2887,37 @@ function quickKindChanged(){
   updateQuickFieldState();
 }
 function applyQuickSetup(){
+  const g=id=>document.getElementById(id);
+  const qk=g('quickOrderKind').value;
+  // validate custom sizes first so nothing is half-applied
+  let lsz=g('quickLogoSize').value, lcustom=false, ssz=g('quickStripeSize').value, sw='', sg='', scustom=false;
+  if(qk!=='stripe' && lsz==='custom'){
+    const n=parseMm(g('quickLogoCustom').value);
+    if(n===null){ toast('Custom logo size (mm) likho.','warn'); return; }
+    lsz=fmtNum(n); lcustom=true;
+  }
+  if(qk!=='single'){
+    if(ssz==='custom'){
+      const n=parseMm(g('quickStripeCustomSize').value), w=parseMm(g('quickStripeCustomWidth').value), gp=parseMm(g('quickStripeCustomGap').value);
+      if(n===null||w===null||gp===null){ toast('Custom stripe ke teeno measurements (size, stripe, gap) likho.','warn'); return; }
+      ssz=fmtNum(n); sw=fmtMm(w); sg=fmtMm(gp); scustom=true;
+    } else { const sp=stripeSizeMap[ssz]; sw=sp.stripe; sg=sp.gap; }
+  }
   pushStateToHistory();
-  const qk=document.getElementById('quickOrderKind').value;
-  if(qk && qk!==window.currentOrderKind){ document.getElementById('orderKind').value=qk; applyOrderKind(qk); }
-  const art=(document.getElementById('quickCustArt').value||'').trim(); const pi=(document.getElementById('quickPiNo').value||'').replace(/^E+/i,'').replace(/[^0-9A-Za-z\-]/g,'');
-  if(art) document.getElementById('custArt').value=art; if(pi) document.getElementById('piNo').value=pi;
-  const lc=document.getElementById('quickLogoColor').value, ls=document.getElementById('quickLogoSize').value, sc=document.getElementById('quickStripeColor').value, ss=document.getElementById('quickStripeSize').value, sp=stripeSizeMap[ss];
-  if(!logoVariants.length){ if(window.currentOrderKind!=='stripe') logoVariants=[{color:lc,size:ls}]; } else logoVariants.forEach(v=>{ if(!isKitKind(window.currentOrderKind)) v.color=lc; v.size=ls;});
-  if(stripeVariants.length) stripeVariants.forEach(v=>{ if(!isKitKind(window.currentOrderKind)) v.color=sc; v.size=ss;v.width=sp.stripe;v.gap=sp.gap;}); else if(window.currentOrderKind!=='single') stripeVariants=[{color:sc,size:ss,width:sp.stripe,gap:sp.gap}];
-  document.getElementById('pLogoFront').checked=document.getElementById('quickFront').checked; document.getElementById('pLogoBack').checked=document.getElementById('quickBack').checked; document.getElementById('pLogoPant').checked=document.getElementById('quickPant').checked; document.getElementById('pLogoShoulder').checked=document.getElementById('quickShoulder').checked; document.getElementById('pStripesShoulder').checked=document.getElementById('quickStripes').checked;
-  if(isKitKind(window.currentOrderKind)) syncKitMasterSizes(); renderVariantControls(); updateSheet(); if(art) pushRecentArticle(art); closeQuickSetup(); toast('Quick Setup applied successfully.','success');
+  const art=(g('quickCustArt').value||'').trim(); const pi=(g('quickPiNo').value||'').replace(/^E+/i,'').replace(/[^0-9A-Za-z\-]/g,'');
+  if(qk && qk!==window.currentOrderKind){ g('orderKind').value=qk; applyOrderKind(qk); }
+  if(art) g('custArt').value=art; if(pi) g('piNo').value=pi;
+  const lc=g('quickLogoColor').value, sc=g('quickStripeColor').value, kit=isKitKind(window.currentOrderKind);
+  if(window.currentOrderKind!=='stripe'){
+    if(!logoVariants.length) logoVariants=[{color:lc,size:lsz,custom:lcustom}];
+    else logoVariants.forEach(v=>{ if(!kit) v.color=lc; v.size=lsz; v.custom=lcustom; });
+  }
+  if(window.currentOrderKind!=='single'){
+    if(stripeVariants.length) stripeVariants.forEach(v=>{ if(!kit) v.color=sc; v.size=ssz; v.width=sw; v.gap=sg; v.custom=scustom; });
+    else stripeVariants=[{color:sc,size:ssz,width:sw,gap:sg,custom:scustom}];
+  }
+  g('pLogoFront').checked=g('quickFront').checked; g('pLogoBack').checked=g('quickBack').checked; g('pLogoPant').checked=g('quickPant').checked; g('pLogoShoulder').checked=g('quickShoulder').checked; g('pStripesShoulder').checked=g('quickStripes').checked;
+  syncKitMasterSizes(); renderVariantControls(); updateSheet(); if(art) pushRecentArticle(art); closeQuickSetup(); toast('Quick Setup applied successfully.','success');
 }
 document.addEventListener('click',e=>{const m=document.getElementById('quickSetupModal'); if(m&&m.classList.contains('open')&&e.target===m) closeQuickSetup();});
 
