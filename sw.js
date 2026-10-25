@@ -1,4 +1,4 @@
-const CACHE_NAME = 'haider-production-v7';
+const CACHE_NAME = 'haider-production-v8';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
@@ -31,6 +31,23 @@ self.addEventListener('fetch', (event) => {
   const url = event.request.url;
   if (url.includes('firestore') || url.includes('firebaseio') || url.includes('googleapis')) {
     return; // let these go straight to network
+  }
+  // HTML pages: network-first, so updated tool pages (e.g. Outmaker) always load
+  // the latest version; the cache is only the offline fallback.
+  const isPage = event.request.mode === 'navigate' || url.split('?')[0].endsWith('.html');
+  if (isPage) {
+    event.respondWith(
+      fetch(event.request).then((response) => {
+        if (response.ok) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return response;
+      }).catch(() =>
+        caches.match(event.request).then((cached) => cached || caches.match('./index.html'))
+      )
+    );
+    return;
   }
   event.respondWith(
     caches.match(event.request).then((cached) => {

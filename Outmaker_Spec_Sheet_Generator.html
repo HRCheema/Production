@@ -2296,13 +2296,13 @@ function numOf(x){ const n = parseMm(x); return n===null ? '' : fmtNum(n); }
 function isLogoCustom(v){ return !!v && (!!v.custom || !LOGO_PRESET_SIZES.includes(String(v.size))); }
 function isStripeCustom(v){ return !!v && (!!v.custom || !stripeSizeMap[String(v.size)]); }
 function logoCustomHtml(v,i){
-    return isLogoCustom(v) ? `<div class="row2"><div><label>Custom Size (mm)</label><input type="text" inputmode="decimal" value="${numOf(v.size)}" onchange="setLogoCustomSize(${i},this.value)"></div></div>` : '';
+    return isLogoCustom(v) ? `<div class="row2"><div><label>Custom Size (mm)</label><input type="text" inputmode="decimal" data-sv="logo" data-i="${i}" data-f="size" value="${numOf(v.size)}" onchange="setLogoCustomSize(${i},this.value)"></div></div>` : '';
 }
 function stripeCustomHtml(v,i){
     return `<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:2px;">
-        <div><label>Size (mm)</label><input type="text" inputmode="decimal" value="${numOf(v.size)}" onchange="setStripeCustom(${i},'size',this.value)"></div>
-        <div><label>Stripe (mm)</label><input type="text" inputmode="decimal" value="${numOf(v.width)}" onchange="setStripeCustom(${i},'width',this.value)"></div>
-        <div><label>Gap (mm)</label><input type="text" inputmode="decimal" value="${numOf(v.gap)}" onchange="setStripeCustom(${i},'gap',this.value)"></div>
+        <div><label>Size (mm)</label><input type="text" inputmode="decimal" data-sv="stripe" data-i="${i}" data-f="size" value="${numOf(v.size)}" onchange="setStripeCustom(${i},'size',this.value)"></div>
+        <div><label>Stripe (mm)</label><input type="text" inputmode="decimal" data-sv="stripe" data-i="${i}" data-f="width" value="${numOf(v.width)}" onchange="setStripeCustom(${i},'width',this.value)"></div>
+        <div><label>Gap (mm)</label><input type="text" inputmode="decimal" data-sv="stripe" data-i="${i}" data-f="gap" value="${numOf(v.gap)}" onchange="setStripeCustom(${i},'gap',this.value)"></div>
     </div>`;
 }
 function veCustomHtml(isLogo,v){
@@ -2312,6 +2312,16 @@ function veCustomHtml(isLogo,v){
     return isLogo
       ? `<div class="ve-custom" style="display:none;margin-top:8px;"><label ${lab}>Size (mm)</label><input class="ve-c-size" ${inp} value="${numOf(v.size)}">${btn}</div>`
       : `<div class="ve-custom" style="display:none;margin-top:8px;"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;"><div><label ${lab}>Size</label><input class="ve-c-size" ${inp} value="${numOf(v.size)}"></div><div><label ${lab}>Stripe</label><input class="ve-c-width" ${inp} value="${numOf(v.width)}"></div><div><label ${lab}>Gap</label><input class="ve-c-gap" ${inp} value="${numOf(v.gap)}"></div></div>${btn}</div>`;
+}
+
+function refreshSizeInputs(){
+    document.querySelectorAll('#logoVariants input[data-sv], #stripeVariants input[data-sv]').forEach(el=>{
+        if(el === document.activeElement) return;
+        const list = el.dataset.sv === 'logo' ? logoVariants : stripeVariants;
+        const v = list[Number(el.dataset.i)]; if(!v) return;
+        const f = el.dataset.f;
+        el.value = el.dataset.raw ? (v[f] || '') : numOf(v[f]);
+    });
 }
 
 function makeLogoVariant(base){
@@ -2504,7 +2514,7 @@ function renderVariantControls(){
                 <select onchange="pushStateToHistory(); stripeVariants[${i}].color=this.value; updateSheet()">${colorOptionsHtml}</select>
                 <label>Stripes Overall Size (SVG tag)${i===0 && stripeVariants.length>1 ? ' — master, sets all stripes' : ''}</label>
                 <select onchange="setStripeSize(${i},this.value)">${STRIPE_SIZE_OPTS}</select>
-                ${isStripeCustom(v) ? stripeCustomHtml(v,i) : `<div class="row2"><div><label>Stripe Width</label><input type="text" value="${v.width}" onchange="setStripeDim(${i},'width',this.value)"></div><div><label>Gap Width</label><input type="text" value="${v.gap}" onchange="setStripeDim(${i},'gap',this.value)"></div></div>`}
+                ${isStripeCustom(v) ? stripeCustomHtml(v,i) : `<div class="row2"><div><label>Stripe Width</label><input type="text" data-sv="stripe" data-i="${i}" data-f="width" data-raw="1" value="${v.width}" onchange="setStripeDim(${i},'width',this.value)"></div><div><label>Gap Width</label><input type="text" data-sv="stripe" data-i="${i}" data-f="gap" data-raw="1" value="${v.gap}" onchange="setStripeDim(${i},'gap',this.value)"></div></div>`}
             </div>`).join('') : '<div class="order-kind-help">No stripe specification for this order.</div>';
         stripes.querySelectorAll('select').forEach((el,idx)=>{
             const i=Math.floor(idx/2);
@@ -2548,9 +2558,10 @@ function setLogoCustomSize(i, value){
     const n = parseMm(value);
     if(n === null){ toast('Valid size (mm) likho, e.g. 75','warn'); renderVariantControls(); return false; }
     pushStateToHistory();
+    const wasCustom = isLogoCustom(logoVariants[i]) && logoVariants.every(x=>isLogoCustom(x));
     logoVariants[i].size = fmtNum(n); logoVariants[i].custom = true;
     if(i === 0) syncKitMasterSizes();
-    renderVariantControls();
+    if(wasCustom) refreshSizeInputs(); else renderVariantControls();
     updateSheet();
     return true;
 }
@@ -2576,7 +2587,7 @@ function setStripeCustom(i, field, value){
     v.custom = true;
     if(field === 'size') v.size = fmtNum(n); else v[field] = fmtMm(n);
     if(i === 0) syncKitMasterSizes();
-    renderVariantControls();
+    refreshSizeInputs();
     updateSheet();
     return true;
 }
@@ -2593,7 +2604,7 @@ function setStripeDim(i, field, value){
     const n = parseMm(value);
     stripeVariants[i][field] = (n === null) ? String(value) : fmtMm(n);
     if(i === 0) syncKitMasterSizes();
-    renderVariantControls();
+    refreshSizeInputs();
     updateSheet();
 }
 
