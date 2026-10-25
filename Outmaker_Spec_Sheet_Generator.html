@@ -117,6 +117,9 @@
 
     .vector-specs.kind-single .logo-specs-grid { grid-template-columns:minmax(0,1fr); max-width:240px; }
     .vector-specs.kind-single .stripe-specs-stack { display:none; }
+    /* STRIPE ONLY order: no logo card, stripe card centered */
+    .vector-specs.kind-stripe .logo-specs-grid { display:none; }
+    .vector-specs.kind-stripe .stripe-specs-stack { grid-template-columns:minmax(0,1fr); max-width:520px; margin:10px auto 0; }
 
     .vector-specs.kind-combo { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; align-items:start; }
     /* SPECIAL order: logo + stripe cards side-by-side, matching the normal spec-card layout */
@@ -667,11 +670,12 @@ body{
                 <option value="single">Single Logo — 1 Logo</option>
                 <option value="combo">Logo + Stripe — 1 Logo + 1 Stripe</option>
                 <option value="special">Special — 1 Logo + 3 Color Stripes</option>
+                <option value="stripe">Stripe Only — 0 Logo + Stripe</option>
                 <option value="kit1" selected>Kit 1 — 3 Logos + 2 Stripes</option>
                 <option value="kit2">Kit 2 — 3 Logos + 2 Stripes</option>
             </select>
             <div class="preset-badge" id="orderKindBadge">3 Logos • 2 Stripes</div>
-            <div class="order-kind-help">Select the order type and the spec-sheet layout/counts will switch automatically.<br>Kit 1 defaults: Logo1 Red · Logo2 Blue · Logo3 Black · Stripe1 Red · Stripe2 Blue.<br>Kit 2 defaults: Logo1 Red · Logo2 Blue · Logo3 White · Stripe1 Red · Stripe2 Blue.<br><b>Special:</b> 1 full logo color + 3 independently colored stripe bars. Hex and RGB colors are supported.<br>Logo1 / Stripe1 size is the master for kits. Colors and sizes can still be changed manually.</div>
+            <div class="order-kind-help">Select the order type and the spec-sheet layout/counts will switch automatically.<br>Kit 1 defaults: Logo1 Red · Logo2 Blue · Logo3 Black · Stripe1 Red · Stripe2 Blue.<br>Kit 2 defaults: Logo1 Red · Logo2 Blue · Logo3 White · Stripe1 Red · Stripe2 Blue.<br><b>Stripe Only:</b> no logo — sirf stripe (spec sheet par logo card nahi aayega).<br><b>Special:</b> 1 full logo color + 3 independently colored stripe bars. Hex and RGB colors are supported.<br>Logo1 / Stripe1 size is the master for kits. Colors and sizes can still be changed manually.</div>
         </div>
 
         <hr class="sep">
@@ -696,7 +700,7 @@ body{
         </div>
 
         <hr class="sep">
-        <h2 style="cursor:pointer;user-select:none;" onclick="toggleSection('logoBody', this)">Logo <span id="logoToggleIcon" style="float:right;font-size:.85rem;">▼</span></h2>
+        <h2 id="logoHeading" style="cursor:pointer;user-select:none;" onclick="toggleSection('logoBody', this)">Logo <span id="logoToggleIcon" style="float:right;font-size:.85rem;">▼</span></h2>
         <div id="logoBody">
             <div id="logoVariants"></div>
             <button type="button" class="btn btn-add" onclick="addLogoVariant()">+ Add More Logo</button>
@@ -1187,12 +1191,13 @@ function loadPage(idx){
 
     const kind = p.orderKind || 'single';
     const badge = document.getElementById('orderKindBadge');
-    if(badge) badge.textContent = kind==='single' ? '1 Logo • 0 Stripes' : kind==='combo' ? '1 Logo • 1 Stripe' : kind==='special' ? '1 Logo • 3 Stripe Bars' : '3 Logos • 2 Stripes';
+    if(badge) badge.textContent = kindBadgeText(kind);
     const hideStripe = kind === 'single';
     const stripeHeading = document.getElementById('stripeHeading');
     const stripeBody = document.getElementById('stripeBody');
     if(stripeHeading) stripeHeading.style.display = hideStripe ? 'none' : '';
     if(stripeBody) stripeBody.style.display = hideStripe ? 'none' : '';
+    applyLogoSectionVisibility(kind);
     const addStripeBtn=document.getElementById('addStripeBtn');
     if(addStripeBtn) addStripeBtn.style.display = isSpecialKind(kind) ? 'none' : '';
     const addLogoBtn=document.querySelector('#logoBody .btn-add');
@@ -1706,7 +1711,7 @@ function describeSetup(entry){
 }
 function findDuplicateArticles(entry, excludeKey){
     const fp = fingerprintArticle(entry);
-    if(!entry.logoVariants || !entry.logoVariants.length) return [];
+    if(!entry.logoVariants || (!entry.logoVariants.length && entry.orderKind !== 'stripe')) return [];
     const store = loadArticleStore();
     const hits = [];
     const exclude = excludeKey ? String(excludeKey).toUpperCase() : null;
@@ -1714,7 +1719,7 @@ function findDuplicateArticles(entry, excludeKey){
         if(exclude && key === exclude) return;
         const list = Array.isArray(store[key]) ? store[key] : [store[key]];
         list.forEach((e, idx) => {
-            if(!e || !e.logoVariants || !e.logoVariants.length) return;
+            if(!e || !e.logoVariants || (!e.logoVariants.length && e.orderKind !== 'stripe')) return;
             if(fingerprintArticle(e) === fp){
                 const desc = describeSetup(e);
                 hits.push({
@@ -1876,12 +1881,13 @@ function loadArticleFromLibrary(key, idx){
 
     const kind = entry.orderKind || 'single';
     const badge = document.getElementById('orderKindBadge');
-    if(badge) badge.textContent = kind==='single' ? '1 Logo • 0 Stripes' : kind==='combo' ? '1 Logo • 1 Stripe' : kind==='special' ? '1 Logo • 3 Stripe Bars' : '3 Logos • 2 Stripes';
+    if(badge) badge.textContent = kindBadgeText(kind);
     const hideStripe = kind === 'single';
     const stripeHeading = document.getElementById('stripeHeading');
     const stripeBody = document.getElementById('stripeBody');
     if(stripeHeading) stripeHeading.style.display = hideStripe ? 'none' : '';
     if(stripeBody) stripeBody.style.display = hideStripe ? 'none' : '';
+    applyLogoSectionVisibility(kind);
 
     renderVariantControls();
     saveCurrentPage();
@@ -1892,7 +1898,7 @@ function loadArticleFromLibrary(key, idx){
 
 function autoSaveArticleIfNamed(){
     const art = (document.getElementById('custArt').value || '').trim();
-    if(!art || !logoVariants.length) return;
+    if(!art || (!logoVariants.length && document.getElementById('orderKind').value !== 'stripe')) return;
     const store = loadArticleStore();
     const key = art.toUpperCase();
     const list = Array.isArray(store[key]) ? store[key] : (store[key] ? [store[key]] : []);
@@ -2232,12 +2238,27 @@ const KIT_PRESETS = {
 };
 function isKitKind(k){ return k === 'kit1' || k === 'kit2'; }
 function isSpecialKind(k){ return k === 'special'; }
+function isStripeOnlyKind(k){ return k === 'stripe'; }
+function kindBadgeText(k){
+    return k==='single' ? '1 Logo • 0 Stripes'
+         : k==='combo' ? '1 Logo • 1 Stripe'
+         : k==='special' ? '1 Logo • 3 Stripe Bars'
+         : k==='stripe' ? '0 Logos • Stripe Only'
+         : '3 Logos • 2 Stripes';
+}
+function applyLogoSectionVisibility(k){
+    const h=document.getElementById('logoHeading'), b=document.getElementById('logoBody');
+    const hide = k === 'stripe';
+    if(h) h.style.display = hide ? 'none' : '';
+    if(b) b.style.display = hide ? 'none' : '';
+}
 function kindFamily(k){ return isKitKind(k) ? 'kit' : (k || 'single'); }
 function orderKindLabel(k){
     if(k === 'kit1') return 'Kit 1';
     if(k === 'kit2') return 'Kit 2';
     if(k === 'combo') return 'Combo';
     if(k === 'special') return 'Special';
+    if(k === 'stripe') return 'Stripe Only';
     return 'Single';
 }
 // Logo 1 / Stripe 1 act as the "master" size for the whole kit —
@@ -2306,6 +2327,14 @@ function applyOrderKind(kind){
         document.getElementById('pLogoPant').checked = true;
         document.getElementById('pLogoShoulder').checked = false;
         document.getElementById('pStripesShoulder').checked = true;
+    } else if(kind === 'stripe'){
+        logoVariants = [];
+        stripeVariants = [makeStripeVariant(stripeBase)];
+        document.getElementById('pLogoFront').checked = false;
+        document.getElementById('pLogoBack').checked = false;
+        document.getElementById('pLogoPant').checked = false;
+        document.getElementById('pLogoShoulder').checked = false;
+        document.getElementById('pStripesShoulder').checked = true;
     } else if(isKitKind(kind)){
         const preset = KIT_PRESETS[kind];
         const logoSize = logoBase.size || '65';
@@ -2332,13 +2361,14 @@ function applyOrderKind(kind){
     renderVariantControls();
     const badge=document.getElementById('orderKindBadge');
     if(badge){
-        badge.textContent = kind==='single' ? '1 Logo • 0 Stripes' : kind==='combo' ? '1 Logo • 1 Stripe' : kind==='special' ? '1 Logo • 3 Stripe Bars' : '3 Logos • 2 Stripes';
+        badge.textContent = kindBadgeText(kind);
     }
     const stripeHeading=document.getElementById('stripeHeading');
     const stripeBody=document.getElementById('stripeBody');
     const hideStripeControls = kind === 'single';
     if(stripeHeading) stripeHeading.style.display = hideStripeControls ? 'none' : '';
     if(stripeBody) stripeBody.style.display = hideStripeControls ? 'none' : '';
+    applyLogoSectionVisibility(kind);
     const addStripeBtn=document.getElementById('addStripeBtn');
     if(addStripeBtn) addStripeBtn.style.display = isSpecialKind(kind) ? 'none' : '';
     const addLogoBtn=document.querySelector('#logoBody .btn-add');
@@ -2399,7 +2429,7 @@ function renderVariantControls(){
             <label>Logo Size (SVG tag)${i===0 && isKitKind(window.currentOrderKind) ? ' — master, sets all logos' : ''}</label>
             <select onchange="setLogoSize(${i}, this.value)"><option value="48">48mm</option><option value="65">65mm</option></select>
         </div>`;
-    }).join('');
+    }).join('') || (window.currentOrderKind==='stripe' ? '<div class="order-kind-help">No logo for this order (Stripe Only).</div>' : '');
     if(!special){
         logos.querySelectorAll('select').forEach((el,idx)=>{
             const i=Math.floor(idx/2);
@@ -2735,7 +2765,7 @@ function applyQuickSetup(){
   const art=(document.getElementById('quickCustArt').value||'').trim(); const pi=(document.getElementById('quickPiNo').value||'').replace(/^E+/i,'').replace(/[^0-9A-Za-z\-]/g,'');
   if(art) document.getElementById('custArt').value=art; if(pi) document.getElementById('piNo').value=pi;
   const lc=document.getElementById('quickLogoColor').value, ls=document.getElementById('quickLogoSize').value, sc=document.getElementById('quickStripeColor').value, ss=document.getElementById('quickStripeSize').value, sp=stripeSizeMap[ss];
-  if(!logoVariants.length) logoVariants=[{color:lc,size:ls}]; else logoVariants.forEach(v=>{v.color=lc;v.size=ls;});
+  if(!logoVariants.length){ if(window.currentOrderKind!=='stripe') logoVariants=[{color:lc,size:ls}]; } else logoVariants.forEach(v=>{v.color=lc;v.size=ls;});
   if(stripeVariants.length) stripeVariants.forEach(v=>{v.color=sc;v.size=ss;v.width=sp.stripe;v.gap=sp.gap;}); else if(window.currentOrderKind!=='single') stripeVariants=[{color:sc,size:ss,width:sp.stripe,gap:sp.gap}];
   document.getElementById('pLogoFront').checked=document.getElementById('quickFront').checked; document.getElementById('pLogoBack').checked=document.getElementById('quickBack').checked; document.getElementById('pLogoPant').checked=document.getElementById('quickPant').checked; document.getElementById('pLogoShoulder').checked=document.getElementById('quickShoulder').checked; document.getElementById('pStripesShoulder').checked=document.getElementById('quickStripes').checked;
   if(isKitKind(window.currentOrderKind)) syncKitMasterSizes(); renderVariantControls(); updateSheet(); if(art) pushRecentArticle(art); closeQuickSetup(); toast('Quick Setup applied successfully.','success');
@@ -2750,7 +2780,7 @@ function renderVectorSpecs(){
     logoHost.innerHTML='';
     stripeHost.innerHTML='';
     if(vectorSpecs){
-        vectorSpecs.classList.remove('kind-single','kind-combo','kind-kit','kind-special');
+        vectorSpecs.classList.remove('kind-single','kind-combo','kind-kit','kind-special','kind-stripe');
         vectorSpecs.classList.add('kind-' + kindFamily(window.currentOrderKind));
     }
 
