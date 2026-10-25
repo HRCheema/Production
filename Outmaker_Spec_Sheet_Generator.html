@@ -119,7 +119,8 @@
     .vector-specs.kind-single .stripe-specs-stack { display:none; }
     /* STRIPE ONLY order: no logo card, stripe card centered */
     .vector-specs.kind-stripe .logo-specs-grid { display:none; }
-    .vector-specs.kind-stripe .stripe-specs-stack { grid-template-columns:minmax(0,1fr); max-width:520px; margin:10px auto 0; }
+    .vector-specs.kind-stripe .stripe-specs-stack { display:flex; flex-wrap:nowrap; justify-content:center; align-items:flex-start; gap:10px; margin:10px 0 0; }
+    .vector-specs.kind-stripe .stripe-specs-stack .vector-card { flex:1 1 0; min-width:0; max-width:520px; }
 
     .vector-specs.kind-combo { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; align-items:start; }
     /* SPECIAL order: logo + stripe cards side-by-side, matching the normal spec-card layout */
@@ -764,6 +765,7 @@ body{
       <div class="quick-card">
         <div class="quick-head"><h3 id="quickSetupTitle">⚡ Quick Setup</h3><button type="button" class="quick-close" onclick="closeQuickSetup()">✕</button></div>
         <div class="quick-grid">
+          <div class="quick-field" style="grid-column:1/-1;"><label>Order Kind</label><select id="quickOrderKind" onchange="quickKindChanged()"><option value="single">Single Logo — 1 Logo</option><option value="combo">Logo + Stripe — 1 Logo + 1 Stripe</option><option value="special">Special — 1 Logo + 3 Color Stripes</option><option value="stripe">Stripe Only — 0 Logo + Stripe</option><option value="kit1">Kit 1 — 3 Logos + 2 Stripes</option><option value="kit2">Kit 2 — 3 Logos + 2 Stripes</option></select></div>
           <div class="quick-field"><label>Article / Cust Art #</label><input id="quickCustArt" type="text" placeholder="e.g. E3771 / JT275"></div>
           <div class="quick-field"><label>E-number / P.I.</label><input id="quickPiNo" type="text" inputmode="numeric" placeholder="3771"></div>
           <div class="quick-field"><label>Logo Color</label><select id="quickLogoColor"></select></div>
@@ -2751,22 +2753,46 @@ function openQuickSetup(){
   const m=document.getElementById('quickSetupModal'); if(!m) return;
   const qlc=document.getElementById('quickLogoColor'), qsc=document.getElementById('quickStripeColor');
   if(qlc && !qlc.options.length){ qlc.innerHTML=colorOptionsHtml; qsc.innerHTML=colorOptionsHtml; }
+  document.getElementById('quickOrderKind').value=window.currentOrderKind||'single';
   document.getElementById('quickCustArt').value=document.getElementById('custArt').value||'';
   document.getElementById('quickPiNo').value=document.getElementById('piNo').value||'';
   const l=logoVariants[0]||{color:'#c8102e',size:'65'}, st=stripeVariants[0]||{color:'#c8102e',size:'56'};
   qlc.value=l.color; document.getElementById('quickLogoSize').value=l.size; qsc.value=st.color; document.getElementById('quickStripeSize').value=st.size;
   document.getElementById('quickFront').checked=document.getElementById('pLogoFront').checked; document.getElementById('quickBack').checked=document.getElementById('pLogoBack').checked;
   document.getElementById('quickPant').checked=document.getElementById('pLogoPant').checked; document.getElementById('quickShoulder').checked=document.getElementById('pLogoShoulder').checked; document.getElementById('quickStripes').checked=document.getElementById('pStripesShoulder').checked;
-  m.classList.add('open'); document.body.style.overflow='hidden';
+  updateQuickFieldState(); m.classList.add('open'); document.body.style.overflow='hidden';
 }
 function closeQuickSetup(){ document.getElementById('quickSetupModal')?.classList.remove('open'); document.body.style.overflow=''; }
+function kindPlacementPreset(k){
+  if(k==='single') return {front:false,back:true,pant:true,shoulder:false,stripes:false};
+  if(k==='special') return {front:true,back:true,pant:true,shoulder:false,stripes:true};
+  if(k==='stripe') return {front:false,back:false,pant:false,shoulder:false,stripes:true};
+  return {front:true,back:true,pant:true,shoulder:true,stripes:true};
+}
+function updateQuickFieldState(){
+  const k=document.getElementById('quickOrderKind').value;
+  const show=(id,on)=>{ const f=document.getElementById(id)?.closest('.quick-field'); if(f) f.style.display=on?'':'none'; };
+  show('quickLogoColor',k!=='stripe'); show('quickLogoSize',k!=='stripe');
+  show('quickStripeColor',k!=='single'); show('quickStripeSize',k!=='single');
+  const kit=isKitKind(k);
+  ['quickLogoColor','quickStripeColor'].forEach(id=>{ const el=document.getElementById(id); if(el) el.disabled=kit; });
+}
+function quickKindChanged(){
+  const k=document.getElementById('quickOrderKind').value, pr=kindPlacementPreset(k);
+  document.getElementById('quickFront').checked=pr.front; document.getElementById('quickBack').checked=pr.back;
+  document.getElementById('quickPant').checked=pr.pant; document.getElementById('quickShoulder').checked=pr.shoulder;
+  document.getElementById('quickStripes').checked=pr.stripes;
+  updateQuickFieldState();
+}
 function applyQuickSetup(){
   pushStateToHistory();
+  const qk=document.getElementById('quickOrderKind').value;
+  if(qk && qk!==window.currentOrderKind){ document.getElementById('orderKind').value=qk; applyOrderKind(qk); }
   const art=(document.getElementById('quickCustArt').value||'').trim(); const pi=(document.getElementById('quickPiNo').value||'').replace(/^E+/i,'').replace(/[^0-9A-Za-z\-]/g,'');
   if(art) document.getElementById('custArt').value=art; if(pi) document.getElementById('piNo').value=pi;
   const lc=document.getElementById('quickLogoColor').value, ls=document.getElementById('quickLogoSize').value, sc=document.getElementById('quickStripeColor').value, ss=document.getElementById('quickStripeSize').value, sp=stripeSizeMap[ss];
-  if(!logoVariants.length){ if(window.currentOrderKind!=='stripe') logoVariants=[{color:lc,size:ls}]; } else logoVariants.forEach(v=>{v.color=lc;v.size=ls;});
-  if(stripeVariants.length) stripeVariants.forEach(v=>{v.color=sc;v.size=ss;v.width=sp.stripe;v.gap=sp.gap;}); else if(window.currentOrderKind!=='single') stripeVariants=[{color:sc,size:ss,width:sp.stripe,gap:sp.gap}];
+  if(!logoVariants.length){ if(window.currentOrderKind!=='stripe') logoVariants=[{color:lc,size:ls}]; } else logoVariants.forEach(v=>{ if(!isKitKind(window.currentOrderKind)) v.color=lc; v.size=ls;});
+  if(stripeVariants.length) stripeVariants.forEach(v=>{ if(!isKitKind(window.currentOrderKind)) v.color=sc; v.size=ss;v.width=sp.stripe;v.gap=sp.gap;}); else if(window.currentOrderKind!=='single') stripeVariants=[{color:sc,size:ss,width:sp.stripe,gap:sp.gap}];
   document.getElementById('pLogoFront').checked=document.getElementById('quickFront').checked; document.getElementById('pLogoBack').checked=document.getElementById('quickBack').checked; document.getElementById('pLogoPant').checked=document.getElementById('quickPant').checked; document.getElementById('pLogoShoulder').checked=document.getElementById('quickShoulder').checked; document.getElementById('pStripesShoulder').checked=document.getElementById('quickStripes').checked;
   if(isKitKind(window.currentOrderKind)) syncKitMasterSizes(); renderVariantControls(); updateSheet(); if(art) pushRecentArticle(art); closeQuickSetup(); toast('Quick Setup applied successfully.','success');
 }
