@@ -373,10 +373,11 @@
   /* ===================== FABRIC COST & CONSUMPTION SUMMARY PAGE ===================== */
   .fs-block{margin-bottom:16px;}
   .fs-heading{font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--brass-dark);margin:0 0 6px 0;text-transform:uppercase;letter-spacing:.03em;}
-  .fabric-summary-table{width:100%;border-collapse:collapse;font-size:10px;table-layout:fixed;}
-  .fabric-summary-table th,.fabric-summary-table td{border:1px solid var(--line);padding:4px 3px;text-align:center;color:var(--ink);}
-  .fabric-summary-table th{background:var(--bg-soft);color:var(--ink-soft);font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:9px;}
-  .fabric-summary-table td.fs-fabric-lbl{text-align:left;font-weight:700;padding-left:8px;white-space:nowrap;}
+  .fabric-summary-table{width:100%;border-collapse:collapse;font-size:8.5px;table-layout:fixed;}
+  .fabric-summary-table th:first-child{width:13%;}
+  .fabric-summary-table th,.fabric-summary-table td{border:1px solid var(--line);padding:4px 2px;text-align:center;color:var(--ink);}
+  .fabric-summary-table th{background:var(--bg-soft);color:var(--ink-soft);font-weight:700;text-transform:uppercase;letter-spacing:.02em;font-size:8px;}
+  .fabric-summary-table td.fs-fabric-lbl{text-align:left;font-weight:700;padding-left:5px;white-space:nowrap;}
   .fabric-summary-table td.fs-total-col{font-weight:700;background:var(--bg-soft);color:var(--brass-dark);}
   .fabric-summary-table tr.fs-grand-row td.grand{font-weight:700;background:var(--bg-soft);color:var(--brass-dark);}
   .fabric-summary-table tbody tr:nth-child(2){background:#fbf8f2;}
@@ -624,7 +625,7 @@
 
 <!-- IMAGE UPLOAD SLOTS (shared across all sizes) -->
 <div class="panel-block">
-  <h2>Panel Images — upload once, auto on all 9 sizes</h2>
+  <h2>Panel Images — upload once, auto on all 11 sizes</h2>
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
     <label style="background:var(--brass);color:#241c10;padding:8px 14px;border-radius:3px;font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;cursor:pointer;">
       Select ALL Images at Once
@@ -703,7 +704,9 @@ const SIZE_DATA = {
  M:{jktQty:57, pantQty:57, panels:{A:{print:2,w:41.088,h:40.687}, B:{print:15,w:30,h:45}, C:{print:15,w:31,h:45}, D:{print:15,w:51.871,h:43.699}, E:{print:3,w:60,h:40}, F:{print:2,w:59.054,h:79.126}, G:{print:2,w:55.447,h:40.334}, H:{print:3,w:57.493,h:42.725}}},
  L:{jktQty:35, pantQty:35, panels:{A:{print:1,w:41.088,h:40.687}, B:{print:9,w:31,h:46}, C:{print:9,w:33,h:46}, D:{print:9,w:54.534,h:46.237}, E:{print:2,w:60,h:40}, F:{print:2,w:54.758,h:84.26}, G:{print:1,w:56.093,h:41.897}, H:{print:2,w:60.077,h:45.103}}},
  XL:{jktQty:14, pantQty:14, panels:{A:{print:1,w:41.088,h:40.687}, B:{print:3,w:34.5,h:53}, C:{print:3,w:36.5,h:52.5}, D:{print:3,w:56.43,h:47.33}, E:{print:1,w:60,h:40}, F:{print:1,w:60.632,h:89.138}, G:{print:1,w:57.528,h:45.209}, H:{print:1,w:59.187,h:46.119}}},
- XXL:{jktQty:14, pantQty:14, panels:{A:{print:1,w:41.088,h:40.687}, B:{print:3,w:52,h:34.5}, C:{print:3,w:53,h:37}, D:{print:3,w:58.569,h:49.124}, E:{print:1,w:60,h:40}, F:{print:1,w:57.98,h:48.101}, G:{print:1,w:57.267,h:47.652}, H:{print:1,w:60.397,h:48.425}}}
+ XXL:{jktQty:14, pantQty:14, panels:{A:{print:1,w:41.088,h:40.687}, B:{print:3,w:52,h:34.5}, C:{print:3,w:53,h:37}, D:{print:3,w:58.569,h:49.124}, E:{print:1,w:60,h:40}, F:{print:1,w:57.98,h:48.101}, G:{print:1,w:57.267,h:47.652}, H:{print:1,w:60.397,h:48.425}}},
+ XXXL:{jktQty:0, pantQty:0, panels:{A:{print:0,w:41.088,h:40.687}, B:{print:0,w:54.31,h:35.20}, C:{print:0,w:54.39,h:37.20}, D:{print:0,w:57.73,h:52.19}, E:{print:0,w:60,h:40}, F:{print:0,w:52.39,h:49.53}, G:{print:0,w:51.31,h:24.14}, H:{print:0,w:58.17,h:50.79}}},
+ XXXXL:{jktQty:0, pantQty:0, panels:{A:{print:0,w:41.088,h:40.687}, B:{print:0,w:56.48,h:36.22}, C:{print:0,w:56.56,h:38.30}, D:{print:0,w:60.45,h:52.01}, E:{print:0,w:60,h:40}, F:{print:0,w:55.60,h:51.61}, G:{print:0,w:49.49,h:25.07}, H:{print:0,w:60.52,h:52.43}}}
 };
 
 /* ---------- Jacket vs Pant panel grouping ---------- */
@@ -711,19 +714,19 @@ const JACKET_PANELS = ['A','B','C','F','G']; // Necks, Jkt Front, Jkt Back, Side
 const PANT_PANELS = ['D','E','H'];           // Pant, Belts, Pant Panels
 function panelGroup(pid){ return JACKET_PANELS.includes(pid) ? 'jkt' : 'pant'; }
 function qtyElId(sz, group){ return group==='jkt' ? ('qty-jkt-'+sz) : ('qty-pant-'+sz); }
-const SIZE_ORDER = ['YS','YM','YL','XS','S','M','L','XL','XXL'];
+const SIZE_ORDER = ['YS','YM','YL','XS','S','M','L','XL','XXL','XXXL','XXXXL'];
 
 // pcs per 1 print (ratio). print = ceil(orderQty / ratio)
 const RATIOS = {
   // panel: default for all sizes, or per-size override
   A: { default: 10 },  // Necks 10pcs = 1 print
   E: { default: 5 },   // Belts 5pcs = 1 print
-  B: { YS:1, YM:1, YL:1, XS:1, S:1, M:1, L:1, XL:1, XXL:1 }, // Jkt Front
-  C: { YS:1, YM:1, YL:1, XS:1, S:1, M:1, L:1, XL:1, XXL:1 }, // Jkt Back
-  D: { YS:1, YM:1, YL:1, XS:1, S:1, M:1, L:1, XL:1, XXL:1 }, // Pant
-  F: { YS:12, YM:12, YL:9, XS:9, S:8, M:8, L:7, XL:7, XXL:3 }, // Side Panels
-  G: { YS:12, YM:12, YL:12, XS:12, S:11, M:10, L:10, XL:10, XXL:10 }, // Shoulder Panels
-  H: { YS:6, YM:6, YL:5, XS:5, S:5, M:5, L:5, XL:5, XXL:5 }  // Pant Panels
+  B: { YS:1, YM:1, YL:1, XS:1, S:1, M:1, L:1, XL:1, XXL:1, XXXL:1, XXXXL:1 }, // Jkt Front
+  C: { YS:1, YM:1, YL:1, XS:1, S:1, M:1, L:1, XL:1, XXL:1, XXXL:1, XXXXL:1 }, // Jkt Back
+  D: { YS:1, YM:1, YL:1, XS:1, S:1, M:1, L:1, XL:1, XXL:1, XXXL:1, XXXXL:1 }, // Pant
+  F: { YS:12, YM:12, YL:9, XS:9, S:8, M:8, L:7, XL:7, XXL:3, XXXL:2.5, XXXXL:2.5 }, // Side Panels
+  G: { YS:12, YM:12, YL:12, XS:12, S:11, M:10, L:10, XL:10, XXL:10, XXXL:4, XXXXL:4 }, // Shoulder Panels
+  H: { YS:6, YM:6, YL:5, XS:5, S:5, M:5, L:5, XL:5, XXL:5, XXXL:5, XXXXL:5 }  // Pant Panels
 };
 function getRatio(sz, pid){
   const r = RATIOS[pid];
@@ -854,7 +857,7 @@ function buildSheet(){
             <div class="row size-lbl">Size ${sz}</div>
             <div class="row"><input type="number" step="0.001" id="w-${sz}-${p.id}" value="${pd.w}" data-sz="${sz}" data-panel="${p.id}" style="width:52px;">×<input type="number" step="0.001" id="h-${sz}-${p.id}" value="${pd.h}" data-sz="${sz}" data-panel="${p.id}" style="width:52px;"></div>
             <div class="row sqft-row">(<span class="sqft-out" id="sqft-${sz}-${p.id}">0</span> SQFT PER PC)</div>
-            <div class="field-row"><span class="field-label">Ratio/Print</span><input type="number" min="1" class="ratio-input" id="ratio-${sz}-${p.id}" value="${ratioDefault}" data-sz="${sz}" data-panel="${p.id}"></div>
+            <div class="field-row"><span class="field-label">Ratio/Print</span><input type="number" min="1" step="any" class="ratio-input" id="ratio-${sz}-${p.id}" value="${ratioDefault}" data-sz="${sz}" data-panel="${p.id}"></div>
           </div>
           <div class="imgwrap" id="imgwrap-${sz}-${p.id}"><div class="${swatchClass(p.id)}" style="width:100%;"></div></div>
         `;
@@ -948,7 +951,7 @@ function recalcPrintFromQty(sz, pid){
   const group = panelGroup(pid);
   const qty = parseFloat(document.getElementById(qtyElId(sz, group)).value) || 0;
   const ratio = parseFloat(document.getElementById(`ratio-${sz}-${pid}`).value) || 1;
-  const print = qty > 0 ? Math.ceil(qty/ratio) : 0;
+  const print = qty > 0 ? Math.ceil(qty/ratio - 1e-9) : 0; // round-up (e.g. 2.5 ratio)
   document.getElementById(`print-${sz}-${pid}`).value = print;
   renderPanelImage(sz, pid);
 }
